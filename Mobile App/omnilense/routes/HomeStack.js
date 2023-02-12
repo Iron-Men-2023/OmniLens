@@ -1,15 +1,25 @@
 import {createStackNavigator} from "react-navigation-stack";
-import {createAppContainer} from "react-navigation";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
+import HeaderComponent from "../components/HeaderComponent";
+import React from "react";
 const screens ={
     Home:{
-        screen: HomeScreen
+        screen: HomeScreen,
+        navigationOptions: ({navigation}) => {
+            return{
+                headerTitle: () => <HeaderComponent navigation={navigation}/>
+            }
+        }
     },
     Profile:{
-        screen: ProfileScreen
+        screen: ProfileScreen,
+
     }
 }
-const HomeStack = createStackNavigator(screens)
+const HomeStack = createStackNavigator(screens,{
+    defaultNavigationOptions:{
+        headerTitle: 'OmniLens'
+    }})
 
-export default createAppContainer(HomeStack)
+export default HomeStack
