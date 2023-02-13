@@ -8,7 +8,7 @@ function OnboardingScreen({navigation}) {
 
     return (
         <Onboarding
-            onSkip={() => navigation.navigate('Home')}
+            onSkip={() => navigation.navigate('')}
             onDone={() => navigation.navigate('Home')}
 
             pages={[
