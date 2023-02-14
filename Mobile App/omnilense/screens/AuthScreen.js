@@ -10,7 +10,7 @@ function AuthScreen() {
     return (
         <View style={styles.container}>
             <Image
-                source={require("../assets/Logo.png")}
+                source={require("../assets/Logo-removebg.png")}
                 style={styles.logo}/>
             <Text style={styles.text}>OmniLens</Text>
             <FormInputComponent placeholderText="email" icon="user" keyboardType="email-address"/>
@@ -38,7 +38,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         padding: 20,
-        paddingTop: 10
+        paddingTop: 10,
+        backgroundColor: '#b5c9fd'
     },
     logo: {
         height: 150,
