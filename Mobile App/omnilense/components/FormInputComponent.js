@@ -3,13 +3,13 @@ import { TextInput, StyleSheet, View} from "react-native";
 import {AntDesign} from "@expo/vector-icons";
 
 export default function FormInputComponent(props){
-    const {placeholderText,icon, ...rest} = props
+    const {placeholderText,icon,changeText, ...rest} = props
     return (
         <View style={styles.inputContainer}>
             <View style={styles.iconStyle}>
                 <AntDesign name={icon} size={25} color='#666'/>
             </View>
-            <TextInput placeholder={placeholderText} placeholderTextColor="#666" style={styles.input} {...rest}/>
+            <TextInput placeholder={placeholderText} placeholderTextColor="#666" style={styles.input} onChangeText={text=> changeText(text)} {...rest}/>
         </View>
     )
 }

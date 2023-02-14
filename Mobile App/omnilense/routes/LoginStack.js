@@ -16,6 +16,12 @@ const screens ={
     },
     SignUp:{
         screen: SignUpScreen,
+        navigationOptions: ({navigation}) => {
+            return{
+                headerTitle: () => <HeaderComponent navigation={navigation} title={"Sign Up"}/>,
+                headerShown: true
+            }
+        }
     }
 }
 const LoginStack = createStackNavigator(screens,{

@@ -1,21 +1,50 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Text, View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import {Image, Text, View, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native';
+import auth from "../config/firebaseConfig";
+import {createUserWithEmailAndPassword} from "firebase/auth";
 import FormInputComponent from "../components/FormInputComponent";
 import {AntDesign} from "@expo/vector-icons";
 import FormButtonComponent from "../components/FormButtonComponent";
 import SocialButtonComponent from "../components/SocialButtonComponent";
 
 function SignUpScreen({navigation}) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("")
+    const [confirmPassword, setConfirmPassword] = useState("")
+    const [errorMessage, setErrorMessage] = useState(null);
+
+    function createAccount(){
+        password===confirmPassword?
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    // ...
+                    navigation.navigate("Home")
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // ..
+                    setErrorMessage(errorMessage)
+
+                })
+        : setErrorMessage("Password confirmation doesn't match")
+    }
+
     return (
         <View style={styles.container}>
+            <ScrollView>
+                {errorMessage?
+                    <Text style={styles.errorText}>{errorMessage}</Text>:
+                    <Text style={styles.text}>Create an account</Text>
+                }
 
-            <Text style={styles.text}>Create an account</Text>
-            <FormInputComponent placeholderText="email" icon="user" keyboardType="email-address"/>
-            <FormInputComponent placeholderText="password" icon="lock" secureTextEntry={true}/>
-            <FormInputComponent placeholderText="confirm password" icon="lock" secureTextEntry={true}/>
+            <FormInputComponent placeholderText="email" icon="user" keyboardType="email-address" changeText={setEmail}/>
+            <FormInputComponent placeholderText="password" icon="lock" secureTextEntry={true} changeText={setPassword}/>
+            <FormInputComponent placeholderText="confirm password" icon="lock" secureTextEntry={true} changeText={setConfirmPassword}/>
 
-            <FormButtonComponent text="Sign up"/>
+            <FormButtonComponent text="Sign up" onPress={createAccount}/>
             <TouchableOpacity style={styles.forgotButton}>
                 <Text style={styles.navButtonText}>Forgot Password?</Text>
             </TouchableOpacity>
@@ -28,6 +57,7 @@ function SignUpScreen({navigation}) {
             <TouchableOpacity style={styles.forgotButton} onPress={()=>navigation.navigate("Login")}>
                 <Text style={styles.navButtonText}>Already have an account? Sign in</Text>
             </TouchableOpacity>
+            </ScrollView>
         </View>
     );
 }
@@ -41,6 +71,11 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         backgroundColor: '#b5c9fd',
         height: '100%'
+    },
+    errorText: {
+        fontSize: 28,
+        marginBottom: 10,
+        color: '#fa0416',
     },
     logo: {
         height: 150,

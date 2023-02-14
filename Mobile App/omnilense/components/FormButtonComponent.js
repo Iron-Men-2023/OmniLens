@@ -2,9 +2,9 @@ import React from 'react'
 import {TouchableOpacity,View,Text, StyleSheet} from "react-native";
 
 export default function FormButtonComponent(props){
-    const {text} = props
+    const {text,onPress} = props
     return (
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={onPress}>
             <Text style={styles.buttonText}>{text}</Text>
         </TouchableOpacity>
     )

@@ -2,13 +2,13 @@ import React from "react";
 import {Text, View,StyleSheet} from "react-native";
 import {MaterialIcons} from "@expo/vector-icons"
 
-function HeaderComponent({navigation}) {
+function HeaderComponent({navigation,title,showDrawer}) {
 
     return(
         <View style={styles.header}>
-            <MaterialIcons name="menu" size={28} style={styles.icon} onPress={()=>navigation.openDrawer()}/>
+            {showDrawer? <MaterialIcons name="menu" size={28} style={styles.icon} onPress={()=>navigation.openDrawer()}/>: null}
             <View>
-                <Text style={styles.headerText}>OmniLens</Text>
+                <Text style={styles.headerText}>{title}</Text>
             </View>
         </View>
     )
@@ -26,7 +26,8 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         fontSize: 20,
         color: "#333",
-        letterSpacing: 1
+        letterSpacing: 1,
+        marginRight: '20%'
     },
     icon: {
         position: "absolute",
