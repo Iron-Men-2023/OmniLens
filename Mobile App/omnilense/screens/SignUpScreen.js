@@ -6,32 +6,32 @@ import {AntDesign} from "@expo/vector-icons";
 import FormButtonComponent from "../components/FormButtonComponent";
 import SocialButtonComponent from "../components/SocialButtonComponent";
 
-function AuthScreen({navigation}) {
+function SignUpScreen({navigation}) {
     return (
         <View style={styles.container}>
-            <Image
-                source={require("../assets/Logo-removebg.png")}
-                style={styles.logo}/>
-            <Text style={styles.text}>OmniLens</Text>
+
+            <Text style={styles.text}>Create an account</Text>
             <FormInputComponent placeholderText="email" icon="user" keyboardType="email-address"/>
             <FormInputComponent placeholderText="password" icon="lock" secureTextEntry={true}/>
-            <FormButtonComponent text="Sign in"/>
+            <FormInputComponent placeholderText="confirm password" icon="lock" secureTextEntry={true}/>
+
+            <FormButtonComponent text="Sign up"/>
             <TouchableOpacity style={styles.forgotButton}>
                 <Text style={styles.navButtonText}>Forgot Password?</Text>
             </TouchableOpacity>
-            <SocialButtonComponent text="Sign in with Facebook"
+            <SocialButtonComponent text="Sign up with Facebook"
                                    socialName="facebook" color="#4867aa"
                                    bgColor="#e6eaf4"/>
-            <SocialButtonComponent text="Sign in with Google"
+            <SocialButtonComponent text="Sign up with Google"
                                    socialName="facebook" color="#de4d41"
                                    bgColor="#f5e7ea"/>
-            <TouchableOpacity style={styles.forgotButton} onPress={()=> navigation.navigate("SignUp")}>
-                <Text style={styles.navButtonText}>Create account</Text>
+            <TouchableOpacity style={styles.forgotButton} onPress={()=>navigation.navigate("Login")}>
+                <Text style={styles.navButtonText}>Already have an account? Sign in</Text>
             </TouchableOpacity>
         </View>
     );
 }
-export default AuthScreen
+export default SignUpScreen
 
 const styles = StyleSheet.create({
     container: {
@@ -39,7 +39,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 20,
         paddingTop: 10,
-        backgroundColor: '#b5c9fd'
+        backgroundColor: '#b5c9fd',
+        height: '100%'
     },
     logo: {
         height: 150,

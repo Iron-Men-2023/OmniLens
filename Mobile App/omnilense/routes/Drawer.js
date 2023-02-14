@@ -4,13 +4,12 @@ import HomeStack from "./HomeStack";
 import SettingsStack from "./SettingsStack";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import AuthScreen from "../screens/AuthScreen";
+import LoginStack from "./LoginStack";
 
 const drawerNavigator = createDrawerNavigator({
-    Onboard: {
-        screen: OnboardingScreen
-    },
+
     Login: {
-        screen: AuthScreen
+        screen: LoginStack
     },
     Home: {
         screen: HomeStack
