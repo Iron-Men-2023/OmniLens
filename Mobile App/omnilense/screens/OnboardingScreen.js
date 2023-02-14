@@ -8,10 +8,16 @@ function OnboardingScreen({navigation}) {
 
     return (
         <Onboarding
-            onSkip={() => navigation.navigate('')}
-            onDone={() => navigation.navigate('Home')}
+            onSkip={() => navigation.navigate('Login')}
+            onDone={() => navigation.navigate('Login')}
 
             pages={[
+                {
+                    backgroundColor: 'rgba(253,144,101,0.75)',
+                    image: <Image source={require('../assets/Logo-removebg.png')} />,
+                    title: 'Welcome to Omnilens',
+                    subtitle: 'Get ready to make connections in a whole new way never thought possible',
+                },
                 {
                     backgroundColor: 'rgba(229,172,67,0.87)',
                     image: <Image source={require('../assets/onboard1new.png')} />,
@@ -28,7 +34,7 @@ function OnboardingScreen({navigation}) {
                     backgroundColor: '#36ec36',
                     image: <Image source={require('../assets/onboard3.png')} />,
                     title: 'Be in control',
-                    subtitle: 'Decide what can and cant be seen by other omnilense users, easile restrict access to sensitive data',
+                    subtitle: "Decide what can and can't be seen by other omnilense users, easile restrict access to sensitive data",
                 }
             ]}
         />

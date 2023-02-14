@@ -14,8 +14,8 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 10,
         width: '100%',
-        height: '10vh',
-        backgroundColor: "blue",
+        height: '10%',
+        backgroundColor: 'rgb(57,153,215)',
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 5
@@ -23,6 +23,6 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 18,
         fontWeight: 'bold',
-        fontFamily: 'Lato-Regular',
+        color: 'white'
     },
 })

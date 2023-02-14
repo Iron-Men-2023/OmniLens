@@ -2,12 +2,12 @@ import React from 'react'
 import {TouchableOpacity,View,Text, StyleSheet} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-export default function FormButtonComponent(props){
+export default function SocialButtonComponent(props){
     const {text,socialName,color,bgColor} = props
     return (
-        <TouchableOpacity style={[styles.button,{backgroundColor: bgColor}]}>
+        <TouchableOpacity style={[styles.button, {backgroundColor: bgColor}]}>
             <View style={styles.iconWrapper}>
-                <FontAwesome btn={socialName} size={22} color={color} style={styles.icon}/>
+                <FontAwesome name={socialName} size={22} color={color} style={styles.icon}/>
             </View>
             <View style={styles.btnTxtWrapper}>
                 <Text style={[styles.buttonText,{color: color}]}>{text}</Text>
@@ -20,10 +20,11 @@ const styles = StyleSheet.create({
     button: {
         marginTop: 10,
         width: '100%',
-        height: '10vh',
-        backgroundColor: "blue",
+        height: '10%',
         alignItems: "center",
         justifyContent: "center",
+        flexDirection: 'row',
+        padding: 10,
         borderRadius: 5
     },
     iconWrapper: {
@@ -42,6 +43,5 @@ const styles = StyleSheet.create({
     buttonText: {
         fontSize: 18,
         fontWeight: 'bold',
-        fontFamily: 'Lato-Regular',
     },
 })
