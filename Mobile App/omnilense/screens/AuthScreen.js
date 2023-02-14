@@ -1,21 +1,39 @@
 import React, {useEffect, useState} from 'react';
 import {Image, Text, View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import FormInputComponent from "../components/FormInputComponent";
+import auth from "../config/firebaseConfig"
 import {AntDesign} from "@expo/vector-icons";
 import FormButtonComponent from "../components/FormButtonComponent";
 import SocialButtonComponent from "../components/SocialButtonComponent";
 
 function AuthScreen({navigation}) {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("")
+
+    function signIn(){
+        signInWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
+                // Signed in
+                const user = userCredential.user.uid;
+                // ...
+                navigation.navigate("Home")
+            })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+            });
+
+    }
     return (
         <View style={styles.container}>
             <Image
                 source={require("../assets/Logo-removebg.png")}
                 style={styles.logo}/>
             <Text style={styles.text}>OmniLens</Text>
-            <FormInputComponent placeholderText="email" icon="user" keyboardType="email-address"/>
-            <FormInputComponent placeholderText="password" icon="lock" secureTextEntry={true}/>
-            <FormButtonComponent text="Sign in"/>
+            <FormInputComponent placeholderText="email" icon="user" keyboardType="email-address" changeText={setEmail}/>
+            <FormInputComponent placeholderText="password" icon="lock" secureTextEntry={true} changeText={setPassword}/>
+            <FormButtonComponent text="Sign in" onPress={signIn}/>
             <TouchableOpacity style={styles.forgotButton}>
                 <Text style={styles.navButtonText}>Forgot Password?</Text>
             </TouchableOpacity>

@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import {Image, Text, View, StyleSheet, TextInput, TouchableOpacity, ScrollView} from 'react-native';
 import auth from "../config/firebaseConfig";
-import {createUserWithEmailAndPassword} from "firebase/auth";
+import {createUserWithEmailAndPassword,GoogleAuthProvider} from "firebase/auth";
 import FormInputComponent from "../components/FormInputComponent";
 import {AntDesign} from "@expo/vector-icons";
 import FormButtonComponent from "../components/FormButtonComponent";
 import SocialButtonComponent from "../components/SocialButtonComponent";
 
 function SignUpScreen({navigation}) {
+    const provider = new GoogleAuthProvider();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
     const [confirmPassword, setConfirmPassword] = useState("")
