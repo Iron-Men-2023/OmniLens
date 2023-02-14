@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Image, Text, View, StyleSheet, TextInput, TouchableOpacity} from 'react-native';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, FacebookAuthProvider } from "firebase/auth";
 import FormInputComponent from "../components/FormInputComponent";
 import auth from "../config/firebaseConfig"
 import {AntDesign} from "@expo/vector-icons";
@@ -10,6 +10,7 @@ import SocialButtonComponent from "../components/SocialButtonComponent";
 function AuthScreen({navigation}) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("")
+    const provider = new FacebookAuthProvider();
 
     function signIn(){
         signInWithEmailAndPassword(auth, email, password)
@@ -25,6 +26,33 @@ function AuthScreen({navigation}) {
             });
 
     }
+    function fbSignIn(){
+        signInWithPopup(auth, provider)
+            .then((result) => {
+                // The signed-in user info.
+                console.log("Helre")
+                const user = result.user;
+
+                // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+                const credential = FacebookAuthProvider.credentialFromResult(result);
+                const accessToken = credential.accessToken;
+                console.log(accessToken)
+                console.log(user.uid)
+                // IdP data available using getAdditionalUserInfo(result)
+                // ...
+            })
+            .catch((error) => {
+                // Handle Errors here.
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                // The email of the user's account used.
+                const email = error.customData.email;
+                // The AuthCredential type that was used.
+                const credential = FacebookAuthProvider.credentialFromError(error);
+                console.log(error)
+                // ...
+            });
+    }
     return (
         <View style={styles.container}>
             <Image
@@ -39,7 +67,7 @@ function AuthScreen({navigation}) {
             </TouchableOpacity>
             <SocialButtonComponent text="Sign in with Facebook"
                                    socialName="facebook" color="#4867aa"
-                                   bgColor="#e6eaf4"/>
+                                   bgColor="#e6eaf4" onPress={fbSignIn}/>
             <SocialButtonComponent text="Sign in with Google"
                                    socialName="facebook" color="#de4d41"
                                    bgColor="#f5e7ea"/>

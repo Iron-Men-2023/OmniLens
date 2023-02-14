@@ -3,9 +3,9 @@ import {TouchableOpacity,View,Text, StyleSheet} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function SocialButtonComponent(props){
-    const {text,socialName,color,bgColor} = props
+    const {text,socialName,color,bgColor,onPress} = props
     return (
-        <TouchableOpacity style={[styles.button, {backgroundColor: bgColor}]}>
+        <TouchableOpacity style={[styles.button, {backgroundColor: bgColor}]} onPress={onPress}>
             <View style={styles.iconWrapper}>
                 <FontAwesome name={socialName} size={22} color={color} style={styles.icon}/>
             </View>
