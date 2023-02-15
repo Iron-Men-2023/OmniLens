@@ -1,15 +1,17 @@
 import React from 'react'
-import { TextInput, StyleSheet, View} from "react-native";
+import {TextInput, StyleSheet, View, Text} from "react-native";
 import {AntDesign} from "@expo/vector-icons";
 
 export default function FormInputComponent(props){
     const {placeholderText,icon,changeText, ...rest} = props
     return (
         <View style={styles.inputContainer}>
+            {icon?
             <View style={styles.iconStyle}>
-                <AntDesign name={icon} size={25} color='#666'/>
+                 <AntDesign name={icon} size={25} color='#666'/>
             </View>
-            <TextInput placeholder={placeholderText} placeholderTextColor="#666" style={styles.input} onChangeText={text=> changeText(text)} {...rest}/>
+                :null}
+            <TextInput label="sadsa" placeholder={placeholderText} placeholderTextColor="#666" style={styles.input} onChangeText={text=> changeText(text)} {...rest}/>
         </View>
     )
 }
@@ -17,7 +19,7 @@ const styles = StyleSheet.create({
     inputContainer: {
         marginTop: 5,
         marginBottom: 10,
-        width: '100%',
+        width: '90%',
         height: '10%',
         borderColor: '#ccc',
         borderRadius: 3,

@@ -6,7 +6,11 @@ import React from "react";
 import AuthScreen from "../screens/AuthScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import SignUpScreen from "../screens/SignUpScreen";
+import InitialInfoScreen from "../screens/InitialInfoScreen";
 const screens ={
+    InitialInfo:{
+        screen: InitialInfoScreen
+    },
     Onboard: {
         screen: OnboardingScreen
     },
@@ -22,7 +26,8 @@ const screens ={
                 headerShown: true
             }
         }
-    }
+    },
+
 }
 const LoginStack = createStackNavigator(screens,{
     defaultNavigationOptions:{

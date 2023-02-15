@@ -21,7 +21,9 @@ function SignUpScreen({navigation}) {
                     // Signed in
                     const user = userCredential.user;
                     // ...
-                    navigation.navigate("Home")
+                    console.log("asdas")
+                    navigation.navigate("InitialInfo")
+
                 })
                 .catch((error) => {
                     const errorCode = error.code;

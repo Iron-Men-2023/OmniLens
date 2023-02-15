@@ -18,7 +18,8 @@ function AuthScreen({navigation}) {
                 // Signed in
                 const user = userCredential.user.uid;
                 // ...
-                navigation.navigate("Home")
+                navigation.push("initialInfo")
+
             })
             .catch((error) => {
                 const errorCode = error.code;
