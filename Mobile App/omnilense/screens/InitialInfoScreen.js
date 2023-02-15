@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Text, View, StyleSheet, ScrollView} from "react-native";
 import RectangleComponent from "../components/RectangleComponent";
 import FormInputComponent from "../components/FormInputComponent";
-
-function InitialInfoScreen(props) {
+import ImagePickerComponent from "../components/ImagePickerComponent";
+import TextButtonComponent from "../components/TextButtonComponent";
+import dimensions from "../config/DeviceSpecifications"
+function InitialInfoScreen({navigation}) {
+    const [uploaded, setUploaded] = useState(false)
     return (
         <View style={styles.container}>
             <RectangleComponent/>
@@ -14,8 +17,16 @@ function InitialInfoScreen(props) {
             <Text style={styles.textLabel}>Last Name</Text>
             <FormInputComponent placeholderText={"Doe"}/>
 
-            <Text style={styles.textLabel}>Upload Image</Text>
-
+            <Text>{"\n"}</Text>
+            <Text>{"\n"}</Text>
+            <ImagePickerComponent setUploaded={setUploaded}/>
+            {
+                uploaded ?
+                    <View style={styles.next}>
+                        <TextButtonComponent text="Next" onPress={() => navigation.navigate("Interests")}/>
+                    </View>
+                    : null
+            }
         </View>
     );
 }
@@ -31,7 +42,11 @@ const styles=StyleSheet.create({
         color: "#070707"
     },
     textLabel: {
-        right: '35%'
+        right: dimensions.width*.35
+    },
+    next: {
+        marginLeft: dimensions.width*0.7,
+        marginTop: dimensions.height* 0.05
     }
 })
 export default InitialInfoScreen;

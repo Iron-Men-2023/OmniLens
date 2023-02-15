@@ -7,16 +7,23 @@ import AuthScreen from "../screens/AuthScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import InitialInfoScreen from "../screens/InitialInfoScreen";
+import InterestsScreen from "../screens/InterestsScreen";
 const screens ={
     InitialInfo:{
-        screen: InitialInfoScreen
+        screen: InitialInfoScreen,
+        navigationOptions: ({navigation}) => {
+        }
+    },
+    Interests: {
+        screen: InterestsScreen,
+        navigationOptions: ({navigation}) => {
+        }
     },
     Onboard: {
         screen: OnboardingScreen
     },
     Login:{
         screen: AuthScreen,
-
     },
     SignUp:{
         screen: SignUpScreen,

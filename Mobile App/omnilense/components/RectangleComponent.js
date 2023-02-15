@@ -13,7 +13,7 @@ function RectangleComponent(props) {
 const styles = StyleSheet.create({
     container: {
         backgroundColor: "#8c38ee",
-        height:  '35%',
+        height:  '15%',
         width: '96%',
         borderRadius: 5,
         marginTop: '10%',
