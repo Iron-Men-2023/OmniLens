@@ -13,12 +13,14 @@ function AuthScreen({navigation}) {
     const provider = new FacebookAuthProvider();
 
     function signIn(){
+
         signInWithEmailAndPassword(auth, email, password)
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user.uid;
                 // ...
-                navigation.push("initialInfo")
+                console.log("jhghjghj")
+                navigation.navigate("InitialInfo")
 
             })
             .catch((error) => {

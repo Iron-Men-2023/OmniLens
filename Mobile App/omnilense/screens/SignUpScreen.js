@@ -21,7 +21,6 @@ function SignUpScreen({navigation}) {
                     // Signed in
                     const user = userCredential.user;
                     // ...
-                    console.log("asdas")
                     navigation.navigate("InitialInfo")
 
                 })
