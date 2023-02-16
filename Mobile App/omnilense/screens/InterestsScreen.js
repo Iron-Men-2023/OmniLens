@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
     },
     textBtn: {
         alignItems: "flex-end",
-        padding: 10,
         marginRight:  30
     }
 })

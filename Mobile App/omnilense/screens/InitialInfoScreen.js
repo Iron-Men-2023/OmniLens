@@ -7,15 +7,17 @@ import TextButtonComponent from "../components/TextButtonComponent";
 import dimensions from "../config/DeviceSpecifications"
 function InitialInfoScreen({navigation}) {
     const [uploaded, setUploaded] = useState(false)
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
     return (
         <View style={styles.container}>
             <RectangleComponent/>
             <Text style={styles.text}>Please fill out the following information{'\n'}</Text>
             <Text style={styles.textLabel}>First Name</Text>
 
-            <FormInputComponent placeholderText={"John"}/>
+            <FormInputComponent placeholderText={"John"} changeText={setFirstName}/>
             <Text style={styles.textLabel}>Last Name</Text>
-            <FormInputComponent placeholderText={"Doe"}/>
+            <FormInputComponent placeholderText={"Doe"} changeText={setFirstName}/>
 
             <Text>{"\n"}</Text>
             <Text>{"\n"}</Text>
