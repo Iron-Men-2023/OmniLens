@@ -8,7 +8,7 @@ const screens ={
         screen: HomeScreen,
         navigationOptions: ({navigation}) => {
             return{
-                headerTitle: () => <HeaderComponent navigation={navigation}/>
+                headerTitle: () => <HeaderComponent navigation={navigation} showDrawer={true} title={"OmniLens"}/>
             }
         }
     },
@@ -19,7 +19,7 @@ const screens ={
 }
 const HomeStack = createStackNavigator(screens,{
     defaultNavigationOptions:{
-        headerTitle: 'OmniLens'
+        headerTitle: 'OmniLens',
     }})
 
 export default HomeStack
