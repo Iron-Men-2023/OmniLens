@@ -3,7 +3,16 @@ import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import HeaderComponent from "../components/HeaderComponent";
 import React from "react";
+import FeedScreen from "../screens/FeedScreen";
 const screens ={
+    Feed: {
+        screen: FeedScreen,
+        navigationOptions: ({navigation}) => {
+            return{
+                headerTitle: () => <HeaderComponent navigation={navigation} showDrawer={true} title={"OmniLens"}/>
+            }
+        }
+    },
     Home:{
         screen: HomeScreen,
         navigationOptions: ({navigation}) => {
