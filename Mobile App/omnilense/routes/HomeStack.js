@@ -9,7 +9,7 @@ const screens ={
         screen: FeedScreen,
         navigationOptions: ({navigation}) => {
             return{
-                headerTitle: () => <HeaderComponent navigation={navigation} showDrawer={true} title={"OmniLens"}/>
+                headerTitle: () => <HeaderComponent navigation={navigation} showDrawer={true} title={"Recent Views"}/>
             }
         }
     },
