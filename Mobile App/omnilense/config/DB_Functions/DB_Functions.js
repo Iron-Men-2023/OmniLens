@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/firestore';
 import 'firebase/storage';
-import {db, storage, auth} from '../../config/firebaseConfig';
+import {db, storage, auth} from '../firebaseConfig';
 import {Platform} from 'react-native';
 
 async function fetchUserData() {

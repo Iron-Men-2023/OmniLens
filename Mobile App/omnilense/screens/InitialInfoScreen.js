@@ -5,7 +5,7 @@ import FormInputComponent from '../components/FormInputComponent';
 import ImagePickerComponent from '../components/ImagePickerComponent';
 import TextButtonComponent from '../components/TextButtonComponent';
 import dimensions from '../config/DeviceSpecifications';
-import {updateUserPhotoAndName} from '../src/DB_Functions/DB_Functions';
+import {updateUserPhotoAndName} from '../config/DB_Functions/DB_Functions';
 import {auth, storage} from '../config/firebaseConfig';
 
 function InitialInfoScreen({navigation}) {
@@ -118,6 +118,7 @@ function InitialInfoScreen({navigation}) {
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
+    flex: 1,
   },
   text: {
     fontSize: 15,

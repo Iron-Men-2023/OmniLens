@@ -9,18 +9,13 @@ import {
   ScrollView,
 } from 'react-native';
 import {auth} from '../config/firebaseConfig';
-import {
-  createUserWithEmailAndPassword,
-  GoogleAuthProvider,
-} from 'firebase/auth';
 import FormInputComponent from '../components/FormInputComponent';
 import {AntDesign} from '@expo/vector-icons';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
-import {createUser} from '../src/DB_Functions/DB_Functions';
+import {createUser} from '../config/DB_Functions/DB_Functions';
 
 function SignUpScreen({navigation}) {
-  const provider = new GoogleAuthProvider();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -28,7 +23,8 @@ function SignUpScreen({navigation}) {
 
   function createAccount() {
     password === confirmPassword
-      ? createUserWithEmailAndPassword(auth, email, password)
+      ? auth
+          .createUserWithEmailAndPassword(email, password)
           .then(userCredential => {
             // Signed in
             const user = userCredential.user;
