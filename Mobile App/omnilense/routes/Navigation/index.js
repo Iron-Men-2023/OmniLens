@@ -20,7 +20,7 @@ import HomeScreen from '../../screens/HomeScreen';
 import FeedScreen from '../../screens/FeedScreen';
 import InitialInfoScreen from '../../screens/InitialInfoScreen';
 import InterestsScreen from '../../screens/InterestsScreen';
-import {logout} from '../../src/DB_Functions/DB_Functions';
+import {logout} from '../../config/DB_Functions/DB_Functions';
 import {auth} from '../../config/firebaseConfig';
 
 const Tab = createBottomTabNavigator();

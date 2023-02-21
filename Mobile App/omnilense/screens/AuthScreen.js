@@ -13,7 +13,7 @@ import FormInputComponent from '../components/FormInputComponent';
 import {AntDesign} from '@expo/vector-icons';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
-import {createUser} from '../src/DB_Functions/DB_Functions';
+import {createUser} from '../config/DB_Functions/DB_Functions';
 
 function AuthScreen({navigation}) {
   const [email, setEmail] = useState('');
