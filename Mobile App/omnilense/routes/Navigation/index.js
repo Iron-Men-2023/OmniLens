@@ -2,8 +2,17 @@ import React, {useEffect, useState} from 'react';
 import { StyleSheet, View, Text, Alert } from "react-native";
 import {NavigationContainer} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-//
-//
+import { createStackNavigator } from '@react-navigation/stack';
+import AuthScreen from "../../screens/AuthScreen";
+import SignUpScreen from "../../screens/SignUpScreen";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import SearchScreen from "../../screens/SearchScreen";
+import ProfileScreen from "../../screens/ProfileScreen";
+import {createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemList} from "@react-navigation/drawer";
+import OnboardingScreen from "../../screens/OnboardingScreen";
+import { getAuth, getAdditionalUserInfo, signOut } from "firebase/auth";
+import HomeScreen from "../../screens/HomeScreen";
+
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
 const focusColor = 'red';
@@ -67,7 +76,10 @@ const APPNAME = 'OmniLense';
 const Drawer = createDrawerNavigator();
 function DrawerNavigator() {
   return (
-    <Drawer.Navigator>
+    <Drawer.Navigator
+    initialRouteName={'Home'}
+    useLegacyImplementation
+    drawerContent={props => <SignOutComponent {...props} />}>
       <Drawer.Screen name={APPNAME} component={HomeTabs} />
       {/*<Drawer.Screen*/}
       {/*  name="Account Settings"*/}
@@ -77,44 +89,46 @@ function DrawerNavigator() {
   );
 }
 
-// function SignOutComponent(props) {
-//   return (
-//       <DrawerNavigator>
-//       <DrawerItemList {...props} />
-//       <DrawerItem
-//         label="Sign Out"
-//         onPress={() =>
-//           Alert.alert(
-//             'Log out',
-//             'Do you want to logout?',
-//             [
-//               {
-//                 text: 'Cancel',
-//                 onPress: () => {
-//                   return null;
-//                 },
-//               },
-//               {
-//                 text: 'Confirm',
-//                 onPress: async () => {
-//                   try {
-//                     // await auth().signOut();
-//                     console.log('signOut success');
-//                   } catch (error) {
-//                     console.error(error);
-//                     console.log('signOut error');
-//                   }
-//                   props.navigation.navigate('Sign In');
-//                 },
-//               },
-//             ],
-//             {cancelable: false},
-//           )
-//         }
-//       />
-// </DrawerNavigator>
-//   );
-// }
+function SignOutComponent(props) {
+  return (
+  <DrawerContentScrollView>
+      <DrawerItemList {...props} />
+      <DrawerItem
+        label="Sign Out"
+        onPress={() =>
+          Alert.alert(
+            'Log out',
+            'Do you want to logout?',
+            [
+              {
+                text: 'Cancel',
+                onPress: () => {
+                  return null;
+                },
+              },
+              {
+                text: 'Confirm',
+                onPress: async () => {
+                  try {
+                    // await auth().signOut();
+                    await signOut(await getAuth());
+                    console.log('signOut success');
+                    console.log(await getAdditionalUserInfo(await getAuth()));
+                  } catch (error) {
+                    console.error(error);
+                    console.log('signOut error');
+                  }
+                  props.navigation.navigate('Sign In');
+                },
+              },
+            ],
+            {cancelable: false},
+          )
+        }
+      />
+    </DrawerContentScrollView>
+  );
+}
 
 // const Stack = createStackNavigator();
 // const Navigation = () => {
@@ -175,33 +189,25 @@ function DrawerNavigator() {
 // }
 // );
 // const Navigation = createAppContainer(LoginStackScreens);
-import { createStackNavigator } from '@react-navigation/stack';
-import AuthScreen from "../../screens/AuthScreen";
-import SignUpScreen from "../../screens/SignUpScreen";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import SearchScreen from "../../screens/SearchScreen";
-import ProfileScreen from "../../screens/ProfileScreen";
-import { createDrawerNavigator, DrawerItem, DrawerItemList } from "@react-navigation/drawer";
-import auth from "../../config/firebaseConfig"
-import OnboardingScreen from "../../screens/OnboardingScreen";
-
 
 const Stack = createStackNavigator();
 
 export default function Navigation() {
   const [user, setUser] = useState();
+  const [isUserSet, setIsUserSet] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(user => {
+    const unsubscribe = getAuth().onAuthStateChanged(user => {
       if (user) {
         setUser(user);
+        setIsUserSet(true);
       } else {
         setUser(null);
       }
     });
 
     return () => unsubscribe();
-  }, [setUser]);
+  }, [isUserSet]);
   return (
     // <Navigation/>
     <NavigationContainer>

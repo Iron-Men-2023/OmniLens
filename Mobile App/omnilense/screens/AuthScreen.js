@@ -18,9 +18,10 @@ function AuthScreen({navigation}) {
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user.uid;
+                console.log(user)
                 // ...
                 console.log("jhghjghj")
-                navigation.navigate("InitialInfo")
+                navigation.navigate("Home")
 
             })
             .catch((error) => {
