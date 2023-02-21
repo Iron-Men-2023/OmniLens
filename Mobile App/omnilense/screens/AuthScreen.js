@@ -14,7 +14,7 @@ import {
   FacebookAuthProvider,
 } from 'firebase/auth';
 import FormInputComponent from '../components/FormInputComponent';
-import auth from '../config/firebaseConfig';
+import {auth} from '../config/firebaseConfig';
 import {AntDesign} from '@expo/vector-icons';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
@@ -41,31 +41,32 @@ function AuthScreen({navigation}) {
   }
 
   function fbSignIn() {
-    signInWithPopup(auth, provider)
-      .then(result => {
-        // The signed-in user info.
-        console.log('Helre');
-        const user = result.user;
-
-        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-        const credential = FacebookAuthProvider.credentialFromResult(result);
-        const accessToken = credential.accessToken;
-        console.log(accessToken);
-        console.log(user.uid);
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
-      })
-      .catch(error => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = FacebookAuthProvider.credentialFromError(error);
-        console.log(error);
-        // ...
-      });
+    // signInWithPopup(auth, provider)
+    //   .then(result => {
+    //     // The signed-in user info.
+    //     console.log('Helre');
+    //     const user = result.user;
+    //
+    //     // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+    //     const credential = FacebookAuthProvider.credentialFromResult(result);
+    //     const accessToken = credential.accessToken;
+    //     console.log(accessToken);
+    //     console.log(user.uid);
+    //     // IdP data available using getAdditionalUserInfo(result)
+    //     // ...
+    //   })
+    //   .catch(error => {
+    //     // Handle Errors here.
+    //     const errorCode = error.code;
+    //     const errorMessage = error.message;
+    //     // The email of the user's account used.
+    //     const email = error.customData.email;
+    //     // The AuthCredential type that was used.
+    //     const credential = FacebookAuthProvider.credentialFromError(error);
+    //     console.log(error);
+    //     // ...
+    //   });
+    console.log('Here');
   }
 
   return (
