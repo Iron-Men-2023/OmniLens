@@ -21,7 +21,7 @@ function SignUpScreen({navigation}) {
                     // Signed in
                     const user = userCredential.user;
                     // ...
-                    navigation.navigate("InitialInfo")
+                    navigation.navigate("Initial Info")
 
                 })
                 .catch((error) => {
@@ -56,7 +56,7 @@ function SignUpScreen({navigation}) {
             <SocialButtonComponent text="Sign up with Google"
                                    socialName="facebook" color="#de4d41"
                                    bgColor="#f5e7ea"/>
-            <TouchableOpacity style={styles.forgotButton} onPress={()=>navigation.navigate("Login")}>
+            <TouchableOpacity style={styles.forgotButton} onPress={()=>navigation.navigate("Sign In")}>
                 <Text style={styles.navButtonText}>Already have an account? Sign in</Text>
             </TouchableOpacity>
             </ScrollView>

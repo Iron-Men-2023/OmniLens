@@ -12,6 +12,9 @@ import {createDrawerNavigator, DrawerContentScrollView, DrawerItem, DrawerItemLi
 import OnboardingScreen from "../../screens/OnboardingScreen";
 import { getAuth, getAdditionalUserInfo, signOut } from "firebase/auth";
 import HomeScreen from "../../screens/HomeScreen";
+import FeedScreen from "../../screens/FeedScreen";
+import InitialInfoScreen from "../../screens/InitialInfoScreen";
+import InterestsScreen from "../../screens/InterestsScreen";
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -20,8 +23,16 @@ const restColor = 'blue';
 function HomeTabs() {
   return (
     <Tab.Navigator screenOptions={{showLabel: false}}>
+        <Tab.Screen name={"Feed"} component={FeedScreen} options={{
+            tabBarIcon: ({focused}) => (
+                <View>
+                    <Icon name={'github'} size={SIZE} color={focused ? focusColor : restColor}/>
+                </View>
+            ),
+            headerShown: false,
+        }}/>
       <Tab.Screen
-        name="Feed"
+        name="Home"
         component={HomeScreen}
         options={{
           tabBarIcon: ({focused}) => (
@@ -220,6 +231,8 @@ export default function Navigation() {
           initialParams={{data: 'signIn'}}
         />
         <Stack.Screen name="Sign Up" component={SignUpScreen} />
+        <Stack.Screen name={"Initial Info"} component={InitialInfoScreen} />
+        <Stack.Screen name={"Interests"} component={InterestsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
