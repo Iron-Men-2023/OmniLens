@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import {fetchUserData} from '../../src/db/firedb';
-import Posts from '../../components/Posts';
-import ProfilePhoto from '../../components/ProfilePhoto';
+import {fetchUserData} from '../../src/DB_Functions/DB_Functions';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -27,12 +25,12 @@ const ProfilePage = () => {
         <>
           <View style={styles.header}>
             <View style={styles.headerContent}>
-              <ProfilePhoto />
-              <Text style={styles.name}>{user.displayName}</Text>
+              {/*<ProfilePhoto />*/}
+              <Text style={styles.name}>{user.username}</Text>
               <Text style={styles.bio}>{user.bio}</Text>
             </View>
           </View>
-          <Posts />
+          {/*<Posts />*/}
         </>
       ) : (
         <Text>Loading...</Text>
