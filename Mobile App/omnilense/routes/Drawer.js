@@ -5,6 +5,8 @@ import SettingsStack from "./SettingsStack";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import AuthScreen from "../screens/AuthScreen";
 import LoginStack from "./LoginStack";
+import BottomTabNavigator from "./BottomTabNavigator";
+import FeedScreen from "../screens/FeedScreen";
 
 const drawerNavigator = createDrawerNavigator({
 
