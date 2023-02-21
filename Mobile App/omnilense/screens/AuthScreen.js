@@ -28,8 +28,11 @@ function AuthScreen({navigation}) {
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         // Signed in
-        const user = userCredential.user.uid;
+        const user = userCredential.user;
         console.log(user);
+        createUser(user).then(r => {
+          console.log('r', r);
+        });
         // ...
         console.log('jhghjghj');
         navigation.navigate('Home');

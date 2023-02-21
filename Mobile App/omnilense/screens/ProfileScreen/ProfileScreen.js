@@ -26,7 +26,7 @@ const ProfilePage = () => {
           <View style={styles.header}>
             <View style={styles.headerContent}>
               {/*<ProfilePhoto />*/}
-              <Text style={styles.name}>{user.displayName}</Text>
+              <Text style={styles.name}>{user.username}</Text>
               <Text style={styles.bio}>{user.bio}</Text>
             </View>
           </View>
