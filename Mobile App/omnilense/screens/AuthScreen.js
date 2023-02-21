@@ -18,9 +18,10 @@ function AuthScreen({navigation}) {
             .then((userCredential) => {
                 // Signed in
                 const user = userCredential.user.uid;
+                console.log(user)
                 // ...
                 console.log("jhghjghj")
-                navigation.navigate("InitialInfo")
+                navigation.navigate("Home")
 
             })
             .catch((error) => {
@@ -74,7 +75,7 @@ function AuthScreen({navigation}) {
             <SocialButtonComponent text="Sign in with Google"
                                    socialName="facebook" color="#de4d41"
                                    bgColor="#f5e7ea"/>
-            <TouchableOpacity style={styles.forgotButton} onPress={()=> navigation.navigate("SignUp")}>
+            <TouchableOpacity style={styles.forgotButton} onPress={()=> navigation.navigate("Sign Up")}>
                 <Text style={styles.navButtonText}>Create account</Text>
             </TouchableOpacity>
         </View>

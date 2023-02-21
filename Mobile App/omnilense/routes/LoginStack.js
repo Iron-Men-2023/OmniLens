@@ -8,6 +8,7 @@ import OnboardingScreen from "../screens/OnboardingScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import InitialInfoScreen from "../screens/InitialInfoScreen";
 import InterestsScreen from "../screens/InterestsScreen";
+import {createAppContainer } from 'react-navigation';
 import BottomTabNavigator from "./BottomTabNavigator";
 const screens ={
     Onboard: {
