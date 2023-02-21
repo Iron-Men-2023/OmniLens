@@ -5,7 +5,7 @@ import FormInputComponent from '../components/FormInputComponent';
 import ImagePickerComponent from '../components/ImagePickerComponent';
 import TextButtonComponent from '../components/TextButtonComponent';
 import dimensions from '../config/DeviceSpecifications';
-import {updateUser} from '../src/DB_Functions/DB_Functions';
+import {updateUserPhotoAndName} from '../src/DB_Functions/DB_Functions';
 import {auth, storage} from '../config/firebaseConfig';
 
 function InitialInfoScreen({navigation}) {
@@ -21,10 +21,13 @@ function InitialInfoScreen({navigation}) {
     const user = auth.currentUser;
     console.log('photo', photoUrl);
     let name = firstName + ' ' + lastName;
-    await updateUser(user, name, photoUrl).then(r => {
+    await updateUserPhotoAndName(user, name, photoUrl).then(r => {
       console.log('r', r);
     });
-    navigation.navigate('Interests');
+    // .8 second delay to allow firebase to update
+    setTimeout(() => {
+      navigation.navigate('Interests');
+    }, 800);
   }
 
   const handleSetImage = uri => {
@@ -83,7 +86,7 @@ function InitialInfoScreen({navigation}) {
 
       <FormInputComponent placeholderText={'John'} changeText={setFirstName} />
       <Text style={styles.textLabel}>Last Name</Text>
-      <FormInputComponent placeholderText={'Doe'} changeText={setFirstName} />
+      <FormInputComponent placeholderText={'Doe'} changeText={setLastName} />
 
       <Text>{'\n'}</Text>
       <Text>{'\n'}</Text>

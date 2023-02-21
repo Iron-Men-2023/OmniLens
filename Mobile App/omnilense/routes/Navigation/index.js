@@ -20,6 +20,8 @@ import HomeScreen from '../../screens/HomeScreen';
 import FeedScreen from '../../screens/FeedScreen';
 import InitialInfoScreen from '../../screens/InitialInfoScreen';
 import InterestsScreen from '../../screens/InterestsScreen';
+import {logout} from '../../src/DB_Functions/DB_Functions';
+import {auth} from '../../config/firebaseConfig';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -136,10 +138,9 @@ function SignOutComponent(props) {
                 text: 'Confirm',
                 onPress: async () => {
                   try {
-                    // await auth().signOut();
-                    await signOut(await getAuth());
-                    console.log('signOut success');
-                    console.log(await getAdditionalUserInfo(await getAuth()));
+                    await logout().catch(error => {
+                      console.log(error);
+                    });
                   } catch (error) {
                     console.error(error);
                     console.log('signOut error');
@@ -163,7 +164,7 @@ export default function Navigation() {
   const [isUserSet, setIsUserSet] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = getAuth().onAuthStateChanged(user => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
         setUser(user);
         setIsUserSet(true);

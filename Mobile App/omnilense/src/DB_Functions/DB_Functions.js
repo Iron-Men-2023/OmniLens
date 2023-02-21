@@ -1,10 +1,10 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/firestore';
 import 'firebase/storage';
-import {db, storage} from '../../config/firebaseConfig';
+import {db, storage, auth} from '../../config/firebaseConfig';
 import {Platform} from 'react-native';
 
-async function fetchUser() {
+async function fetchUserData() {
   let userData = {};
   const user = firebase.auth().currentUser;
   userData.userInfo = user;
@@ -65,26 +65,37 @@ function createUser(user) {
     name: user.displayName,
     username: username,
     photoURL: user.photoURL,
+    bio: '',
     uid: user.uid,
+    interests: [],
   });
 }
 
-async function updateUser(user, name, photo) {
+async function updateUserPhotoAndName(user, name, photo) {
   if (!user) {
     return;
   }
-  // const pathToFile = `faces/${user.uid}/face.jpg`;
-  // const uploadUri =
-  //   Platform.OS === 'ios' ? photo.replace('file://', '') : photo;
-  // console.log('uploadUri', uploadUri);
-  // const storagePath = await storage.ref(pathToFile);
-  // await putFile(uploadUri);
-  // const ref = storage.ref(pathToFile);
-  // const url = await ref.getDownloadURL();
   return db.collection('users').doc(user.uid).update({
     name: name,
     photoURL: photo,
   });
 }
 
-export {fetchUser, createUser, updateUser};
+async function logout() {
+  return auth.signOut();
+}
+
+async function updateInterests(interests) {
+  const user = auth.currentUser;
+  return db.collection('users').doc(user.uid).update({
+    interests: interests,
+  });
+}
+
+export {
+  fetchUserData,
+  createUser,
+  updateUserPhotoAndName,
+  logout,
+  updateInterests,
+};

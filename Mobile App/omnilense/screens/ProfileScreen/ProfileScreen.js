@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, Text} from 'react-native';
-import fetchUserData from '../../src/DB_Functions/DB_Functions';
+import {fetchUserData} from '../../src/DB_Functions/DB_Functions';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);

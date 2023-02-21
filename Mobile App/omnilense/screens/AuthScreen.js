@@ -6,35 +6,25 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  FacebookAuthProvider,
-} from 'firebase/auth';
-import FormInputComponent from '../components/FormInputComponent';
 import {auth} from '../config/firebaseConfig';
+import FormInputComponent from '../components/FormInputComponent';
 import {AntDesign} from '@expo/vector-icons';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
+import {createUser} from '../src/DB_Functions/DB_Functions';
 
 function AuthScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const provider = new FacebookAuthProvider();
 
   function signIn() {
-    signInWithEmailAndPassword(auth, email, password)
+    auth
+      .signInWithEmailAndPassword(email, password)
       .then(userCredential => {
         // Signed in
-        const user = userCredential.user;
-        console.log(user);
-        createUser(user).then(r => {
-          console.log('r', r);
-        });
-        // ...
-        console.log('jhghjghj');
+        console.log('Signed in');
         navigation.navigate('Home');
       })
       .catch(error => {
@@ -69,7 +59,7 @@ function AuthScreen({navigation}) {
     //     console.log(error);
     //     // ...
     //   });
-    console.log('Here');
+    console.log('Facebook sign in');
   }
 
   return (
