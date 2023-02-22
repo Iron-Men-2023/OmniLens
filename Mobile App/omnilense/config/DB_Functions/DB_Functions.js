@@ -24,20 +24,6 @@ async function fetchUserData() {
       } else {
         userData.userDoc = doc.data();
         console.log('userDoc', doc.data());
-        // let photoURL = userDoc.data().photoURL;
-        // if (!photoURL) {
-        //   console.log('No photoURLsssss');
-        //   const pathToFile = `avatars/${user.uid}.jpg`;
-        //   const photoURL = await firebase()
-        //       .storage.ref(pathToFile)
-        //       .getDownloadURL();
-        //   try {
-        //     await userRef.update({
-        //       photoURL,
-        //     });
-        //   } catch (e) {
-        //     console.log('Error updating user document', e);
-        //   }
       }
       // const postsQuery = await firebase()
       //     .firestore.collection('posts')
@@ -92,10 +78,25 @@ async function updateInterests(interests) {
   });
 }
 
+async function setImageForUser(user, photo, type) {
+  if (!user) {
+    return;
+  }
+  if (type === 'avatar') {
+    return db.collection('users').doc(user.uid).update({
+      avatarUrl: photo,
+    });
+  }
+  return db.collection('users').doc(user.uid).update({
+    coverPhotoUrl: photo,
+  });
+}
+
 export {
   fetchUserData,
   createUser,
   updateUserPhotoAndName,
   logout,
   updateInterests,
+  setImageForUser,
 };

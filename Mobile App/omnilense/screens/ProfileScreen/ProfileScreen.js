@@ -1,6 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+} from 'react-native';
 import {fetchUserData} from '../../config/DB_Functions/DB_Functions';
+import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -20,22 +28,37 @@ const ProfilePage = () => {
   }, [user]);
 
   return (
-    <>
+    <ScrollView style={styles.scrollView}>
       {user ? (
-        <>
+        <View style={styles.container}>
           <View style={styles.header}>
-            <View style={styles.headerContent}>
-              {/*<ProfilePhoto />*/}
-              <Text style={styles.name}>{user.username}</Text>
-              <Text style={styles.bio}>{user.bio}</Text>
-            </View>
+            {/* Placeholder for cover photo */}
+            {/*<ProfilePhotoComponent*/}
+            {/*  imageStyle={styles.coverPhoto}*/}
+            {/*  photoType={'Cover'}*/}
+            {/*/>*/}
+            {/* Placeholder for profile picture */}
+            <ProfilePhotoComponent
+              imageStyle={styles.avatar}
+              photoType={'Avatar'}
+            />
+            <Text style={styles.name}>{user.username}</Text>
+            <Text style={styles.bio}>Bio: {user.bio}</Text>
+          </View>
+          <View style={styles.stats}>
+            {/* Placeholder for friends list */}
+            <Text style={styles.statText}>Friends: 10</Text>
+            {/* Placeholder for social media links */}
+            <Text style={styles.statText}>Instagram: @johndoe</Text>
+            <Text style={styles.statText}>Twitter: @johndoe</Text>
+            {/* Add more stats and links as needed */}
           </View>
           {/*<Posts />*/}
-        </>
+        </View>
       ) : (
         <Text>Loading...</Text>
       )}
-    </>
+    </ScrollView>
   );
 };
 
@@ -44,19 +67,21 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5FCFF',
   },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
   header: {
+    width: '100%',
+    alignItems: 'center',
     backgroundColor: '#F5FCFF',
     borderBottomWidth: 1,
     borderBottomColor: 'lightgray',
+    paddingBottom: 10,
   },
-  headerContent: {
-    alignItems: 'center',
-  },
-  bio: {
-    fontSize: 16,
-    color: '#696969',
-    marginTop: 10,
-    textAlign: 'center',
+  coverPhoto: {
+    width: '100%',
+    height: 150,
   },
   avatar: {
     width: 130,
@@ -64,30 +89,36 @@ const styles = StyleSheet.create({
     borderRadius: 63,
     borderWidth: 4,
     borderColor: 'white',
-    marginBottom: 10,
+    position: 'absolute',
+    marginTop: 80,
   },
   name: {
     fontSize: 22,
     color: '#000000',
     fontWeight: '600',
+    marginTop: 70,
+    alignSelf: 'flex-start',
+    marginLeft: 10,
   },
-  postContainer: {
-    margin: 10,
+  bio: {
+    fontSize: 16,
+    color: '#696969',
+    marginTop: 10,
+    textAlign: 'center',
+    alignSelf: 'flex-start',
+    marginLeft: 10,
   },
-  post: {
-    backgroundColor: 'grey',
+  stats: {
+    marginTop: 20,
     padding: 10,
-    borderRadius: 10,
+    backgroundColor: '#F5FCFF',
+  },
+  statText: {
+    fontSize: 16,
     marginBottom: 10,
   },
-  postImage: {
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
-  },
-  postText: {
-    fontSize: 16,
-    marginTop: 10,
+  headerContent: {
+    alignItems: 'center',
   },
 });
 
