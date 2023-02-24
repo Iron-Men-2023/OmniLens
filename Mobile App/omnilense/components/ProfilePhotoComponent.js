@@ -19,16 +19,18 @@ import {
 import * as Progress from 'react-native-progress';
 import {Asset} from 'expo-asset';
 
-const ProfilePhoto = ({imageStyle, photoType}) => {
+const ProfilePhoto = ({imageStyle, photoType, user}) => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-  const [user, setUser] = useState(null);
-  const [userImage, setUserImage] = useState(null);
   const [uploadPhoto, setUploadPhoto] = useState(false);
-  const [userImageUrl, setUserImageUrl] = useState(null);
-
-  console.log(imageStyle);
+  const [userImageUrl, setUserImageUrl] = useState(() => {
+    if (photoType === 'Avatar') {
+      return user.avatarPhotoUrl;
+    } else if (photoType === 'Cover') {
+      return user.coverPhotoUrl;
+    }
+  });
 
   const handleChoosePhoto = async () => {
     const options = {
@@ -71,7 +73,7 @@ const ProfilePhoto = ({imageStyle, photoType}) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log(`Upload is ${progress}% done`);
-        setTransferred(progress);
+        setTransferred(progress / 100);
       },
       error => {
         console.log(error);
@@ -91,34 +93,9 @@ const ProfilePhoto = ({imageStyle, photoType}) => {
     );
   };
 
-  useEffect(() => {
-    fetchUserData()
-      .then(r => {
-        try {
-          console.log('\n\n\n\nR fetch is', r);
-          setUser(r.userDoc);
-          console.log('user', user);
-          if (r.userDoc.avatarPhotoUrl || r.userDoc.coverPhotoUrl) {
-            console.log('photoType', photoType);
-            if (photoType === 'Avatar') {
-              setUserImageUrl(user.avatarPhotoUrl);
-            }
-            if (photoType === 'Cover') {
-              setUserImageUrl(user.coverPhotoUrl);
-            }
-            console.log('\n\n\n\n\nuserImageUrl', userImageUrl);
-            setUserImage(true);
-          }
-        } catch (e) {
-          console.log('e42', e);
-        }
-      })
-      .catch(e => console.log('e5', e));
-  }, [userImage]);
-
   return (
     <>
-      {userImage && userImageUrl ? (
+      {userImageUrl ? (
         <TouchableOpacity onPress={handleChoosePhoto}>
           <Image
             source={{uri: userImageUrl}}
@@ -129,18 +106,21 @@ const ProfilePhoto = ({imageStyle, photoType}) => {
       ) : (
         <TouchableOpacity onPress={handleChoosePhoto}>
           <Image source={Logo} style={imageStyle} resizeMode="contain" />
+          <Text style={{color: 'white'}}>Choose Photo</Text>
         </TouchableOpacity>
       )}
-      {uploadPhoto ? (
-        <View>
-          <Button title={'Upload Photo'} onPress={uploadImage} />
+      {uploadPhoto && (
+        <View style={styles.uploadButtonContainer}>
+          <View style={styles.uploadButtonWrapper}>
+            <Button title="Upload Photo" onPress={uploadImage} />
+          </View>
         </View>
-      ) : null}
-      {uploading ? (
-        <View>
+      )}
+      {uploading && (
+        <View style={styles.progressBarContainer}>
           <Progress.Bar progress={transferred} width={300} />
         </View>
-      ) : null}
+      )}
     </>
   );
 };
@@ -152,6 +132,29 @@ const styles = StyleSheet.create({
     borderWidth: 4,
     borderColor: 'white',
     marginBottom: 10,
+  },
+  uploadButtonContainer: {
+    position: 'absolute',
+    top: 300,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  uploadButtonWrapper: {
+    backgroundColor: 'white',
+    borderRadius: 5,
+    padding: 10,
+    position: 'relative',
+  },
+  progressBarContainer: {
+    marginTop: 10,
+    marginBottom: 10,
+    alignItems: 'center',
+    position: 'absolute',
+    top: 365,
   },
 });
 

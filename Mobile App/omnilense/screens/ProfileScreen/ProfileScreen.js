@@ -21,7 +21,7 @@ const ProfilePage = () => {
   useEffect(() => {
     fetchUserData()
       .then(r => {
-        console.log('user data: ', r);
+        console.log('user data: ', r.userDoc);
         setUser(r.userDoc);
         setUserSet(true);
         console.log('user issss: ', user);
@@ -35,7 +35,7 @@ const ProfilePage = () => {
       .then(r => {
         try {
           setUserData(r.userDoc);
-          console.log('user data: ', r);
+          console.log('user data: ', r.userDoc);
           setUser(r.userInfo);
           setUserSet(true);
         } catch (e) {
@@ -67,10 +67,12 @@ const ProfilePage = () => {
             <ProfilePhotoComponent
               imageStyle={styles.coverPhoto}
               photoType={'Cover'}
+              user={user}
             />
             <ProfilePhotoComponent
               imageStyle={styles.avatar}
               photoType={'Avatar'}
+              user={user}
             />
             {/* Placeholder for profile picture */}
 
