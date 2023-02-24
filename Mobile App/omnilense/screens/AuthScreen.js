@@ -19,6 +19,22 @@ function AuthScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        // User is signed in.
+        console.log('User is signed in');
+        navigation.navigate('Home');
+      } else {
+        // User is signed out.
+        console.log('User is signed out');
+      }
+    });
+
+    // Clean-up function
+    return unsubscribe;
+  }, []);
+
   function signIn() {
     auth
       .signInWithEmailAndPassword(email, password)
@@ -30,35 +46,25 @@ function AuthScreen({navigation}) {
       .catch(error => {
         const errorCode = error.code;
         const errorMessage = error.message;
+        Alert.alert('Error', errorMessage);
+        setPassword('');
+      });
+  }
+
+  function signInAnonymously() {
+    auth
+      .signInAnonymously()
+      .then(userCredential => {
+        console.log('Anonymous user signed in');
+        navigation.navigate('Home');
+      })
+      .catch(error => {
+        console.log(error);
+        Alert.alert('Error', 'An error occurred while signing in anonymously.');
       });
   }
 
   function fbSignIn() {
-    // signInWithPopup(auth, provider)
-    //   .then(result => {
-    //     // The signed-in user info.
-    //     console.log('Helre');
-    //     const user = result.user;
-    //
-    //     // This gives you a Facebook Access Token. You can use it to access the Facebook API.
-    //     const credential = FacebookAuthProvider.credentialFromResult(result);
-    //     const accessToken = credential.accessToken;
-    //     console.log(accessToken);
-    //     console.log(user.uid);
-    //     // IdP data available using getAdditionalUserInfo(result)
-    //     // ...
-    //   })
-    //   .catch(error => {
-    //     // Handle Errors here.
-    //     const errorCode = error.code;
-    //     const errorMessage = error.message;
-    //     // The email of the user's account used.
-    //     const email = error.customData.email;
-    //     // The AuthCredential type that was used.
-    //     const credential = FacebookAuthProvider.credentialFromError(error);
-    //     console.log(error);
-    //     // ...
-    //   });
     console.log('Facebook sign in');
   }
 
@@ -80,6 +86,7 @@ function AuthScreen({navigation}) {
         icon="lock"
         secureTextEntry={true}
         changeText={setPassword}
+        onSubmitEditing={signIn}
       />
       <FormButtonComponent text="Sign in" onPress={signIn} />
       <TouchableOpacity style={styles.forgotButton}>
@@ -93,10 +100,11 @@ function AuthScreen({navigation}) {
         onPress={fbSignIn}
       />
       <SocialButtonComponent
-        text="Sign in with Google"
-        socialName="facebook"
-        color="#de4d41"
-        bgColor="#f5e7ea"
+        text="Sign in anonymously"
+        socialName="user-secret"
+        color="#000"
+        bgColor="#e6eaf4"
+        onPress={signInAnonymously}
       />
       <TouchableOpacity
         style={styles.forgotButton}
@@ -106,8 +114,6 @@ function AuthScreen({navigation}) {
     </View>
   );
 }
-
-export default AuthScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -139,3 +145,5 @@ const styles = StyleSheet.create({
     color: 'rgb(57,153,215)',
   },
 });
+
+export default AuthScreen;
