@@ -6,44 +6,76 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native';
 import {fetchUserData} from '../../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
+import dimensions from '../../config/DeviceSpecifications';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [userSet, setUserSet] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      return;
-    }
     fetchUserData()
       .then(r => {
         console.log('user data: ', r);
         setUser(r.userDoc);
         setUserSet(true);
+        console.log('user issss: ', user);
       })
       .catch(e => console.log('e1', e));
-  }, [user]);
+  }, [userSet]);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    fetchUserData()
+      .then(r => {
+        try {
+          setUserData(r.userDoc);
+          console.log('user data: ', r);
+          setUser(r.userInfo);
+          setUserSet(true);
+        } catch (e) {
+          console.log('e1', e);
+        }
+      })
+      .catch(e => console.log('e2', e));
+    // Perform the refresh logic here, such as fetching new data from an API.
+    try {
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    } catch (e) {
+      console.log('e3', e);
+    }
+  };
 
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView
+      style={styles.scrollView}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       {user ? (
         <View style={styles.container}>
+          {/*</View>*/}
           <View style={styles.header}>
-            {/* Placeholder for cover photo */}
-            {/*<ProfilePhotoComponent*/}
-            {/*  imageStyle={styles.coverPhoto}*/}
-            {/*  photoType={'Cover'}*/}
-            {/*/>*/}
-            {/* Placeholder for profile picture */}
+            {/*Placeholder for cover photo */}
+            <ProfilePhotoComponent
+              imageStyle={styles.coverPhoto}
+              photoType={'Cover'}
+            />
             <ProfilePhotoComponent
               imageStyle={styles.avatar}
               photoType={'Avatar'}
             />
-            <Text style={styles.name}>{user.username}</Text>
-            <Text style={styles.bio}>Bio: {user.bio}</Text>
+            {/* Placeholder for profile picture */}
+
+            <Text style={styles.name}>Hi</Text>
+            <Text style={styles.bio}>Bio: </Text>
           </View>
           <View style={styles.stats}>
             {/* Placeholder for friends list */}
@@ -78,19 +110,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'lightgray',
     paddingBottom: 10,
+    flex: 1,
   },
   coverPhoto: {
-    width: '100%',
-    height: 150,
+    padding: 10,
+    width: dimensions.width,
+    height: 300,
   },
   avatar: {
     width: 130,
     height: 130,
     borderRadius: 63,
     borderWidth: 4,
+    marginTop: -65,
+    marginLeft: 20,
     borderColor: 'white',
-    position: 'absolute',
-    marginTop: 80,
   },
   name: {
     fontSize: 22,

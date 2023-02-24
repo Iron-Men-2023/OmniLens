@@ -82,9 +82,9 @@ async function setImageForUser(user, photo, type) {
   if (!user) {
     return;
   }
-  if (type === 'avatar') {
+  if (type === 'Avatar') {
     return db.collection('users').doc(user.uid).update({
-      avatarUrl: photo,
+      avatarPhotoUrl: photo,
     });
   }
   return db.collection('users').doc(user.uid).update({

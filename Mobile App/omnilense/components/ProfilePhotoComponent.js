@@ -17,6 +17,7 @@ import {
   setImageForUser,
 } from '../config/DB_Functions/DB_Functions';
 import * as Progress from 'react-native-progress';
+import {Asset} from 'expo-asset';
 
 const ProfilePhoto = ({imageStyle, photoType}) => {
   const [image, setImage] = useState(null);
@@ -29,100 +30,118 @@ const ProfilePhoto = ({imageStyle, photoType}) => {
 
   console.log(imageStyle);
 
-  const handleChoosePhoto = async async => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
+  const handleChoosePhoto = async () => {
+    const options = {
       aspect: [4, 3],
-      quality: 1,
-    });
-
-    console.log(result);
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
-      console.log('image', image);
-      setUploadPhoto(true);
-    }
+      quality: 0.8,
+      format: 'jpeg',
+    };
+    ImagePicker.launchImageLibraryAsync(options)
+      .then(response => {
+        console.log('response', response);
+        if (response.canceled) {
+          console.log('User cancelled image picker');
+        } else {
+          const source = {uri: response.assets[0].uri};
+          console.log('Source is', source);
+          setImage(source);
+          setUploadPhoto(true);
+        }
+      })
+      .catch(e => console.log(e));
   };
 
   const uploadImage = async () => {
     setUploadPhoto(false);
-    const uri = image;
-    console.log('uri', uri);
-    console.log('image', image);
+    const {uri} = image;
     const userId = auth.currentUser.uid;
     const user = auth.currentUser;
     const timestamp = new Date().getTime();
     const path = `images/${photoType}/${userId}-${timestamp}.jpg`;
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
 
     setUploading(true);
+    const response = await fetch(uri);
+    const blob = await response.blob();
+
+    const task = storage.ref(path).put(blob);
     setTransferred(0);
-
-    const task = storage.ref(path).put(uploadUri);
-
-    try {
-      await task;
-      const url = await storage.ref(path).getDownloadURL();
-      setUserImageUrl(url);
-      await setImageForUser(user, url, photoType);
-      setImage(null);
-      Alert.alert(
-        'Photo uploaded!',
-        'Your photo has been uploaded to Firebase Cloud Storage!',
-      );
-    } catch (error) {
-      console.log(error);
-      Alert.alert('An error occurred while uploading the photo.');
-    } finally {
-      setUploading(false);
-    }
+    task.on(
+      'state_changed',
+      snapshot => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log(`Upload is ${progress}% done`);
+        setTransferred(progress);
+      },
+      error => {
+        console.log(error);
+        Alert.alert('An error occurred while uploading the photo.');
+      },
+      async () => {
+        const url = await task.snapshot.ref.getDownloadURL();
+        setUserImageUrl(url);
+        await setImageForUser(user, url, photoType);
+        setImage(null);
+        Alert.alert(
+          'Photo uploaded!',
+          'Your photo has been uploaded to Firebase Cloud Storage!',
+        );
+        setUploading(false);
+      },
+    );
   };
 
   useEffect(() => {
     fetchUserData()
       .then(r => {
-        console.log('user data: ', r);
-        setUser(r.userDoc);
-        console.log('user photo: ', r.userDoc.photoURL);
-        if (r.userDoc.photoURL) {
-          setUserImage(true);
-          setUserImageUrl(r.userDoc.photoURL);
-          console.log('Photo Set');
+        try {
+          console.log('\n\n\n\nR fetch is', r);
+          setUser(r.userDoc);
+          console.log('user', user);
+          if (r.userDoc.avatarPhotoUrl || r.userDoc.coverPhotoUrl) {
+            console.log('photoType', photoType);
+            if (photoType === 'Avatar') {
+              setUserImageUrl(user.avatarPhotoUrl);
+            }
+            if (photoType === 'Cover') {
+              setUserImageUrl(user.coverPhotoUrl);
+            }
+            console.log('\n\n\n\n\nuserImageUrl', userImageUrl);
+            setUserImage(true);
+          }
+        } catch (e) {
+          console.log('e42', e);
         }
       })
-      .catch(e => console.log('e1', e));
+      .catch(e => console.log('e5', e));
   }, [userImage]);
 
   return (
-    <TouchableOpacity onPress={handleChoosePhoto}>
-      <Image source={Logo} style={imageStyle} resizeMode="contain" />
-    </TouchableOpacity>
-    // <View>
-    //   {userImage ? (
-    //     <TouchableOpacity onPress={handleChoosePhoto}>
-    //       <Image
-    //         source={{uri: userImageUrl}}
-    //         style={imageStyle}
-    //         resizeMode="contain"
-    //       />
-    //     </TouchableOpacity>
-    //   ) : (
-    //     <TouchableOpacity onPress={handleChoosePhoto}>
-    //       <Image source={Logo} style={imageStyle} resizeMode="contain" />
-    //     </TouchableOpacity>
-    //   )}
-    //   {uploadPhoto ? (
-    //     <View>
-    //       <Button title={'Upload Photo'} onPress={uploadImage} />
-    //     </View>
-    //   ) : null}
-    //   {uploading ? (
-    //     <View>
-    //       <Progress.Bar progress={transferred} width={300} />
-    //     </View>
-    //   ) : null}
-    // </View>
+    <>
+      {userImage && userImageUrl ? (
+        <TouchableOpacity onPress={handleChoosePhoto}>
+          <Image
+            source={{uri: userImageUrl}}
+            style={imageStyle}
+            resizeMode="fill"
+          />
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity onPress={handleChoosePhoto}>
+          <Image source={Logo} style={imageStyle} resizeMode="contain" />
+        </TouchableOpacity>
+      )}
+      {uploadPhoto ? (
+        <View>
+          <Button title={'Upload Photo'} onPress={uploadImage} />
+        </View>
+      ) : null}
+      {uploading ? (
+        <View>
+          <Progress.Bar progress={transferred} width={300} />
+        </View>
+      ) : null}
+    </>
   );
 };
 const styles = StyleSheet.create({
