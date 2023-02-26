@@ -41,16 +41,15 @@ function createUser(user) {
   if (!user) {
     return;
   }
-  if (!user.photoURL) {
-    user.photoURL =
-      'https://firebasestorage.googleapis.com/v0/b/instagram-clone-4a7d2.appspot.com/o/avatars%2Fdefault-avatar.png?alt=media&token=0d0c9f9b-1a7a-4c1f-8d8c-0e0b3d3b3c3b';
-  }
+  let photo =
+    'https://firebasestorage.googleapis.com/v0/b/omnilens-d5745.appspot.com/o/images%2Flogo.png?alt=media&token=33463096-3586-4e32-86a4-213fdeabe8a9';
   let username = user.email.split('@')[0];
   return db.collection('users').doc(user.uid).set({
     email: user.email,
     name: user.displayName,
     username: username,
-    photoURL: user.photoURL,
+    avatarPhotoUrl: photo,
+    coverPhotoUrl: photo,
     bio: '',
     uid: user.uid,
     interests: [],

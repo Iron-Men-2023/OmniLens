@@ -22,6 +22,7 @@ import InitialInfoScreen from '../../screens/InitialInfoScreen';
 import InterestsScreen from '../../screens/InterestsScreen';
 import {logout} from '../../config/DB_Functions/DB_Functions';
 import {auth} from '../../config/firebaseConfig';
+import FriendsScreen from '../../screens/FriendsScreen';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -38,7 +39,7 @@ function HomeTabs() {
           tabBarIcon: ({focused}) => (
             <View>
               <Icon
-                name={'github'}
+                name={'book'}
                 size={SIZE}
                 color={focused ? focusColor : restColor}
               />
@@ -109,6 +110,7 @@ function DrawerNavigator() {
       useLegacyImplementation
       drawerContent={props => <SignOutComponent {...props} />}>
       <Drawer.Screen name={APPNAME} component={HomeTabs} />
+      <Drawer.Screen name="Friends" component={FriendsScreen} />
       {/*<Drawer.Screen*/}
       {/*  name="Account Settings"*/}
       {/*  component={AccountSettingsScreen}*/}
@@ -176,7 +178,6 @@ export default function Navigation() {
     return () => unsubscribe();
   }, [isUserSet]);
   return (
-    // <Navigation/>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {user ? <Stack.Screen name="Home" component={DrawerNavigator} /> : null}

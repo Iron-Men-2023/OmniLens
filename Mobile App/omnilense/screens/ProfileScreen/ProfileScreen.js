@@ -77,7 +77,7 @@ const ProfilePage = () => {
             {/* Placeholder for profile picture */}
 
             <Text style={styles.name}>Hi</Text>
-            <Text style={styles.bio}>Bio: </Text>
+            <Text style={styles.bio}>Bio: {user.bio}</Text>
           </View>
           <View style={styles.stats}>
             {/* Placeholder for friends list */}
@@ -120,12 +120,12 @@ const styles = StyleSheet.create({
     height: 300,
   },
   avatar: {
-    width: 130,
-    height: 130,
-    borderRadius: 63,
+    width: 185,
+    height: 185,
+    borderRadius: 150,
     borderWidth: 4,
-    marginTop: -65,
-    marginLeft: 20,
+    marginTop: -125,
+    marginLeft: -165,
     borderColor: 'white',
   },
   name: {
