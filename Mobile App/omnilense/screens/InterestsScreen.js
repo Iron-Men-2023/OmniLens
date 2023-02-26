@@ -4,7 +4,7 @@ import dimensions from '../config/DeviceSpecifications';
 import SearchInputComponent from '../components/SearchInputComponent';
 import InterestComponent from '../components/InterestComponent';
 import TextButtonComponent from '../components/TextButtonComponent';
-import {updateInterests} from '../src/DB_Functions/DB_Functions';
+import {updateInterests} from '../config/DB_Functions/DB_Functions';
 
 function InterestsScreen({navigation}) {
   const Interests = [

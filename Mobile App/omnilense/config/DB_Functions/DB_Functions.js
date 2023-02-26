@@ -1,7 +1,7 @@
 import firebase from 'firebase/compat/app';
 import 'firebase/firestore';
 import 'firebase/storage';
-import {db, storage, auth} from '../../config/firebaseConfig';
+import {db, storage, auth} from '../firebaseConfig';
 import {Platform} from 'react-native';
 
 async function fetchUserData() {
@@ -24,20 +24,6 @@ async function fetchUserData() {
       } else {
         userData.userDoc = doc.data();
         console.log('userDoc', doc.data());
-        // let photoURL = userDoc.data().photoURL;
-        // if (!photoURL) {
-        //   console.log('No photoURLsssss');
-        //   const pathToFile = `avatars/${user.uid}.jpg`;
-        //   const photoURL = await firebase()
-        //       .storage.ref(pathToFile)
-        //       .getDownloadURL();
-        //   try {
-        //     await userRef.update({
-        //       photoURL,
-        //     });
-        //   } catch (e) {
-        //     console.log('Error updating user document', e);
-        //   }
       }
       // const postsQuery = await firebase()
       //     .firestore.collection('posts')
@@ -92,10 +78,25 @@ async function updateInterests(interests) {
   });
 }
 
+async function setImageForUser(user, photo, type) {
+  if (!user) {
+    return;
+  }
+  if (type === 'Avatar') {
+    return db.collection('users').doc(user.uid).update({
+      avatarPhotoUrl: photo,
+    });
+  }
+  return db.collection('users').doc(user.uid).update({
+    coverPhotoUrl: photo,
+  });
+}
+
 export {
   fetchUserData,
   createUser,
   updateUserPhotoAndName,
   logout,
   updateInterests,
+  setImageForUser,
 };
