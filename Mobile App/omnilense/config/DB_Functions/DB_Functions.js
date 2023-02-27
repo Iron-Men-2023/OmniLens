@@ -53,6 +53,8 @@ function createUser(user) {
     bio: '',
     uid: user.uid,
     interests: [],
+    friendRequests: [],
+    friends: [],
   });
 }
 
@@ -62,7 +64,7 @@ async function updateUserPhotoAndName(user, name, photo) {
   }
   return db.collection('users').doc(user.uid).update({
     name: name,
-    photoURL: photo,
+    avatarPhotoUrl: photo,
   });
 }
 

@@ -26,7 +26,7 @@ function InitialInfoScreen({navigation}) {
     });
     // .8 second delay to allow firebase to update
     setTimeout(() => {
-      navigation.navigate('Interests');
+      navigation.navigate('Home');
     }, 800);
   }
 
