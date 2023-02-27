@@ -23,6 +23,7 @@ import InterestsScreen from '../../screens/InterestsScreen';
 import {logout} from '../../config/DB_Functions/DB_Functions';
 import {auth} from '../../config/firebaseConfig';
 import FriendsScreen from '../../screens/FriendsScreen';
+import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
 import ViewOtherUser from "../../screens/ViewUserProfileScreen";
 import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
