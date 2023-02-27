@@ -64,7 +64,7 @@ function InterestsScreen({navigation}) {
     console.log('Captured Interests');
     // .8 second delay to allow firebase to update
     setTimeout(() => {
-      navigation.navigate('Home');
+      navigation.navigate('Initial Info');
     }, 800);
   };
   return (
