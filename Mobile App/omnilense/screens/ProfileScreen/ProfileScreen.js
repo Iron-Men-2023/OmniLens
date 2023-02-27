@@ -11,6 +11,7 @@ import {
 import {fetchUserData} from '../../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
 import dimensions from '../../config/DeviceSpecifications';
+import FriendRequestsScreen from '../FriendRequestsScreen';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);

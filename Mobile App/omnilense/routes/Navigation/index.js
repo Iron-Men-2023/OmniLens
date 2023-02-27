@@ -23,6 +23,7 @@ import InterestsScreen from '../../screens/InterestsScreen';
 import {logout} from '../../config/DB_Functions/DB_Functions';
 import {auth} from '../../config/firebaseConfig';
 import FriendsScreen from '../../screens/FriendsScreen';
+import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -111,6 +112,8 @@ function DrawerNavigator() {
       drawerContent={props => <SignOutComponent {...props} />}>
       <Drawer.Screen name={APPNAME} component={HomeTabs} />
       <Drawer.Screen name="Friends" component={FriendsScreen} />
+      <Drawer.Screen name="Friend Requests" component={FriendRequestsScreen} />
+
       {/*<Drawer.Screen*/}
       {/*  name="Account Settings"*/}
       {/*  component={AccountSettingsScreen}*/}
