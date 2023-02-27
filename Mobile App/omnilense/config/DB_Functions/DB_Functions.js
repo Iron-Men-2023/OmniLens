@@ -110,6 +110,29 @@ async function getAllUsersData(users) {
   return usersRequested;
 }
 
+async function addRecents() {
+  const users = [];
+  const docs = await db.collection('users').get();
+  docs.forEach(doc => {
+    users.push({id: doc.id, ...doc.data()});
+  });
+  const batch = db.batch();
+  users.forEach(user => {
+    const userRef = db.collection('users').doc(user.id);
+    batch.update(userRef, {
+      recents: firebase.firestore.FieldValue.arrayUnion(new Date().getTime()),
+    });
+  });
+  batch
+    .commit()
+    .then(() => {
+      console.log('Recents field updated successfully');
+    })
+    .catch(error => {
+      console.error('Error updating recents field:', error);
+    });
+}
+
 export {
   fetchUserData,
   createUser,
@@ -118,4 +141,5 @@ export {
   updateInterests,
   setImageForUser,
   getAllUsersData,
+  addRecents,
 };
