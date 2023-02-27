@@ -93,6 +93,23 @@ async function setImageForUser(user, photo, type) {
   });
 }
 
+async function getAllUsersData(users) {
+  if (!users) {
+    return;
+  }
+  const usersRequested = [];
+  const usersRef = db.collection('users');
+  const allUsers = await usersRef.get();
+  allUsers.docs.map(doc => {
+    users.forEach(user => {
+      if (doc.id === user) {
+        usersRequested.push(doc.data());
+      }
+    });
+  });
+  return usersRequested;
+}
+
 export {
   fetchUserData,
   createUser,
@@ -100,4 +117,5 @@ export {
   logout,
   updateInterests,
   setImageForUser,
+  getAllUsersData,
 };
