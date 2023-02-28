@@ -34,9 +34,11 @@ const ProfilePhoto = ({imageStyle, photoType, user}) => {
 
   const handleChoosePhoto = async () => {
     const options = {
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.8,
-      format: 'jpeg',
+      quality: 0.9,
+      resize: {width: 800, height: 800},
     };
     ImagePicker.launchImageLibraryAsync(options)
       .then(response => {
