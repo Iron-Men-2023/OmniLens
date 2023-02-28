@@ -11,10 +11,10 @@ async function fetchUserData() {
 
   // // Get the user's idToken
   const idToken = await user.getIdToken();
-  console.log('userId', user.uid);
-  console.log('users', user);
+  //console.log('userId', user.uid);
+  //console.log('users', user);
   const userRef = await db.collection('users').doc(user.uid);
-  console.log('userRef', userRef);
+  //console.log('userRef', userRef);
   // const userRef = db.collection('users').doc(user.uid);
   await userRef
     .get()
@@ -23,7 +23,7 @@ async function fetchUserData() {
         console.log('User does not exist', doc);
       } else {
         userData.userDoc = doc.data();
-        console.log('userDoc', doc.data());
+        //console.log('userDoc', doc.data());
       }
       // const postsQuery = await firebase()
       //     .firestore.collection('posts')
@@ -32,11 +32,55 @@ async function fetchUserData() {
       // userData.postsData = postsQuery.docs.map(doc => doc.data());
     })
     .catch(e => {
-      console.log('Error getting document', e);
+      //console.log('Error getting document', e);
     });
   return userData;
 }
+async function getUserById(uid){
+    let userData = {};
+    const user = firebase.auth().currentUser;
 
+    // // Get the user's idToken
+    const idToken = await user.getIdToken();
+    //console.log('userId', user.uid);
+    //console.log('users', user);
+    const userRef = await db.collection('users').doc(uid);
+    //console.log('userRef', userRef);
+    // const userRef = db.collection('users').doc(user.uid);
+    await userRef
+        .get()
+        .then(async doc => {
+          if (!doc.exists) {
+            console.log('User does not exist',uid);
+          } else {
+            userData.userDoc = doc.data();
+           // console.log('userDoc', doc.data());
+          }
+          // const postsQuery = await firebase()
+          //     .firestore.collection('posts')
+          //     .where('userId', '==', user.uid)
+          //     .get();
+          // userData.postsData = postsQuery.docs.map(doc => doc.data());
+        })
+        .catch(e => {
+          //console.log('Error getting document', e);
+        });
+    return userData;
+
+}
+async function getAllUsers() {
+  const users = []
+  const userRef = await db.collection('users').doc();
+  await userRef.get()
+      .then(async doc=> {
+            console.log(doc.data())
+          }
+      )
+  snapshot.forEach(doc => {
+    users.push(doc.data())
+  });
+  return users
+}
 function createUser(user) {
   if (!user) {
     return;
@@ -99,4 +143,6 @@ export {
   logout,
   updateInterests,
   setImageForUser,
+  getAllUsers,
+  getUserById
 };

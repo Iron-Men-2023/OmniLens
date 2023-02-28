@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {StyleSheet, Text, TouchableOpacity, View,Image} from "react-native";
 import dimensions from "../config/DeviceSpecifications"
 import HorizontalLineComponent from "./HorizontalLineComponent";
 import {AntDesign, Entypo, Feather, FontAwesome5, Ionicons} from "@expo/vector-icons";
 import NotificationTextComponent from "./NotificationTextComponent";
-function RecentComponent(props) {
+function RecentComponent({name,avatar}) {
     const IconSizes = 30
     const [connected, setConnected] = useState(false);
     const [connectionNofification, setConnectionNofification] = useState(false);
@@ -33,6 +33,8 @@ function RecentComponent(props) {
         <View>
             <View style={styles.pos}>
             <View style={styles.container}>
+                {console.log(avatar)}
+                <Image source={ avatar}/>
                 <View style={styles.line}>
                     <HorizontalLineComponent/>
                 </View>
@@ -57,7 +59,7 @@ function RecentComponent(props) {
                 </View>
             </View>
             <View style={styles.textContainer}>
-                <Text style={styles.text}>Joslin Some</Text>
+                <Text style={styles.text}>{name}</Text>
             </View>
 
             </View>

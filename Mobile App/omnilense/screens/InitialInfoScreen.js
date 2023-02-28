@@ -89,7 +89,6 @@ function InitialInfoScreen({navigation}) {
       <FormInputComponent placeholderText={'Doe'} changeText={setLastName} />
 
       <Text>{'\n'}</Text>
-      <Text>{'\n'}</Text>
       <ImagePickerComponent
         setImageSet={setImageSet}
         setPhoto={handleSetImage}

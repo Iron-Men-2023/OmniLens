@@ -11,7 +11,7 @@ import {
   Button,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Logo from '../assets/logo.png';
+import Logo from '../assets/Logo.png';
 import {
   fetchUserData,
   setImageForUser,
