@@ -55,16 +55,16 @@ function createUser(user) {
     interests: [],
     friendRequests: [],
     friends: [],
+    recents: [],
   });
 }
 
-async function updateUserPhotoAndName(user, name, photo) {
+async function updateUserName(user, name) {
   if (!user) {
     return;
   }
   return db.collection('users').doc(user.uid).update({
     name: name,
-    avatarPhotoUrl: photo,
   });
 }
 
@@ -83,14 +83,19 @@ async function setImageForUser(user, photo, type) {
   if (!user) {
     return;
   }
+  console.log('user', user);
+  console.log('photo', photo);
+  console.log('type', type);
   if (type === 'Avatar') {
-    return db.collection('users').doc(user.uid).update({
+    await db.collection('users').doc(user.uid).update({
       avatarPhotoUrl: photo,
     });
+    return;
   }
-  return db.collection('users').doc(user.uid).update({
+  await db.collection('users').doc(user.uid).update({
     coverPhotoUrl: photo,
   });
+  return;
 }
 
 async function getAllUsersData(users) {
@@ -136,7 +141,7 @@ async function addRecents() {
 export {
   fetchUserData,
   createUser,
-  updateUserPhotoAndName,
+  updateUserName,
   logout,
   updateInterests,
   setImageForUser,
