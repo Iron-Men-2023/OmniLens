@@ -24,6 +24,7 @@ import {logout} from '../../config/DB_Functions/DB_Functions';
 import {auth} from '../../config/firebaseConfig';
 import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
+import MLScreen from '../../screens/MLScreen';
 import ViewOtherUser from "../../screens/ViewUserProfileScreen";
 import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
