@@ -24,6 +24,7 @@ import {logout} from '../../config/DB_Functions/DB_Functions';
 import {auth} from '../../config/firebaseConfig';
 import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
+import MLScreen from '../../screens/MLScreen';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -50,13 +51,13 @@ function HomeTabs() {
         }}
       />
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="ML Model"
+        component={MLScreen}
         options={{
           tabBarIcon: ({focused}) => (
             <View>
               <Icon
-                name={'home'}
+                name={'magic'}
                 size={SIZE}
                 color={focused ? focusColor : restColor}
               />
