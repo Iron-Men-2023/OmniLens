@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Text, View, StyleSheet, ScrollView} from "react-native";
 import SearchInputComponent from "../components/SearchInputComponent";
 import RecentComponent from "../components/RecentComponent";
@@ -9,6 +9,11 @@ function FeedScreen(props) {
     const [user, setUser] = useState(null);
     const [userSet, setUserSet] = useState(false);
     const [recents, setRecents] = useState([])
+    const [emails, setEmails] = useState([])
+    const recentsRef =useRef([])
+    const emailsRef = useRef([])
+    recentsRef.current =recents
+    emailsRef.current = emails
     useEffect(() => {
         fetchUserData()
             .then(r => {
@@ -18,21 +23,26 @@ function FeedScreen(props) {
                 for (let id in user.recents) {
                     getUserById(user.recents[id])
                         .then(a => {
-                            console.log('recendsts: ', a.userDoc);
-                            setRecents([a.userDoc,...recents])
-                            console.log("listt",recents.length)
+                            console.log('recendassts: ', a.userDoc.email);
+                            if(!emailsRef.current.includes(a.userDoc.email))
+                            {
+                                setRecents([a.userDoc,...recentsRef.current])
+                               // recentsRef.current = recents
+                                setEmails([...emailsRef.current,a.userDoc.email])
+                               // emailsRef
+                            }
+                            console.log("listt",recentsRef,emailsRef.current)
                             }
                         )
                 }
             })
-            .catch(e => console.log('e1', e));
+            .catch(e => console.log('es1', e));
     }, [userSet]);
 
     return (
         <View style={styles.container}>
            <SearchInputComponent/>
             <ScrollView style={styles.scroll}>
-                <RecentComponent />
                 {recents.map(user => (
                     <RecentComponent
                         avatar={user.avatarPhotoUrl}

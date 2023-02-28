@@ -1,15 +1,22 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View,Image} from "react-native";
+import React, {useRef, useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import dimensions from "../config/DeviceSpecifications"
 import HorizontalLineComponent from "./HorizontalLineComponent";
-import {AntDesign, Entypo, Feather, FontAwesome5, Ionicons} from "@expo/vector-icons";
+import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
 import NotificationTextComponent from "./NotificationTextComponent";
+
 function RecentComponent({name,avatar}) {
     const IconSizes = 30
     const [connected, setConnected] = useState(false);
     const [connectionNofification, setConnectionNofification] = useState(false);
     const [saveNotification, setSaveNotification] = useState(false)
     const [saved, setSaved] = useState(false);
+    const urlRef = useRef("")
+    urlRef.current=avatar
+    async function displayImage(){
+        urlRef.current = await avatar.getDownloadURL()
+        console.log("THHH",urlRef.current)
+    }
     function handleCheckPress(){
         setConnected(!connected)
         if(!connected){
@@ -33,8 +40,7 @@ function RecentComponent({name,avatar}) {
         <View>
             <View style={styles.pos}>
             <View style={styles.container}>
-                {console.log(avatar)}
-                <Image source={ avatar}/>
+                <Image   source={{ uri: urlRef.current }}/>
                 <View style={styles.line}>
                     <HorizontalLineComponent/>
                 </View>
@@ -59,7 +65,7 @@ function RecentComponent({name,avatar}) {
                 </View>
             </View>
             <View style={styles.textContainer}>
-                <Text style={styles.text}>{name}</Text>
+                <Text style={styles.text}>{name?name:"Joslin Some"}</Text>
             </View>
 
             </View>
