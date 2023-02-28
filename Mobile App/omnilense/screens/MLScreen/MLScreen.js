@@ -13,18 +13,8 @@ const FaceRecognitionExample = () => {
   const [cameraRef, setCameraRef] = useState(null);
   const [person, setPerson] = useState(null);
   const [personIsSet, setPersonIsSet] = useState(false);
-  const [cameraOn, setCameraOn] = useState(false);
+  const [cameraOn, setCameraOn] = useState(true);
   // Turn on the camera when the component mounts
-  useEffect(() => {
-    setCameraOn(true);
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      console.log('Unmounting');
-      turnOffCamera().then(r => console.log(r));
-    };
-  }, []);
 
   const turnOffCamera = async () => {
     console.log('Turning off camera');
@@ -90,8 +80,19 @@ const FaceRecognitionExample = () => {
     );
   }
 
+  const toggleCamera = () => {
+    setCameraOn(prevState => !prevState);
+  };
+
   return (
     <View style={styles.container}>
+      <View style={styles.toggleContainer}>
+        <TouchableOpacity style={styles.toggleButton} onPress={toggleCamera}>
+          <Text style={styles.toggleText}>
+            {cameraOn ? 'Turn Camera Off' : 'Turn Camera On'}
+          </Text>
+        </TouchableOpacity>
+      </View>
       {cameraOn ? (
         <Camera
           style={styles.camera}
@@ -148,6 +149,18 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 18,
     color: 'white',
+  },
+  toggleContainer: {
+    flex: 0.1,
+  },
+  toggleButton: {
+    backgroundColor: '#333',
+    padding: 10,
+    borderRadius: 5,
+  },
+  toggleText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 export default FaceRecognitionExample;
