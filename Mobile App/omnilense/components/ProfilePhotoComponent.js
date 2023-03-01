@@ -100,7 +100,6 @@ const ProfilePhoto = ({imageStyle, photoType, user}) => {
           <Image
             source={{uri: userImageUrl}}
             style={imageStyle}
-            resizeMode="fill"
           />
         </TouchableOpacity>
       ) : (

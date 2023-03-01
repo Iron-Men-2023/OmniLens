@@ -38,35 +38,36 @@ function RecentComponent({name,avatar}) {
     }
     return (
         <View>
-            <View style={styles.pos}>
+
             <View style={styles.container}>
-                <Image   source={{ uri: urlRef.current }}/>
-                <View style={styles.line}>
-                    <HorizontalLineComponent/>
+                <Image  style={styles.image} source={{ uri: avatar}}/>
+            </View>
+            <View style={styles.pos}>
+                <View style={styles.textContainer}>
+                    <Text style={styles.text}>{name}</Text>
                 </View>
+            {/*<View style={styles.line}>*/}
+                {/*    <HorizontalLineComponent/>*/}
+                {/*</View>*/}
                 <View style={styles.icons}>
                     <TouchableOpacity onPress={handleCheckPress} >
                         {
                             connected?
                                 <AntDesign name="checkcircleo" size={IconSizes} color='black' style={styles.icon}/>
-                            :   <AntDesign name="pluscircleo" size={IconSizes} color='black' style={styles.icon}/>
+                                :   <AntDesign name="pluscircleo" size={IconSizes} color='black' style={styles.icon}/>
                         }
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleBookmarkPress}>
                         {
                             saved?
                                 <Ionicons name="bookmark" size={IconSizes} color="#ff2121" style={styles.icon}/>
-                            :   <Feather name="bookmark" size={IconSizes} color="black" style={styles.icon}/>
+                                :   <Feather name="bookmark" size={IconSizes} color="black" style={styles.icon}/>
                         }
                     </TouchableOpacity>
                     <TouchableOpacity>
                         <Feather name="message-circle" size={IconSizes} color="black" style={styles.icon}/>
                     </TouchableOpacity>
                 </View>
-            </View>
-            <View style={styles.textContainer}>
-                <Text style={styles.text}>{name?name:"Joslin Some"}</Text>
-            </View>
 
             </View>
             <View style={styles.center}>
@@ -88,14 +89,14 @@ function RecentComponent({name,avatar}) {
 const styles = StyleSheet.create({
     container: {
         borderRadius: 60,
-        padding: 10,
+        padding: 2,
         margin: 10,
         borderColor: "#000000",
         borderWidth: 4,
         color: "#fff",
-        height: dimensions.height*.32,
-        width: dimensions.width*.9,
-        alignItems: "center"
+        height: dimensions.height*.55,
+        width: dimensions.width*.95,
+
     },
     line: {
         marginTop: dimensions.height*.23,
@@ -106,22 +107,31 @@ const styles = StyleSheet.create({
         marginTop: 0
     },
     icon: {
-        margin: 10
+        marginLeft: 20
     },
     text: {
         fontWeight: "bold",
         fontStyle: "italic",
-        fontSize: 15,
+        fontSize: 18,
     },
     textContainer: {
         alignItems: "center",
-        marginLeft: dimensions.width*.45
+        marginLeft: dimensions.width*.13
     },
     center: {
         alignItems: "center",
     },
     pos: {
-        position: "relative"
+        flexDirection: "row",
+        marginBottom: dimensions.height*.05
+
+    },
+    image: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 60,
+        padding: 10,
+
     }
 })
 export default RecentComponent;
