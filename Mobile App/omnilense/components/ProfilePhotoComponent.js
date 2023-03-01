@@ -36,9 +36,9 @@ const ProfilePhoto = ({imageStyle, photoType, user,viewOnly}) => {
     const options = {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.9,
-      resize: {width: 800, height: 800},
+      quality: 1,
+      resize: {width: 500, height: 500},
+      base64: true, // optionally, if you want to get the base64-encoded string of the image
     };
     ImagePicker.launchImageLibraryAsync(options)
       .then(response => {
