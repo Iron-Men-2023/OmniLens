@@ -64,7 +64,7 @@ const FaceRecognitionExample = () => {
           console.log('formData', formData);
           try {
             const response = await fetch(
-              'http://172.17.111.187:8000/api/facial-recognition',
+              'http://192.168.0.203:8000/api/facial-recognition',
               {
                 method: 'POST',
                 body: formData,
