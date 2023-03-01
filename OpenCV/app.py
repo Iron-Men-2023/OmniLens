@@ -4,6 +4,8 @@ import numpy as np
 import base64
 import os
 import tempfile
+import cv2
+from simple_facerec import RecognitionHelper
 
 import platform
 ip_address = None
@@ -42,47 +44,21 @@ def facial_recognition():
     encoded_data = request.form['image']
     nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_UNCHANGED)
+    sfr = RecognitionHelper()
+    sfr.load_images("images")
 
-    # Save image to a temporary file
-    # _, tmp_file = tempfile.mkstemp(suffix='.jpg')
-    temp_path = 'temp_image.jpg'
-    cv2.imwrite(temp_path, img)
+    face_locations, face_names = sfr.detect_known_faces(img)
 
-    # Check image file format and download if necessary
-    if cv2.imread(temp_path) is None:
-        return jsonify({'message': 'Invalid image format'})
+    if face_names is None:
+        return jsonify({'message': 'No face found'})
     else:
-        # Preprocess image
-        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        resized = cv2.resize(gray, (96, 96))
-        normalized = resized / 255.0
-        print(normalized.shape)
-
-        # Perform facial recognition
-        model = cv2.face.LBPHFaceRecognizer_create()
-        model.read('model.yml')
-        label, confidence = model.predict(normalized)
-        # loop through all the files in the directory
-        predicted_img = None
-        predicted_person = None
-        for filename in os.listdir('images'):
-            # check if the file starts with the label we want
-            if filename.startswith(str(label) + '_'):
-                # load the image
-                print(os.path.join('images', filename))
-                predicted_person = filename.split('_')[1].split('.')[0]
-                print(predicted_person)
-                predicted_img = cv2.imread(os.path.join('images', filename))
-                break
-        print(f'Label: {label}, Confidence: {confidence}')
-        if predicted_img is None:
-            return jsonify({'message': 'No face found'})
-        # Encode predicted image in Base64 format
-        retval, buffer = cv2.imencode('.jpg', predicted_img)
-        jpg_as_text = base64.b64encode(buffer)
-
-        # Remove temporary file
-        return jsonify({'predicted_person': predicted_person, 'confidence': confidence, 'image': jpg_as_text.decode('utf-8')})
+        for face_loc, name in zip(face_locations, face_names):
+            y1, x2, y2, x1 = face_loc[0], face_loc[1], face_loc[2], face_loc[3]
+            # cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 200), 4)
+            # cv2.putText(frame, name, (x1, y1 - 10), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 2)
+            # cv2.imshow("frame", frame)
+        print(face_names)
+        return jsonify({'predicted_person': face_names})
 
 @app.route('/api/facial-recognition', methods=['GET'])
 def get():
@@ -90,6 +66,7 @@ def get():
 
 if __name__ == '__main__':
     if ip_address is not None:
-        app.run(host=ip_address, port=8000, debug=True)
+        print(ip_address)
+        app.run(host='192.168.0.203', port=8000, debug=True)
     else:
         print("IP address is not defined.")

@@ -12,7 +12,6 @@ class RecognitionHelper:
         self.resizedFrame = 0.25
 
     def load_images(self, images_path):
-
         # Loading images from folder
         images_path = glob.glob(os.path.join(images_path, "*.*"))
 
@@ -26,12 +25,18 @@ class RecognitionHelper:
             # Get the filename only from the initial file path.
             basename = os.path.basename(img_path)
             (filename, ext) = os.path.splitext(basename)
-            # Get encoding
-            img_encoding = face_recognition.face_encodings(rgb_img)[0]
 
-            # Store file name and file encoding
-            self.encodings.append(img_encoding)
-            self.names.append(filename)
+            # Get encoding
+            img_encoding_list = face_recognition.face_encodings(rgb_img)
+            if len(img_encoding_list) > 0:
+                img_encoding = img_encoding_list[0]
+
+                # Store file name and file encoding
+                self.encodings.append(img_encoding)
+                self.names.append(filename)
+            else:
+                print(f"No face found in {img_path}")
+
         print("Encoding images loaded")
 
     def detect_known_faces(self, frame):
@@ -43,24 +48,24 @@ class RecognitionHelper:
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
-        for face_encoding in face_encodings:
-            # See if the face is a match for the known face(s)
-            matches = face_recognition.compare_faces(self.encodings, face_encoding)
-            name = "Unknown"
+        if len(face_encodings) > 0:
+            for face_encoding in face_encodings:
+                # See if the face is a match for the known face(s)
+                matches = face_recognition.compare_faces(self.encodings, face_encoding)
+                name = "Unknown"
 
-            # # If a match was found in known_face_encodings, just use the first one.
-            # if True in matches:
-            #     first_match_index = matches.index(True)
-            #     name = known_face_names[first_match_index]
+                # Or instead, use the known face with the smallest distance to the new face
+                face_distances = face_recognition.face_distance(self.encodings, face_encoding)
+                best_match_index = np.argmin(face_distances)
+                if matches[best_match_index]:
+                    name = self.names[best_match_index]
+                face_names.append(name)
 
-            # Or instead, use the known face with the smallest distance to the new face
-            face_distances = face_recognition.face_distance(self.encodings, face_encoding)
-            best_match_index = np.argmin(face_distances)
-            if matches[best_match_index]:
-                name = self.names[best_match_index]
-            face_names.append(name)
+            # Convert to numpy array to adjust coordinates with frame resizing quickly
+            face_locations = np.array(face_locations)
+            face_locations = face_locations / self.resizedFrame
+            return face_locations.astype(int), face_names
+        else:
+            print("No face found")
+            return None, None
 
-        # Convert to numpy array to adjust coordinates with frame resizing quickly
-        face_locations = np.array(face_locations)
-        face_locations = face_locations / self.resizedFrame
-        return face_locations.astype(int), face_names

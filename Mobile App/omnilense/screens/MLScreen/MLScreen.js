@@ -49,11 +49,10 @@ const FaceRecognitionExample = () => {
         );
         const data = await response.json();
 
-        console.log('data', data);
         console.log('data.predicted_person', data.predicted_person);
-        setPerson(data.predicted_person);
+        setPerson(data.predicted_person[0]);
         setPersonIsSet(true);
-        return data.predicted_person;
+        return data.predicted_person[0];
       } catch (e) {
         console.log('No person found OR Need to start server', e);
       }
@@ -108,7 +107,7 @@ const FaceRecognitionExample = () => {
             mode: FaceDetector.FaceDetectorMode.fast,
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
             runClassifications: FaceDetector.FaceDetectorClassifications.none,
-            minDetectionInterval: 3000,
+            minDetectionInterval: 10000,
             tracking: true,
           }}>
           <View style={styles.buttonContainer}>
