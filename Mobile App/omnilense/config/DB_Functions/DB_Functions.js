@@ -85,29 +85,30 @@ function createUser(user) {
   if (!user) {
     return;
   }
-  if (!user.photoURL) {
-    user.photoURL =
-      'https://firebasestorage.googleapis.com/v0/b/instagram-clone-4a7d2.appspot.com/o/avatars%2Fdefault-avatar.png?alt=media&token=0d0c9f9b-1a7a-4c1f-8d8c-0e0b3d3b3c3b';
-  }
+  let photo =
+    'https://firebasestorage.googleapis.com/v0/b/omnilens-d5745.appspot.com/o/images%2Flogo.png?alt=media&token=33463096-3586-4e32-86a4-213fdeabe8a9';
   let username = user.email.split('@')[0];
   return db.collection('users').doc(user.uid).set({
     email: user.email,
     name: user.displayName,
     username: username,
-    photoURL: user.photoURL,
+    avatarPhotoUrl: photo,
+    coverPhotoUrl: photo,
     bio: '',
     uid: user.uid,
     interests: [],
+    friendRequests: [],
+    friends: [],
+    recents: [],
   });
 }
 
-async function updateUserPhotoAndName(user, name, photo) {
+async function updateUserName(user, name) {
   if (!user) {
     return;
   }
   return db.collection('users').doc(user.uid).update({
     name: name,
-    photoURL: photo,
   });
 }
 
@@ -126,23 +127,71 @@ async function setImageForUser(user, photo, type) {
   if (!user) {
     return;
   }
+  console.log('user', user);
+  console.log('photo', photo);
+  console.log('type', type);
   if (type === 'Avatar') {
-    return db.collection('users').doc(user.uid).update({
+    await db.collection('users').doc(user.uid).update({
       avatarPhotoUrl: photo,
     });
+    return;
   }
-  return db.collection('users').doc(user.uid).update({
+  await db.collection('users').doc(user.uid).update({
     coverPhotoUrl: photo,
   });
+  return;
+}
+
+async function getAllUsersData(users) {
+  if (!users) {
+    return;
+  }
+  const usersRequested = [];
+  const usersRef = db.collection('users');
+  const allUsers = await usersRef.get();
+  allUsers.docs.map(doc => {
+    users.forEach(user => {
+      if (doc.id === user) {
+        usersRequested.push(doc.data());
+      }
+    });
+  });
+  return usersRequested;
+}
+
+async function addRecents() {
+  const users = [];
+  const docs = await db.collection('users').get();
+  docs.forEach(doc => {
+    users.push({id: doc.id, ...doc.data()});
+  });
+  const batch = db.batch();
+  users.forEach(user => {
+    const userRef = db.collection('users').doc(user.id);
+    batch.update(userRef, {
+      recents: firebase.firestore.FieldValue.arrayUnion(new Date().getTime()),
+    });
+  });
+  batch
+    .commit()
+    .then(() => {
+      console.log('Recents field updated successfully');
+    })
+    .catch(error => {
+      console.error('Error updating recents field:', error);
+    });
 }
 
 export {
   fetchUserData,
   createUser,
-  updateUserPhotoAndName,
+  updateUserName,
   logout,
   updateInterests,
   setImageForUser,
+
   getAllUsers,
   getUserById
+  getAllUsersData,
+  addRecents,
 };

@@ -23,6 +23,9 @@ import InterestsScreen from '../../screens/InterestsScreen';
 import {logout} from '../../config/DB_Functions/DB_Functions';
 import {auth} from '../../config/firebaseConfig';
 import ViewOtherUser from "../../screens/ViewUserProfileScreen";
+import FriendsScreen from '../../screens/FriendsScreen';
+import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
+import MLScreen from '../../screens/MLScreen';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -39,7 +42,7 @@ function HomeTabs() {
           tabBarIcon: ({focused}) => (
             <View>
               <Icon
-                name={'github'}
+                name={'book'}
                 size={SIZE}
                 color={focused ? focusColor : restColor}
               />
@@ -49,13 +52,13 @@ function HomeTabs() {
         }}
       />
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="ML Model"
+        component={MLScreen}
         options={{
           tabBarIcon: ({focused}) => (
             <View>
               <Icon
-                name={'home'}
+                name={'magic'}
                 size={SIZE}
                 color={focused ? focusColor : restColor}
               />
@@ -110,6 +113,9 @@ function DrawerNavigator() {
       useLegacyImplementation
       drawerContent={props => <SignOutComponent {...props} />}>
       <Drawer.Screen name={APPNAME} component={HomeTabs} />
+      <Drawer.Screen name="Friends" component={FriendsScreen} />
+      <Drawer.Screen name="Friend Requests" component={FriendRequestsScreen} />
+
       {/*<Drawer.Screen*/}
       {/*  name="Account Settings"*/}
       {/*  component={AccountSettingsScreen}*/}
@@ -177,7 +183,6 @@ export default function Navigation() {
     return () => unsubscribe();
   }, [isUserSet]);
   return (
-    // <Navigation/>
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {user ? <Stack.Screen name="Home" component={DrawerNavigator} /> : null}

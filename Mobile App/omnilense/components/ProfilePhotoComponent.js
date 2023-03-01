@@ -34,9 +34,11 @@ const ProfilePhoto = ({imageStyle, photoType, user,viewOnly}) => {
 
   const handleChoosePhoto = async () => {
     const options = {
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
       aspect: [4, 3],
-      quality: 0.8,
-      format: 'jpeg',
+      quality: 0.9,
+      resize: {width: 800, height: 800},
     };
     ImagePicker.launchImageLibraryAsync(options)
       .then(response => {
@@ -138,7 +140,6 @@ const styles = StyleSheet.create({
     left: 0,
     bottom: 0,
     right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
   },
