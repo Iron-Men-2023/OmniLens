@@ -5,7 +5,7 @@ import RecentComponent from "../components/RecentComponent";
 import {getAllUsers} from "../config/DB_Functions/DB_Functions"
 import dimensions from "../config/DeviceSpecifications"
 import {fetchUserData,getUserById} from "../config/DB_Functions/DB_Functions"
-function FeedScreen(props) {
+function FeedScreen({navigation}) {
     const [user, setUser] = useState(null);
     const [userSet, setUserSet] = useState(false);
     const [recents, setRecents] = useState([])
@@ -47,6 +47,8 @@ function FeedScreen(props) {
                     <RecentComponent
                         avatar={user.avatarPhotoUrl}
                         name={user.name}
+                        navigation={navigation}
+                        id={user.uid}
                     />
                 ))}
 

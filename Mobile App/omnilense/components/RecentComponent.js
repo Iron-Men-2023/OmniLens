@@ -1,11 +1,12 @@
 import React, {useRef, useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {Image, StyleSheet, Text, TouchableOpacity, View,Pressable} from "react-native";
 import dimensions from "../config/DeviceSpecifications"
 import HorizontalLineComponent from "./HorizontalLineComponent";
 import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
 import NotificationTextComponent from "./NotificationTextComponent";
 
-function RecentComponent({name,avatar}) {
+function RecentComponent({name,avatar,navigation,id}) {
+
     const IconSizes = 30
     const [connected, setConnected] = useState(false);
     const [connectionNofification, setConnectionNofification] = useState(false);
@@ -39,9 +40,10 @@ function RecentComponent({name,avatar}) {
     return (
         <View>
 
-            <View style={styles.container}>
+            <Pressable style={({ pressed }) => [{ backgroundColor: pressed ? 'black' : 'white' }, styles.container ]}
+                       onPress={()=> navigation.navigate("OtherUserProfile",{uid: id})}>
                 <Image  style={styles.image} source={{ uri: avatar}}/>
-            </View>
+            </Pressable>
             <View style={styles.pos}>
                 <View style={styles.textContainer}>
                     <Text style={styles.text}>{name}</Text>
@@ -96,7 +98,7 @@ const styles = StyleSheet.create({
         color: "#fff",
         height: dimensions.height*.55,
         width: dimensions.width*.95,
-
+        alignItems: "center"
     },
     line: {
         marginTop: dimensions.height*.23,
@@ -127,8 +129,8 @@ const styles = StyleSheet.create({
 
     },
     image: {
-        width: "100%",
-        height: "100%",
+        width: "98%",
+        height: "98%",
         borderRadius: 60,
         padding: 10,
 

@@ -22,6 +22,7 @@ import InitialInfoScreen from '../../screens/InitialInfoScreen';
 import InterestsScreen from '../../screens/InterestsScreen';
 import {logout} from '../../config/DB_Functions/DB_Functions';
 import {auth} from '../../config/firebaseConfig';
+import ViewOtherUser from "../../screens/ViewUserProfileScreen";
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -189,6 +190,7 @@ export default function Navigation() {
         <Stack.Screen name="Sign Up" component={SignUpScreen} />
         <Stack.Screen name={'Initial Info'} component={InitialInfoScreen} />
         <Stack.Screen name={'Interests'} component={InterestsScreen} />
+        <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser} />
       </Stack.Navigator>
     </NavigationContainer>
   );
