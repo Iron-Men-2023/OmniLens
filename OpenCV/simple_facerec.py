@@ -67,6 +67,7 @@ class RecognitionHelper:
                 if matches[best_match_index]:
                     name = self.names[best_match_index]
                 face_names.append(name)
+                print("Face found: {}".format(name))
 
             # Convert to numpy array to adjust coordinates with frame resizing quickly
             face_locations = np.array(face_locations)

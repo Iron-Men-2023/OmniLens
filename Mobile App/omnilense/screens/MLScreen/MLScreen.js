@@ -4,7 +4,8 @@ import * as FileSystem from 'expo-file-system';
 import * as FaceDetector from 'expo-face-detector';
 import {Camera, CameraType} from 'expo-camera';
 import {storage, auth, db} from '../../config/firebaseConfig';
-import {TouchableOpacity, View, StyleSheet, Text} from 'react-native';
+import {TouchableOpacity, View, StyleSheet, Text, Alert} from 'react-native';
+import {setImageForUser} from '../../config/DB_Functions/DB_Functions';
 
 const FaceRecognitionExample = () => {
   const [model, setModel] = useState(null);
@@ -35,22 +36,46 @@ const FaceRecognitionExample = () => {
   const handleFacesDetected = async ({faces, camera}) => {
     console.log('Faces detected:', faces);
 
-    async function recognizeFace(image) {
-      // console.log('image', image);
-      const formData = new FormData();
-      formData.append('image', image);
+    async function recognizeFace(imageUri) {
+      const {uri: localUri} = await FileSystem.downloadAsync(
+        imageUri,
+        FileSystem.documentDirectory + 'test.jpg',
+      );
+
+      const response = await fetch(localUri);
+      const blob = await response.blob();
+      const userId = auth.currentUser.uid;
+      const path = `images/ml_images/${userId}.jpg`;
+      const task = storage.ref(path).put(blob);
+      task.on(
+        'state_changed',
+        snapshot => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+        },
+        error => {
+          console.log(error);
+          Alert.alert('An error occurred while uploading the photo.');
+        },
+        async () => {
+          const url = await task.snapshot.ref.getDownloadURL();
+          Alert.alert(
+            'Photo uploaded!',
+            'Your photo has been uploaded to Firebase Cloud Storage!',
+          );
+        },
+      );
       try {
         const response = await fetch(
           'http://localhost:8000/api/facial-recognition',
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/octet-stream',
-            },
-            body: formData,
+            body: JSON.stringify({path: path}),
           },
         );
         const data = await response.json();
+        console.log('data', data);
         if (data.message === 'No face found') {
           console.log('No face found');
           return 'No face found';
@@ -66,13 +91,14 @@ const FaceRecognitionExample = () => {
     }
 
     if (faces.length > 0) {
-      const photo = await camera.takePictureAsync({base64: true});
+      const photo = await camera.takePictureAsync();
       console.log('Photo taken:');
-      recognizeFace(photo.base64).then(r => console.log(r));
+      recognizeFace(photo.uri).then(r => console.log(r));
     } else {
       console.log('No faces detected');
     }
   };
+
   // Handle face detection errors
   const handleFaceDetectionError = error => {
     requestPermission().then(r => console.log(r));

@@ -9,34 +9,37 @@ import tempfile
 import cv2
 from simple_facerec import RecognitionHelper
 
+
 import platform
 
-ip_address = None
-if platform.system() == "Windows":
-    print("This is a Windows system.")
-    import netifaces
+from test import FirebaseImageRecognizer
 
-    # Get the IP address of the default network interface
-    ip_address = netifaces.ifaddresses('en0')[netifaces.AF_INET][0]['addr']
-
-    # Print the IP address
-    print("IP address:", ip_address)
-elif platform.system() == "Darwin":
-    import socket
-
-    # Get the hostname of the current computer
-    hostname = socket.gethostname()
-
-    # Get the IP address of the current computer
-    ip_address = socket.gethostbyname(hostname)
-
-    # Print the IP address
-    print("IP address:", ip_address)
-    print("This is a Mac system.")
-elif platform.system() == "Linux":
-    print("This is a Linux system.")
-else:
-    print("This system is not recognized.")
+# ip_address = None
+# if platform.system() == "Windows":
+#     print("This is a Windows system.")
+#     import netifaces
+#
+#     # Get the IP address of the default network interface
+#     ip_address = netifaces.ifaddresses('en0')[netifaces.AF_INET][0]['addr']
+#
+#     # Print the IP address
+#     print("IP address:", ip_address)
+# elif platform.system() == "Darwin":
+#     import socket
+#
+#     # Get the hostname of the current computer
+#     hostname = socket.gethostname()
+#
+#     # Get the IP address of the current computer
+#     ip_address = socket.gethostbyname(hostname)
+#
+#     # Print the IP address
+#     print("IP address:", ip_address)
+#     print("This is a Mac system.")
+# elif platform.system() == "Linux":
+#     print("This is a Linux system.")
+# else:
+#     print("This system is not recognized.")
 
 app = Flask(__name__)
 
@@ -44,19 +47,23 @@ app = Flask(__name__)
 @app.route('/api/facial-recognition', methods=['POST'])
 def facial_recognition():
     # Get image data from request
-    image_data = request.get_json()['image']
-    print(image_data)
-    nparr = np.frombuffer(image_data, np.uint8)
-    img = cv2.imdecode(nparr, cv2.IMREAD_UNCHANGED)
-    cv2.imwrite("images/test1.jpg", img)
-    resized_img = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
-    rotated_image = cv2.rotate(resized_img, cv2.ROTATE_90_CLOCKWISE)
-    cv2.imwrite("images/test.jpg", rotated_image)
+    encoded_data = request.form['path']
+    print(request.form)
+    recognizer = FirebaseImageRecognizer("omnilens-d5745-firebase-adminsdk-rorof-df461ea39d.json", "omnilens-d5745.appspot.com")
+    recognizer.recognize_faces("images/Cover/LfqBYBcq1BhHUvmE7803PhCFxeI2-1677682547898.jpg")
+
+    # Time delay of 1 seconds
+    cv2.waitKey(1000)
+
+    # Load the saved image
+    img = cv2.imread("images/test1.jpg")
+    if img is None:
+        return jsonify({'message': 'No face found'})
     sfr = RecognitionHelper()
     sfr.load_images("images")
-    # Wait for 1 second
+    # Wait for 0.5 seconds
     cv2.waitKey(500)
-    face_locations, face_names = sfr.detect_known_faces(resized_img)
+    face_locations, face_names = sfr.detect_known_faces(img)
 
     if face_names is None:
         return jsonify({'message': 'No face found'})
@@ -76,8 +83,8 @@ def get():
 
 
 if __name__ == '__main__':
-    if ip_address is not None:
-        print(ip_address)
-        app.run(host='localhost', port=8000, debug=True)
-    else:
-        print("IP address is not defined.")
+    # if ip_address is not None:
+    #     print(ip_address)
+    app.run(host='172.58.82.106', port=8000, debug=True)
+    # else:
+    #     print("IP address is not defined.")
