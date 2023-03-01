@@ -11,7 +11,7 @@ import {
   Button,
 } from 'react-native';
 import React, {useEffect, useState} from 'react';
-import Logo from '../assets/logo.png';
+import Logo from '../assets/Logo.png';
 import {
   fetchUserData,
   setImageForUser,
@@ -19,7 +19,7 @@ import {
 import * as Progress from 'react-native-progress';
 import {Asset} from 'expo-asset';
 
-const ProfilePhoto = ({imageStyle, photoType, user}) => {
+const ProfilePhoto = ({imageStyle, photoType, user,viewOnly}) => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
@@ -98,11 +98,10 @@ const ProfilePhoto = ({imageStyle, photoType, user}) => {
   return (
     <>
       {userImageUrl ? (
-        <TouchableOpacity onPress={handleChoosePhoto}>
+        <TouchableOpacity onPress={!viewOnly? handleChoosePhoto: null}>
           <Image
             source={{uri: userImageUrl}}
             style={imageStyle}
-            resizeMode="fill"
           />
         </TouchableOpacity>
       ) : (

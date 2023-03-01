@@ -1,15 +1,23 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import React, {useRef, useState} from 'react';
+import {Image, StyleSheet, Text, TouchableOpacity, View,Pressable} from "react-native";
 import dimensions from "../config/DeviceSpecifications"
 import HorizontalLineComponent from "./HorizontalLineComponent";
-import {AntDesign, Entypo, Feather, FontAwesome5, Ionicons} from "@expo/vector-icons";
+import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
 import NotificationTextComponent from "./NotificationTextComponent";
-function RecentComponent(props) {
+
+function RecentComponent({name,avatar,navigation,id}) {
+
     const IconSizes = 30
     const [connected, setConnected] = useState(false);
     const [connectionNofification, setConnectionNofification] = useState(false);
     const [saveNotification, setSaveNotification] = useState(false)
     const [saved, setSaved] = useState(false);
+    const urlRef = useRef("")
+    urlRef.current=avatar
+    async function displayImage(){
+        urlRef.current = await avatar.getDownloadURL()
+        console.log("THHH",urlRef.current)
+    }
     function handleCheckPress(){
         setConnected(!connected)
         if(!connected){
@@ -31,34 +39,37 @@ function RecentComponent(props) {
     }
     return (
         <View>
+
+            <Pressable style={({ pressed }) => [{ backgroundColor: pressed ? 'black' : 'white' }, styles.container ]}
+                       onPress={()=> navigation.navigate("OtherUserProfile",{uid: id})}>
+                <Image  style={styles.image} source={{ uri: avatar}}/>
+            </Pressable>
             <View style={styles.pos}>
-            <View style={styles.container}>
-                <View style={styles.line}>
-                    <HorizontalLineComponent/>
+                <View style={styles.textContainer}>
+                    <Text style={styles.text}>{name}</Text>
                 </View>
+            {/*<View style={styles.line}>*/}
+                {/*    <HorizontalLineComponent/>*/}
+                {/*</View>*/}
                 <View style={styles.icons}>
                     <TouchableOpacity onPress={handleCheckPress} >
                         {
                             connected?
                                 <AntDesign name="checkcircleo" size={IconSizes} color='black' style={styles.icon}/>
-                            :   <AntDesign name="pluscircleo" size={IconSizes} color='black' style={styles.icon}/>
+                                :   <AntDesign name="pluscircleo" size={IconSizes} color='black' style={styles.icon}/>
                         }
                     </TouchableOpacity>
                     <TouchableOpacity onPress={handleBookmarkPress}>
                         {
                             saved?
                                 <Ionicons name="bookmark" size={IconSizes} color="#ff2121" style={styles.icon}/>
-                            :   <Feather name="bookmark" size={IconSizes} color="black" style={styles.icon}/>
+                                :   <Feather name="bookmark" size={IconSizes} color="black" style={styles.icon}/>
                         }
                     </TouchableOpacity>
                     <TouchableOpacity>
                         <Feather name="message-circle" size={IconSizes} color="black" style={styles.icon}/>
                     </TouchableOpacity>
                 </View>
-            </View>
-            <View style={styles.textContainer}>
-                <Text style={styles.text}>Joslin Some</Text>
-            </View>
 
             </View>
             <View style={styles.center}>
@@ -80,13 +91,13 @@ function RecentComponent(props) {
 const styles = StyleSheet.create({
     container: {
         borderRadius: 60,
-        padding: 10,
+        padding: 2,
         margin: 10,
         borderColor: "#000000",
         borderWidth: 4,
         color: "#fff",
-        height: dimensions.height*.32,
-        width: dimensions.width*.9,
+        height: dimensions.height*.55,
+        width: dimensions.width*.95,
         alignItems: "center"
     },
     line: {
@@ -98,22 +109,31 @@ const styles = StyleSheet.create({
         marginTop: 0
     },
     icon: {
-        margin: 10
+        marginLeft: 20
     },
     text: {
         fontWeight: "bold",
         fontStyle: "italic",
-        fontSize: 15,
+        fontSize: 18,
     },
     textContainer: {
         alignItems: "center",
-        marginLeft: dimensions.width*.45
+        marginLeft: dimensions.width*.13
     },
     center: {
         alignItems: "center",
     },
     pos: {
-        position: "relative"
+        flexDirection: "row",
+        marginBottom: dimensions.height*.05
+
+    },
+    image: {
+        width: "98%",
+        height: "98%",
+        borderRadius: 60,
+        padding: 10,
+
     }
 })
 export default RecentComponent;
