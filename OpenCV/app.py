@@ -1,3 +1,5 @@
+from io import BytesIO
+
 from flask import Flask, request, jsonify
 import cv2
 import numpy as np
@@ -8,6 +10,7 @@ import cv2
 from simple_facerec import RecognitionHelper
 
 import platform
+
 ip_address = None
 if platform.system() == "Windows":
     print("This is a Windows system.")
@@ -41,13 +44,19 @@ app = Flask(__name__)
 @app.route('/api/facial-recognition', methods=['POST'])
 def facial_recognition():
     # Get image data from request
-    encoded_data = request.form['image']
-    nparr = np.fromstring(base64.b64decode(encoded_data), np.uint8)
+    image_data = request.get_json()['image']
+    print(image_data)
+    nparr = np.frombuffer(image_data, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_UNCHANGED)
+    cv2.imwrite("images/test1.jpg", img)
+    resized_img = cv2.resize(img, (0, 0), fx=0.25, fy=0.25)
+    rotated_image = cv2.rotate(resized_img, cv2.ROTATE_90_CLOCKWISE)
+    cv2.imwrite("images/test.jpg", rotated_image)
     sfr = RecognitionHelper()
     sfr.load_images("images")
-
-    face_locations, face_names = sfr.detect_known_faces(img)
+    # Wait for 1 second
+    cv2.waitKey(500)
+    face_locations, face_names = sfr.detect_known_faces(resized_img)
 
     if face_names is None:
         return jsonify({'message': 'No face found'})
@@ -58,15 +67,17 @@ def facial_recognition():
             # cv2.putText(frame, name, (x1, y1 - 10), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 2)
             # cv2.imshow("frame", frame)
         print(face_names)
-        return jsonify({'predicted_person': face_names})
+        return jsonify({'predicted_person': face_names, 'message': 'No face found'})
+
 
 @app.route('/api/facial-recognition', methods=['GET'])
 def get():
     return jsonify({'message': 'Hello World!'})
 
+
 if __name__ == '__main__':
     if ip_address is not None:
         print(ip_address)
-        app.run(host='192.168.0.203', port=8000, debug=True)
+        app.run(host='localhost', port=8000, debug=True)
     else:
         print("IP address is not defined.")

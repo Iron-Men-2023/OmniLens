@@ -2,8 +2,8 @@ import cv2
 import os
 
 # Create directory for storing images
-if not os.path.exists('imagesTest'):
-    os.makedirs('imagesTest')
+if not os.path.exists('images'):
+    os.makedirs('images')
 
 # Initialize video capture device
 cap = cv2.VideoCapture(0)
@@ -16,7 +16,7 @@ for filename in os.listdir('imagesTest'):
     count += 1
 # Counter for keeping track of number of images captured
 test = 0
-while test < 50:
+while test < 1:
     # Capture a frame from the video capture device
     if test == 0:
         print('Press c to capture an image')
@@ -39,8 +39,8 @@ while test < 50:
     count += 1
 
     # Save the captured image to a file
-    file_name = f"{count}_Kelly.jpg"
-    file_path = os.path.join('imagesTest', file_name)
+    file_name = f"{count}_Ben.jpg"
+    file_path = os.path.join('images', file_name)
     cv2.imwrite(file_path, frame)
     test += 1
 

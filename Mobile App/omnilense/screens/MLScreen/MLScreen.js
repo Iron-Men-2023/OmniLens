@@ -41,14 +41,20 @@ const FaceRecognitionExample = () => {
       formData.append('image', image);
       try {
         const response = await fetch(
-          'http://192.168.0.203:8000/api/facial-recognition',
+          'http://localhost:8000/api/facial-recognition',
           {
             method: 'POST',
+            headers: {
+              'Content-Type': 'application/octet-stream',
+            },
             body: formData,
           },
         );
         const data = await response.json();
-
+        if (data.message === 'No face found') {
+          console.log('No face found');
+          return 'No face found';
+        }
         console.log('data.predicted_person', data.predicted_person);
         setPerson(data.predicted_person[0]);
         setPersonIsSet(true);
@@ -103,11 +109,13 @@ const FaceRecognitionExample = () => {
             handleFacesDetected({faces, camera: cameraRef})
           }
           onFaceDetectionError={handleFaceDetectionError}
+          quality={1} // adjust quality
+          ratio="16:9" // adjust aspect ratio
           faceDetectorSettings={{
             mode: FaceDetector.FaceDetectorMode.fast,
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
             runClassifications: FaceDetector.FaceDetectorClassifications.none,
-            minDetectionInterval: 10000,
+            minDetectionInterval: 3200,
             tracking: true,
           }}>
           <View style={styles.buttonContainer}>
@@ -137,13 +145,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     backgroundColor: 'transparent',
-    flexDirection: 'row',
     margin: 20,
   },
   button: {
     flex: 0.1,
     alignSelf: 'flex-end',
-    alignItems: 'center',
   },
   text: {
     fontSize: 18,

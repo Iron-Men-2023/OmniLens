@@ -2,10 +2,10 @@ import cv2
 import os
 
 # Set the target size
-target_size = (96, 96)
+target_size = (1000, 1000)
 
 # Set the path to the image directory
-image_dir = "imagesTest"
+image_dir = "images"
 
 # Loop through each image in the directory
 for filename in os.listdir(image_dir):
@@ -30,14 +30,14 @@ for filename in os.listdir(image_dir):
         new_size = (target_size[1], new_height)
 
     # Resize the image while maintaining the aspect ratio
-    resized_image = cv2.resize(image, new_size)
+    small_frame = cv2.resize(image, (0, 0), fx=0.25, fy=0.25)
 
     # Add padding to the resized image to match the target size
-    top = (target_size[0] - new_size[1]) // 2
-    bottom = target_size[0] - new_size[1] - top
-    left = (target_size[1] - new_size[0]) // 2
-    right = target_size[1] - new_size[0] - left
-    resized_image = cv2.copyMakeBorder(resized_image, top, bottom, left, right, cv2.BORDER_CONSTANT)
+    # top = (target_size[0] - new_size[1]) // 2
+    # bottom = target_size[0] - new_size[1] - top
+    # left = (target_size[1] - new_size[0]) // 2
+    # right = target_size[1] - new_size[0] - left
+    # resized_image = cv2.copyMakeBorder(resized_image, top, bottom, left, right, cv2.BORDER_CONSTANT)
 
     # Save the resized image
-    cv2.imwrite(image_path, resized_image)
+    cv2.imwrite(image_path, small_frame)

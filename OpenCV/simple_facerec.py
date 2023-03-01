@@ -4,6 +4,7 @@ import os
 import glob
 import numpy as np
 
+
 class RecognitionHelper:
     def __init__(self):
         self.names = []
@@ -20,7 +21,8 @@ class RecognitionHelper:
         # Store image encoding and names
         for img_path in images_path:
             img = cv2.imread(img_path)
-            rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            img_resize = cv2.resize(img, (0, 0), fx=self.resizedFrame, fy=self.resizedFrame)
+            rgb_img = cv2.cvtColor(img_resize, cv2.COLOR_BGR2RGB)
 
             # Get the filename only from the initial file path.
             basename = os.path.basename(img_path)
@@ -40,6 +42,11 @@ class RecognitionHelper:
         print("Encoding images loaded")
 
     def detect_known_faces(self, frame):
+        print("Detecting faces")
+        if frame is None:
+            print("Frame is None")
+            return None, None
+        print("Frame size: {}".format(frame.shape))
         small_frame = cv2.resize(frame, (0, 0), fx=self.resizedFrame, fy=self.resizedFrame)
         # Find all the faces and face encodings in the current frame of video
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
@@ -68,4 +75,3 @@ class RecognitionHelper:
         else:
             print("No face found")
             return None, None
-
