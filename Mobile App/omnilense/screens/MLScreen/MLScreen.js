@@ -37,10 +37,8 @@ const FaceRecognitionExample = () => {
     console.log('Faces detected:', faces);
 
     async function recognizeFace(imageUri) {
-      const {uri: localUri} = await FileSystem.downloadAsync(
-        imageUri,
-        FileSystem.documentDirectory + 'test.jpg',
-      );
+      console.log('imageUri', imageUri);
+      const localUri = imageUri;
 
       const response = await fetch(localUri);
       const blob = await response.blob();
@@ -59,35 +57,35 @@ const FaceRecognitionExample = () => {
           Alert.alert('An error occurred while uploading the photo.');
         },
         async () => {
-          const url = await task.snapshot.ref.getDownloadURL();
-          Alert.alert(
-            'Photo uploaded!',
-            'Your photo has been uploaded to Firebase Cloud Storage!',
-          );
+          console.log('Upload complete');
+          const uri = await storage.ref(path).getDownloadURL();
+          const formData = new FormData();
+          formData.append('path', path);
+          console.log('formData', formData);
+          try {
+            const response = await fetch(
+              'http://172.17.111.187:8000/api/facial-recognition',
+              {
+                method: 'POST',
+                body: formData,
+              },
+            );
+            const data = await response.json();
+            console.log('data', data);
+            if (data.message === 'No face found') {
+              console.log('No face found');
+              return 'No face found';
+            }
+            console.log('data.predicted_person', data.predicted_person);
+            setPerson(data.predicted_person[0]);
+            setPersonIsSet(true);
+            return data.predicted_person[0];
+          } catch (e) {
+            console.log('No person found OR Need to start server', e);
+          }
+          return 'No person found OR Need to start server';
         },
       );
-      try {
-        const response = await fetch(
-          'http://localhost:8000/api/facial-recognition',
-          {
-            method: 'POST',
-            body: JSON.stringify({path: path}),
-          },
-        );
-        const data = await response.json();
-        console.log('data', data);
-        if (data.message === 'No face found') {
-          console.log('No face found');
-          return 'No face found';
-        }
-        console.log('data.predicted_person', data.predicted_person);
-        setPerson(data.predicted_person[0]);
-        setPersonIsSet(true);
-        return data.predicted_person[0];
-      } catch (e) {
-        console.log('No person found OR Need to start server', e);
-      }
-      return 'No person found OR Need to start server';
     }
 
     if (faces.length > 0) {
@@ -141,7 +139,7 @@ const FaceRecognitionExample = () => {
             mode: FaceDetector.FaceDetectorMode.fast,
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
             runClassifications: FaceDetector.FaceDetectorClassifications.none,
-            minDetectionInterval: 3200,
+            minDetectionInterval: 10000,
             tracking: true,
           }}>
           <View style={styles.buttonContainer}>
