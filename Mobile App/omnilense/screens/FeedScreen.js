@@ -10,10 +10,18 @@ function FeedScreen({navigation}) {
     const [userSet, setUserSet] = useState(false);
     const [recents, setRecents] = useState([])
     const [emails, setEmails] = useState([])
+    const [searchedRecents, setSearchedRecents] = useState([])
+    const [searchText, setSearchText] = useState("")
     const recentsRef =useRef([])
     const emailsRef = useRef([])
     recentsRef.current =recents
     emailsRef.current = emails
+
+    function dynamicSearch(text){
+        setSearchText(text)
+        setSearchedRecents(recents.filter(element => element.name.includes(text)));
+        console.log(searchedRecents,"asdadsadasdas")
+    }
     useEffect(() => {
         fetchUserData()
             .then(r => {
@@ -41,9 +49,9 @@ function FeedScreen({navigation}) {
 
     return (
         <View style={styles.container}>
-           <SearchInputComponent/>
+           <SearchInputComponent changeText={dynamicSearch}/>
             <ScrollView style={styles.scroll}>
-                {recents.map(user => (
+                {searchedRecents.map(user => (
                     <RecentComponent
                         avatar={user.avatarPhotoUrl}
                         name={user.name}
