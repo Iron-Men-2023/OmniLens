@@ -39,7 +39,7 @@ function FeedScreen({navigation}) {
                                 setEmails([...emailsRef.current,a.userDoc.email])
                                // emailsRef
                             }
-                            console.log("listt",recentsRef,emailsRef.current)
+                            console.log("listts",recentsRef,emailsRef.current)
                             }
                         )
                 }
@@ -49,9 +49,19 @@ function FeedScreen({navigation}) {
 
     return (
         <View style={styles.container}>
-           <SearchInputComponent changeText={dynamicSearch}/>
+            <SearchInputComponent changeText={dynamicSearch}/>
             <ScrollView style={styles.scroll}>
-                {searchedRecents.map(user => (
+                {   searchedRecents.length === 0?
+                    recents.map(user => (
+                        <RecentComponent
+                            avatar={user.avatarPhotoUrl}
+                            name={user.name}
+                            navigation={navigation}
+                            id={user.uid}
+                        />
+                    ))
+                    :
+                    searchedRecents.map(user => (
                     <RecentComponent
                         avatar={user.avatarPhotoUrl}
                         name={user.name}

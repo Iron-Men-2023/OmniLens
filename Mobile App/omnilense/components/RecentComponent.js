@@ -6,7 +6,6 @@ import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
 import NotificationTextComponent from "./NotificationTextComponent";
 
 function RecentComponent({name,avatar,navigation,id}) {
-
     const IconSizes = 30
     const [connected, setConnected] = useState(false);
     const [connectionNofification, setConnectionNofification] = useState(false);

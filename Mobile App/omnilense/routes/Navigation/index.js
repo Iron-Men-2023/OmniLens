@@ -198,6 +198,7 @@ export default function Navigation() {
         <Stack.Screen name="Sign Up" component={SignUpScreen} />
         <Stack.Screen name={'Initial Info'} component={InitialInfoScreen} />
         <Stack.Screen name={'Interests'} component={InterestsScreen} />
+        <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser} />
       </Stack.Navigator>
     </NavigationContainer>
   );
