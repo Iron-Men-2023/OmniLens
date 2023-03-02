@@ -4,7 +4,8 @@ import * as FileSystem from 'expo-file-system';
 import * as FaceDetector from 'expo-face-detector';
 import {Camera, CameraType} from 'expo-camera';
 import {storage, auth, db} from '../../config/firebaseConfig';
-import {TouchableOpacity, View, StyleSheet, Text} from 'react-native';
+import {TouchableOpacity, View, StyleSheet, Text, Alert} from 'react-native';
+import {setImageForUser} from '../../config/DB_Functions/DB_Functions';
 
 const FaceRecognitionExample = () => {
   const [model, setModel] = useState(null);
@@ -35,39 +36,67 @@ const FaceRecognitionExample = () => {
   const handleFacesDetected = async ({faces, camera}) => {
     console.log('Faces detected:', faces);
 
-    async function recognizeFace(image) {
-      // console.log('image', image);
-      const formData = new FormData();
-      formData.append('image', image);
-      try {
-        const response = await fetch(
-          'http://192.168.0.203:8000/api/facial-recognition',
-          {
-            method: 'POST',
-            body: formData,
-          },
-        );
-        const data = await response.json();
+    async function recognizeFace(imageUri) {
+      console.log('imageUri', imageUri);
+      const localUri = imageUri;
 
-        console.log('data', data);
-        console.log('data.predicted_person', data.predicted_person);
-        setPerson(data.predicted_person);
-        setPersonIsSet(true);
-        return data.predicted_person;
-      } catch (e) {
-        console.log('No person found OR Need to start server', e);
-      }
-      return 'No person found OR Need to start server';
+      const response = await fetch(localUri);
+      const blob = await response.blob();
+      const userId = auth.currentUser.uid;
+      const path = `images/ml_images/${userId}.jpg`;
+      const task = storage.ref(path).put(blob);
+      task.on(
+        'state_changed',
+        snapshot => {
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(`Upload is ${progress}% done`);
+        },
+        error => {
+          console.log(error);
+          Alert.alert('An error occurred while uploading the photo.');
+        },
+        async () => {
+          console.log('Upload complete');
+          const uri = await storage.ref(path).getDownloadURL();
+          const formData = new FormData();
+          formData.append('path', path);
+          console.log('formData', formData);
+          try {
+            const response = await fetch(
+              'http://192.168.0.203:8000/api/facial-recognition',
+              {
+                method: 'POST',
+                body: formData,
+              },
+            );
+            const data = await response.json();
+            console.log('data', data);
+            if (data.message === 'No face found') {
+              console.log('No face found');
+              return 'No face found';
+            }
+            console.log('data.predicted_person', data.predicted_person);
+            setPerson(data.predicted_person[0]);
+            setPersonIsSet(true);
+            return data.predicted_person[0];
+          } catch (e) {
+            console.log('No person found OR Need to start server', e);
+          }
+          return 'No person found OR Need to start server';
+        },
+      );
     }
 
     if (faces.length > 0) {
-      const photo = await camera.takePictureAsync({base64: true});
+      const photo = await camera.takePictureAsync();
       console.log('Photo taken:');
-      recognizeFace(photo.base64).then(r => console.log(r));
+      recognizeFace(photo.uri).then(r => console.log(r));
     } else {
       console.log('No faces detected');
     }
   };
+
   // Handle face detection errors
   const handleFaceDetectionError = error => {
     requestPermission().then(r => console.log(r));
@@ -104,11 +133,13 @@ const FaceRecognitionExample = () => {
             handleFacesDetected({faces, camera: cameraRef})
           }
           onFaceDetectionError={handleFaceDetectionError}
+          quality={1} // adjust quality
+          ratio="16:9" // adjust aspect ratio
           faceDetectorSettings={{
             mode: FaceDetector.FaceDetectorMode.fast,
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
             runClassifications: FaceDetector.FaceDetectorClassifications.none,
-            minDetectionInterval: 3000,
+            minDetectionInterval: 10000,
             tracking: true,
           }}>
           <View style={styles.buttonContainer}>
@@ -138,13 +169,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flex: 1,
     backgroundColor: 'transparent',
-    flexDirection: 'row',
     margin: 20,
   },
   button: {
     flex: 0.1,
     alignSelf: 'flex-end',
-    alignItems: 'center',
   },
   text: {
     fontSize: 18,
