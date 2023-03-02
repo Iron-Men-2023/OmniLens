@@ -4,7 +4,14 @@ import * as FileSystem from 'expo-file-system';
 import * as FaceDetector from 'expo-face-detector';
 import {Camera, CameraType} from 'expo-camera';
 import {storage, auth, db} from '../../config/firebaseConfig';
-import {TouchableOpacity, View, StyleSheet, Text, Alert} from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  StyleSheet,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {setImageForUser} from '../../config/DB_Functions/DB_Functions';
 import {GestureObjects as Sentry} from 'react-native-gesture-handler/src/handlers/gestures/gestureObjects';
 import {manipulateAsync} from 'expo-image-manipulator';
@@ -47,9 +54,9 @@ const FaceRecognitionExample = () => {
         setPictureUploading(true);
         const manipulatedImage = await manipulateAsync(
           localUri,
-          [{resize: {width: 1800, height: 2700}}],
+          [{resize: {width: 2000, height: 3000}}],
           {
-            compress: 1,
+            compress: 0.8,
             format: ImageManipulator.SaveFormat.JPEG,
           },
         );
@@ -149,6 +156,12 @@ const FaceRecognitionExample = () => {
           </Text>
         </TouchableOpacity>
       </View>
+      {pictureUploading && (
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#0000ff" />
+          <Text>Uploading image...</Text>
+        </View>
+      )}
       {cameraOn ? (
         <Camera
           style={styles.camera}
@@ -227,6 +240,11 @@ const styles = StyleSheet.create({
     color: 'black',
     fontWeight: 'bold',
     fontSize: 20,
+  },
+  loadingContainer: {
+    flex: 0.1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 export default FaceRecognitionExample;
