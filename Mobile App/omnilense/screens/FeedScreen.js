@@ -51,14 +51,23 @@ function FeedScreen({navigation}) {
     <View style={styles.container}>
       <SearchInputComponent changeText={dynamicSearch} />
       <ScrollView style={styles.scroll}>
-        {searchedRecents.map(user => (
-          <RecentComponent
-            avatar={user.avatarPhotoUrl}
-            name={user.name}
-            navigation={navigation}
-            id={user.uid}
-          />
-        ))}
+        {searchedRecents.length === 0
+          ? recents.map(user => (
+              <RecentComponent
+                avatar={user.avatarPhotoUrl}
+                name={user.name}
+                navigation={navigation}
+                id={user.uid}
+              />
+            ))
+          : searchedRecents.map(user => (
+              <RecentComponent
+                avatar={user.avatarPhotoUrl}
+                name={user.name}
+                navigation={navigation}
+                id={user.uid}
+              />
+            ))}
       </ScrollView>
     </View>
   );
