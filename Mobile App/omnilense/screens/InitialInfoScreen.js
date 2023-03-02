@@ -11,6 +11,8 @@ import {
 } from '../config/DB_Functions/DB_Functions';
 import {auth, storage} from '../config/firebaseConfig';
 import * as Progress from 'react-native-progress';
+import {manipulateAsync} from 'expo-image-manipulator';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 function InitialInfoScreen({navigation}) {
   const [uploaded, setUploaded] = useState(false);
@@ -51,7 +53,15 @@ function InitialInfoScreen({navigation}) {
 
     setUploading(true);
     console.log('Hereee', uri);
-    const response = await fetch(uri);
+    const manipulatedImage = await manipulateAsync(
+      uri,
+      [{resize: {width: 1800, height: 2700}}],
+      {
+        compress: 1,
+        format: ImageManipulator.SaveFormat.JPEG,
+      },
+    );
+    const response = await fetch(manipulatedImage.uri);
     const blob = await response.blob();
 
     const task = storage.ref(path).put(blob);

@@ -29,7 +29,7 @@ class FirebaseImageRecognizer:
         image = cv2.imdecode(image_array, -1)
 
         # Rotate the image
-        image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+        # image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
 
         # Save the image to directory
         save_path = os.path.join("imagesTest", "test3.jpg")

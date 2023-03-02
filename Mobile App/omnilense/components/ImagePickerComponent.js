@@ -12,9 +12,6 @@ export default function ImagePickerComponent({setImageSet, setPhoto}) {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.8,
-      resize: {width: 800, height: 800},
     });
 
     console.log(result);

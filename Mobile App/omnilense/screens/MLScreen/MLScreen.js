@@ -6,6 +6,9 @@ import {Camera, CameraType} from 'expo-camera';
 import {storage, auth, db} from '../../config/firebaseConfig';
 import {TouchableOpacity, View, StyleSheet, Text, Alert} from 'react-native';
 import {setImageForUser} from '../../config/DB_Functions/DB_Functions';
+import {GestureObjects as Sentry} from 'react-native-gesture-handler/src/handlers/gestures/gestureObjects';
+import {manipulateAsync} from 'expo-image-manipulator';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 const FaceRecognitionExample = () => {
   const [model, setModel] = useState(null);
@@ -37,11 +40,21 @@ const FaceRecognitionExample = () => {
   const handleFacesDetected = async ({faces, camera}) => {
     console.log('Faces detected:', faces);
     try {
+      // your code
       async function recognizeFace(imageUri) {
         console.log('imageUri', imageUri);
         const localUri = imageUri;
         setPictureUploading(true);
-        const response = await fetch(localUri);
+        const manipulatedImage = await manipulateAsync(
+          localUri,
+          [{resize: {width: 1800, height: 2700}}],
+          {
+            compress: 1,
+            format: ImageManipulator.SaveFormat.JPEG,
+          },
+        );
+
+        const response = await fetch(manipulatedImage.uri);
         const blob = await response.blob();
         const userId = auth.currentUser.uid;
         const path = `images/ml_images/${userId}.jpg`;
@@ -59,7 +72,6 @@ const FaceRecognitionExample = () => {
           },
           async () => {
             console.log('Upload complete');
-            const uri = await storage.ref(path).getDownloadURL();
             const formData = new FormData();
             formData.append('path', path);
             console.log('formData', formData);
@@ -103,8 +115,8 @@ const FaceRecognitionExample = () => {
       } else {
         console.log('No faces detected');
       }
-    } catch (e) {
-      console.log('Error', e);
+    } catch (error) {
+      console.log('Error in handleFacesDetected', error);
     }
   };
 
@@ -147,11 +159,13 @@ const FaceRecognitionExample = () => {
             handleFacesDetected({faces, camera: cameraRef})
           }
           onFaceDetectionError={handleFaceDetectionError}
-          quality={1} // adjust quality
+          // adjust the maximum number of faces that can be detected
+          // adjust the detection interval
+          // adjust the minimum detection confidence
           faceDetectorSettings={{
-            mode: FaceDetector.FaceDetectorMode.accurate,
-            detectLandmarks: FaceDetector.FaceDetectorLandmarks.all,
-            runClassifications: FaceDetector.FaceDetectorClassifications.all,
+            mode: FaceDetector.FaceDetectorMode.fast,
+            detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
+            runClassifications: FaceDetector.FaceDetectorClassifications.none,
             minDetectionInterval: 5000,
             tracking: true,
           }}>
@@ -210,7 +224,7 @@ const styles = StyleSheet.create({
     flex: 0.1,
   },
   personText: {
-    color: '#fff',
+    color: 'black',
     fontWeight: 'bold',
     fontSize: 20,
   },

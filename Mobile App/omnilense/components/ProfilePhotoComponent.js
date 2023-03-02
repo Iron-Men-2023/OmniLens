@@ -18,8 +18,10 @@ import {
 } from '../config/DB_Functions/DB_Functions';
 import * as Progress from 'react-native-progress';
 import {Asset} from 'expo-asset';
+import {manipulateAsync} from 'expo-image-manipulator';
+import * as ImageManipulator from 'expo-image-manipulator';
 
-const ProfilePhoto = ({imageStyle, photoType, user,viewOnly}) => {
+const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
@@ -64,7 +66,16 @@ const ProfilePhoto = ({imageStyle, photoType, user,viewOnly}) => {
     const path = `images/${photoType}/${userId}-${timestamp}.jpg`;
 
     setUploading(true);
-    const response = await fetch(uri);
+    const manipulatedImage = await manipulateAsync(
+      uri,
+      [{resize: {width: 1800, height: 2700}}],
+      {
+        compress: 1,
+        format: ImageManipulator.SaveFormat.JPEG,
+      },
+    );
+
+    const response = await fetch(manipulatedImage.uri);
     const blob = await response.blob();
 
     const task = storage.ref(path).put(blob);
@@ -98,11 +109,8 @@ const ProfilePhoto = ({imageStyle, photoType, user,viewOnly}) => {
   return (
     <>
       {userImageUrl ? (
-        <TouchableOpacity onPress={!viewOnly? handleChoosePhoto: null}>
-          <Image
-            source={{uri: userImageUrl}}
-            style={imageStyle}
-          />
+        <TouchableOpacity onPress={!viewOnly ? handleChoosePhoto : null}>
+          <Image source={{uri: userImageUrl}} style={imageStyle} />
         </TouchableOpacity>
       ) : (
         <TouchableOpacity onPress={handleChoosePhoto}>
