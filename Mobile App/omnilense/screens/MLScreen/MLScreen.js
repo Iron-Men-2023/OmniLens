@@ -26,6 +26,7 @@ const FaceRecognitionExample = () => {
   const [personIsSet, setPersonIsSet] = useState(false);
   const [cameraOn, setCameraOn] = useState(true);
   const [pictureUploading, setPictureUploading] = useState(false);
+  const [faceLoc, setFaceLoc] = useState(null);
   // Turn on the camera when the component mounts
 
   const turnOffCamera = async () => {
@@ -45,7 +46,23 @@ const FaceRecognitionExample = () => {
 
   // Handle face detection events
   const handleFacesDetected = async ({faces, camera}) => {
-    console.log('Faces detected:', faces);
+    if (faces.length > 0) {
+      console.log('Faces detected:', faces);
+      console.log('Face Bounds:', faces[0].bounds);
+      console.log('Face size:', faces[0].bounds.size);
+      console.log('Face origin:', faces[0].bounds.origin);
+      const faceLocations = [];
+      faceLocations.push(faces[0].bounds.origin.x);
+      faceLocations.push(faces[0].bounds.origin.y);
+      faceLocations.push(faces[0].bounds.size.width);
+      faceLocations.push(faces[0].bounds.size.height);
+      console.log('Face Locations:', faceLocations);
+      setFaceLoc(faceLocations);
+    } else {
+      console.log('No faces detected');
+      setFaceLoc(null);
+      return;
+    }
     try {
       // your code
       async function recognizeFace(imageUri) {
@@ -92,12 +109,15 @@ const FaceRecognitionExample = () => {
               );
               const data = await response.json();
               console.log('data', data);
-              if (data.message === 'No face found') {
+              if (data.message === 'No face found' || !data.predicted_person) {
                 console.log('No face found');
+                setPictureUploading(false);
                 return 'No face found';
               }
               console.log('data.predicted_person', data.predicted_person);
               setPerson(data.predicted_person[0]);
+              // setFaceLoc(faceLoc); // Set the faceLoc state variable
+
               setPersonIsSet(true);
               setPictureUploading(false);
               return data.predicted_person[0];
@@ -116,9 +136,7 @@ const FaceRecognitionExample = () => {
         }
         const photo = await camera.takePictureAsync();
         console.log('Photo taken:');
-        cameraRef.pausePreview();
         recognizeFace(photo.uri).then(r => console.log(r));
-        cameraRef.resumePreview();
       } else {
         console.log('No faces detected');
       }
@@ -145,6 +163,39 @@ const FaceRecognitionExample = () => {
 
   const toggleCamera = () => {
     setCameraOn(prevState => !prevState);
+  };
+
+  const FaceBox = ({faceLoc}) => {
+    console.log('faceLoc', faceLoc);
+    if (!faceLoc) {
+      return null;
+    }
+    const top = faceLoc[0] + 25;
+    const left = faceLoc[1] - 75;
+    console.log('top', top);
+    console.log('left', left);
+    const height = faceLoc[2];
+    const width = faceLoc[3];
+    console.log('height', height);
+    console.log('width', width);
+    try {
+      const styles = StyleSheet.create({
+        faceBox: {
+          position: 'absolute',
+          borderColor: 'red',
+          borderWidth: 2,
+          borderRadius: 10,
+          top: top,
+          left: left,
+          width: width,
+          height: height,
+        },
+      });
+
+      return <View style={styles.faceBox} />;
+    } catch (e) {
+      console.log('Error in FaceBox', e);
+    }
   };
 
   return (
@@ -179,7 +230,7 @@ const FaceRecognitionExample = () => {
             mode: FaceDetector.FaceDetectorMode.fast,
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
             runClassifications: FaceDetector.FaceDetectorClassifications.none,
-            minDetectionInterval: 5000,
+            minDetectionInterval: 1000,
             tracking: true,
           }}>
           <View style={styles.buttonContainer}>
@@ -187,6 +238,7 @@ const FaceRecognitionExample = () => {
               <Text style={styles.text}>Flip Camera</Text>
             </TouchableOpacity>
           </View>
+          {faceLoc && <FaceBox faceLoc={faceLoc} />}
         </Camera>
       ) : (
         <Text>Camera is off</Text>

@@ -14,6 +14,7 @@ import {AntDesign} from '@expo/vector-icons';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
 import {createUser} from '../config/DB_Functions/DB_Functions';
+import * as Google from 'expo-auth-session/providers/google';
 
 function AuthScreen({navigation}) {
   const [email, setEmail] = useState('');
@@ -50,6 +51,30 @@ function AuthScreen({navigation}) {
         setPassword('');
       });
   }
+
+  const signInWithGoogleAsync = async () => {
+    try {
+      const result = Google.useAuthRequest({
+        expoClientId: '',
+        iosClientId: '',
+        androidClientId: '',
+        scopes: ['profile', 'email'],
+      });
+
+      if (result.type === 'success') {
+        // Use result.idToken to authenticate with Firebase
+        const credential = auth.GoogleAuthProvider.credential(
+          result.idToken,
+          result.accessToken,
+        );
+        await auth.signInWithCredential(credential);
+      } else {
+        console.log('Google sign-in was cancelled.');
+      }
+    } catch (e) {
+      console.log('Error with Google sign-in:', e);
+    }
+  };
 
   function signInAnonymously() {
     auth

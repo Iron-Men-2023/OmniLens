@@ -45,4 +45,4 @@ class FirebaseImageRecognizer:
 
         # Print the detected face names, or "No face found" if none were detected
         print(face_names if face_names else "No face found")
-        return face_names if face_names else "No face found"
+        return face_names, face_locations if face_names else "No face found"

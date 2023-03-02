@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, request, jsonify
 from downloadImgAndRec import FirebaseImageRecognizer
 
@@ -11,7 +13,7 @@ def facial_recognition():
     # Get image data from request
     print(request.form)
     path = request.form['path']
-    face_names = recognizer.recognize_faces(path)
+    face_names, faceLoc = recognizer.recognize_faces(path)
 
     if face_names is None:
         return jsonify({'message': 'No face found'})
@@ -21,8 +23,25 @@ def facial_recognition():
         #     # cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 200), 4)
         #     # cv2.putText(frame, name, (x1, y1 - 10), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 2)
         #     # cv2.imshow("frame", frame)
-        print(face_names)
-        return jsonify({'predicted_person': face_names, 'message': 'Face found'})
+        try:
+            print(faceLoc)
+            faceLoc_dict = {}
+            for i in range(len(faceLoc)):
+                faceLoc_dict[i] = faceLoc[i]
+            print(faceLoc_dict)
+            # Create an example dictionary with NumPy arrays as values
+            # Convert the NumPy arrays to nested lists using tolist()
+            data_json = json.dumps(faceLoc[0].tolist())
+
+            # Print the JSON string
+            print(data_json)
+            print(face_names)
+            jsonConv = jsonify({'predicted_person': face_names, 'face_loc': data_json, 'message': 'Face found'})
+            print("Json: ", jsonConv)
+            return jsonConv
+        except Exception as e:
+            print("Error: ", e)
+            return jsonify({'message': 'Error'})
 
 
 @app.route('/api/facial-recognition', methods=['GET'])
