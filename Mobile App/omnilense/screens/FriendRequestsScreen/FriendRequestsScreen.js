@@ -24,7 +24,7 @@ const FriendRequestsScreen = () => {
       .onSnapshot(async doc => {
         const data = doc.data();
         const friendRequestsData = data.friendRequests;
-        console.log(friendRequestsData);
+        console.log('Friends', friendRequestsData);
         try {
           const friendData = await getAllUsersData(friendRequestsData);
           setFriendRequests(friendData);
@@ -35,11 +35,6 @@ const FriendRequestsScreen = () => {
 
     return () => unsubscribe();
   }, []);
-
-  // useEffect(() => {
-  //   // setFriendRequests when friendRequests changes
-  //   setFriendRequests([...friendRequests]);
-  // }, [friendRequests]);
 
   const acceptRequest = async requestId => {
     const currentUser = auth.currentUser;

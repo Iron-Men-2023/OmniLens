@@ -189,5 +189,4 @@ export {
   getAllUsers,
   getUserById,
   getAllUsersData,
-  addRecents,
 };
