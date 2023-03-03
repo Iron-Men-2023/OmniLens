@@ -15,7 +15,7 @@ def facial_recognition():
     path = request.form['path']
     face_names, faceLoc = recognizer.recognize_faces(path)
 
-    if face_names is None:
+    if face_names is None or faceLoc is None:
         return jsonify({'message': 'No face found'})
     else:
         # for face_loc, name in zip(face_locations, face_names):

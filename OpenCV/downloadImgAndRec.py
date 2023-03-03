@@ -5,6 +5,26 @@ import numpy as np
 import firebase_admin
 from firebase_admin import credentials, storage
 import os
+import time
+
+
+def upscale_image(image_path, method):
+    # Load the image
+    image = cv2.imread(image_path)
+
+    # Check if the image was loaded successfully
+    if image is None:
+        raise ValueError(f"Failed to load image: {image_path}")
+
+    # Upscale the image
+    result = cv2.resize(image, None, fx=4, fy=4, interpolation=getattr(cv2, method))
+
+    # Save the image
+    save_path = f"imagesTest/{method}.png"
+    cv2.imwrite(save_path, result)
+    print(f"Saved image to: {save_path}")
+
+    return save_path
 
 
 class FirebaseImageRecognizer:
@@ -12,6 +32,11 @@ class FirebaseImageRecognizer:
         self.cred = credentials.Certificate(credential_path)
         self.app = firebase_admin.initialize_app(self.cred, {'storageBucket': storage_bucket}, name='storage')
         self.bucket = storage.bucket(app=self.app)
+        self.sr = cv2.dnn_superres.DnnSuperResImpl_create()
+        self.sr.readModel("EDSR_x4.pb")
+        self.sr.setModel("edsr", 4)
+        self.sfr = RecognitionHelper()
+        self.sfr.load_images("images")
 
     def recognize_faces(self, image_path):
         blob = self.bucket.blob(image_path)
@@ -25,38 +50,44 @@ class FirebaseImageRecognizer:
         # Convert the bytes object to a numpy array
         image_array = np.asarray(bytearray(image_bytes), dtype=np.uint8)
         image = cv2.imdecode(image_array, -1)
-        image = cv2.resize(image, (0, 0), fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
-        save_path = os.path.join("imagesTest", "14_Ben_DeSollar.png")
+
+        # Save the original image
+        save_path = os.path.join("imagesTest", "test.png")
         cv2.imwrite(save_path, image)
 
-        # Create an SR object
-        sr = cv2.dnn_superres.DnnSuperResImpl_create()
+        # Try all interpolation methods until a face is found or 5 seconds has passed
+        start_time = time.time()
+        elapsed_time = 0
+        while elapsed_time < 5:
+            for method in ["INTER_NEAREST", "INTER_LINEAR", "INTER_CUBIC", "INTER_LANCZOS4"]:
+                try:
+                    # Upscale the image using the current interpolation method
+                    upscaled_image_path = upscale_image(save_path, method)
 
-        # Read image
-        image = cv2.imread(save_path)
+                    # Load the upscaled image from the file
+                    upscaled_image = cv2.imread(upscaled_image_path)
 
-        # Read the desired model
-        path = "EDSR_x4.pb"
-        sr.readModel(path)
+                    # Initialize the face recognition model and detect known faces in the image
+                    sfr = RecognitionHelper()
+                    sfr.load_images("images")
+                    face_locations, face_names = sfr.detect_known_faces(upscaled_image)
 
-        # Set the desired model and scale to get correct pre- and post-processing
-        sr.setModel("edsr", 3)
+                    # Print the detected face names, or "No face found" if none were detected
+                    print(face_names if face_names else f"No face found using {method} interpolation")
 
-        # Upscale the image
-        result = sr.upsample(image)
+                    # Return the detected face names and locations if at least one face was found
+                    if face_names:
+                        print(f"Found face using {method} interpolation")
+                        print(face_names)
+                        return face_names, face_locations
+                except ValueError as e:
+                    # Continue to the next iteration if the image could not be loaded
+                    print(e)
+                    continue
 
-        # Save the image
-        save_path = os.path.join("imagesTest", "new_Ben_DeSollar.png")
-        cv2.imwrite(save_path, result)
+            # Update the elapsed time
+            elapsed_time = time.time() - start_time
 
-        # Load the image from the directory
-        image = cv2.imread(save_path)
-
-        # Initialize the face recognition model and detect known faces in the image
-        sfr = RecognitionHelper()
-        sfr.load_images("images")
-        face_locations, face_names = sfr.detect_known_faces(image)
-
-        # Print the detected face names, or "No face found" if none were detected
-        print(face_names if face_names else "No face found")
-        return face_names, face_locations if face_names else "No face found"
+        # Return "No face found" if no face was found after trying all methods for 5 seconds
+        print("No face found")
+        return "No face found", None
