@@ -6,6 +6,7 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "jsEngine": "hermes",
     "plugins": [
       [
         "expo-image-picker",
@@ -43,6 +44,18 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "hooks": {
+      "postPublish": [
+        {
+          "file": "sentry-expo/upload-sourcemaps",
+          "config": {
+            "organization": "university-of-iowa-oi",
+            "project": "react-native",
+            "authToken": "7227438c63014d65ba2f985e246b0a6e91f5ae83d91349c7819e0cd90feb2090"
+          }
+        }
+      ]
     }
   }
 }
