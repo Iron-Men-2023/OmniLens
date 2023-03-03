@@ -12,6 +12,7 @@ import {fetchUserData} from '../../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
 import dimensions from '../../config/DeviceSpecifications';
 import FriendRequestsScreen from '../FriendRequestsScreen';
+import BoxComponent from "../BoxComponent";
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -77,8 +78,14 @@ const ProfilePage = () => {
             />
             {/* Placeholder for profile picture */}
 
-            <Text style={styles.name}>Hi</Text>
+            <Text style={styles.name}>{user.name}</Text>
+          </View>
+          <View style={styles.header2}>
             <Text style={styles.bio}>Bio: {user.bio}</Text>
+          </View>
+          <View style={styles.box}>
+            <BoxComponent title={"Friends"}/>
+            <BoxComponent title={"Daily views"}/>
           </View>
           <View style={styles.stats}>
             {/* Placeholder for friends list */}
@@ -104,13 +111,24 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center',
+  },
+  row: {
+    flexDirection: "row"
   },
   header: {
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    borderBottomWidth: 1,
+    borderBottomWidth: 20,
+    borderBottomColor: 'lightgray',
+    paddingBottom: 10,
+    flex: 1,
+  },
+  header2: {
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+    borderBottomWidth: 2,
     borderBottomColor: 'lightgray',
     paddingBottom: 10,
     flex: 1,
@@ -118,7 +136,7 @@ const styles = StyleSheet.create({
   coverPhoto: {
     padding: 10,
     width: dimensions.width,
-    height: 300,
+    height: 225,
   },
   avatar: {
     width: 185,
@@ -133,9 +151,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#000000',
     fontWeight: '600',
-    marginTop: 70,
     alignSelf: 'flex-start',
     marginLeft: 10,
+
   },
   bio: {
     fontSize: 16,
@@ -144,6 +162,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'flex-start',
     marginLeft: 10,
+
+
+
+  },
+  box: {
+    flexDirection: "row",
+    alignItems: "stretch"
   },
   stats: {
     marginTop: 20,

@@ -4,7 +4,7 @@ import dimensions from "../config/DeviceSpecifications"
 import HorizontalLineComponent from "./HorizontalLineComponent";
 import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
 import NotificationTextComponent from "./NotificationTextComponent";
-
+//()=>Linking.openURL('https://www.instagram.com/rstarkid73/')
 function RecentComponent({name,avatar,navigation,id}) {
     const IconSizes = 30
     const [connected, setConnected] = useState(false);
