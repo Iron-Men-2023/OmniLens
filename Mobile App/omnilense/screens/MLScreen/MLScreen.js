@@ -36,10 +36,10 @@ const FaceRecognitionExample = () => {
     setCameraRef(ref);
   };
 
-  const debouncedRecognizeFace = useCallback(
-    debounce(recognizeFace, 10000, {leading: true, trailing: false}),
-    [],
-  );
+  // const debouncedRecognizeFace = useCallback(
+  //   debounce(recognizeFace, 3000, {leading: true, trailing: false}),
+  //   [],
+  // );
 
   // Handle face detection events
   const handleFacesDetected = async ({faces, camera}) => {
@@ -55,20 +55,14 @@ const FaceRecognitionExample = () => {
       return;
     }
     try {
-      if (Date.now() - lastUploadTime > 10000) {
-        setLastUploadTime(Date.now());
-
-        if (faces.length > 0) {
-          if (pictureUploading) {
-            return;
-          }
-          const photo = await camera.takePictureAsync();
-          console.log('Photo taken:');
-          debouncedRecognizeFace(photo.uri).then(r => console.log(r));
-        } else {
+      if (faces.length > 0) {
+        if (pictureUploading) {
+          console.log('Picture is uploading');
+          return;
         }
-      } else {
-        console.log('Uploading is still on cooldown');
+        const photo = await camera.takePictureAsync();
+        console.log('Photo taken:');
+        recognizeFace(photo.uri).then(r => console.log(r));
       }
     } catch (error) {
       console.log('Error in handleFacesDetected', error);
@@ -78,11 +72,12 @@ const FaceRecognitionExample = () => {
   async function recognizeFace(imageUri) {
     const localUri = imageUri;
     setPictureUploading(true);
+    setPerson('Loading...');
     const manipulatedImage = await manipulateAsync(
       localUri,
-      [{resize: {width: 100, height: 100}}],
+      [{resize: {width: 400, height: 500}}],
       {
-        compress: 0.5,
+        compress: 1,
         format: ImageManipulator.SaveFormat.JPEG,
       },
     );
@@ -129,7 +124,7 @@ const FaceRecognitionExample = () => {
       },
       () => {
         // Upload completed successfully, now we can get the download URL
-        setPictureUploading(false);
+        console.log('Upload completed');
 
         //perform your task
       },
@@ -145,8 +140,14 @@ const FaceRecognitionExample = () => {
         },
       );
       const data = await response.json();
-      if (data.message === 'No face found' || !data.predicted_person) {
+      if (
+        data.message === 'No face found' ||
+        !data.predicted_person ||
+        data.message === 'Error'
+      ) {
+        console.log(data.message);
         setPictureUploading(false);
+        setPerson('Face Not Found');
         return 'No face found';
       }
       const str = data.predicted_person[0];
@@ -158,9 +159,11 @@ const FaceRecognitionExample = () => {
         setPerson(name);
       }
       setPersonIsSet(true);
+      setPictureUploading(false);
       return data.predicted_person[0];
     } catch (e) {
       console.log('No person found OR Need to start server', e);
+      setPictureUploading(false);
     }
     console.log('No person found OR Need to start server');
     return 'No person found OR Need to start server';
@@ -256,7 +259,7 @@ const FaceRecognitionExample = () => {
             mode: FaceDetector.FaceDetectorMode.fast,
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
             runClassifications: FaceDetector.FaceDetectorClassifications.none,
-            minDetectionInterval: 5000,
+            minDetectionInterval: 1000,
             tracking: true,
           }}>
           <View style={styles.buttonContainer}>
