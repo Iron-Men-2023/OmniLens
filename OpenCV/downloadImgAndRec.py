@@ -3,7 +3,8 @@ import cv2
 from simple_facerec import RecognitionHelper
 import numpy as np
 import firebase_admin
-from firebase_admin import credentials, storage
+from firebase_admin import credentials, storage, firestore
+
 import os
 import time
 
@@ -32,11 +33,46 @@ class FirebaseImageRecognizer:
         self.cred = credentials.Certificate(credential_path)
         self.app = firebase_admin.initialize_app(self.cred, {'storageBucket': storage_bucket}, name='storage')
         self.bucket = storage.bucket(app=self.app)
+        self.db = firestore.client(app=self.app)
+        self.get_all_images()
         self.sr = cv2.dnn_superres.DnnSuperResImpl_create()
         self.sr.readModel("EDSR_x4.pb")
         self.sr.setModel("edsr", 4)
         self.sfr = RecognitionHelper()
         self.sfr.load_images("images")
+
+    def get_all_images(self):
+        prefix = "images/Avatar"
+        blobs = self.bucket.list_blobs(prefix=prefix)
+        for blob in blobs:
+            print(blob.name)
+            start_index = blob.name.index("/")
+            end_index = blob.name.index("-")
+            result = blob.name[start_index:end_index]
+            name = result.split("/")[2]
+            print(name)
+            # Get the user associated with the image name from the Firebase database
+            user_ref = self.db.collection('users').document(name).get()
+            if not user_ref.exists:
+                continue
+            user = user_ref.to_dict()['name']
+            print('user', user)
+            user = user.replace(" ", "_")
+
+            # Download the image as a bytes object
+            image_bytes = blob.download_as_bytes()
+
+            image_array = np.asarray(bytearray(image_bytes), dtype=np.uint8)
+            image = cv2.imdecode(image_array, -1)
+
+            # Save the original image with the user's name as the path
+            save_path = os.path.join("imagesTest", f"{user}.png")
+            print(save_path)
+            if not os.path.exists(save_path):
+                cv2.imwrite(save_path, image)
+            else:
+                print("File already exists")
+        return blobs
 
     def recognize_faces(self, image_path):
         blob = self.bucket.blob(image_path)
