@@ -24,16 +24,30 @@ class FirebaseImageRecognizer:
 
         # Convert the bytes object to a numpy array
         image_array = np.asarray(bytearray(image_bytes), dtype=np.uint8)
-
-        # Decode the numpy array as an image
         image = cv2.imdecode(image_array, -1)
-
-        # Rotate the image
-        # image = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
-
-        # Save the image to directory
-        save_path = os.path.join("imagesTest", "test3.jpg")
+        image = cv2.resize(image, (0, 0), fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+        save_path = os.path.join("imagesTest", "14_Ben_DeSollar.png")
         cv2.imwrite(save_path, image)
+
+        # Create an SR object
+        sr = cv2.dnn_superres.DnnSuperResImpl_create()
+
+        # Read image
+        image = cv2.imread(save_path)
+
+        # Read the desired model
+        path = "EDSR_x4.pb"
+        sr.readModel(path)
+
+        # Set the desired model and scale to get correct pre- and post-processing
+        sr.setModel("edsr", 3)
+
+        # Upscale the image
+        result = sr.upsample(image)
+
+        # Save the image
+        save_path = os.path.join("imagesTest", "new_Ben_DeSollar.png")
+        cv2.imwrite(save_path, result)
 
         # Load the image from the directory
         image = cv2.imread(save_path)

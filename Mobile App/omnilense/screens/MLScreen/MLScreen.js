@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import firebase from 'firebase/app';
 import * as FileSystem from 'expo-file-system';
 import * as FaceDetector from 'expo-face-detector';
@@ -16,9 +16,10 @@ import {setImageForUser} from '../../config/DB_Functions/DB_Functions';
 import {GestureObjects as Sentry} from 'react-native-gesture-handler/src/handlers/gestures/gestureObjects';
 import {manipulateAsync} from 'expo-image-manipulator';
 import * as ImageManipulator from 'expo-image-manipulator';
+import {debounce} from 'lodash';
+import {uploadBytesResumable} from 'firebase/storage';
 
 const FaceRecognitionExample = () => {
-  const [model, setModel] = useState(null);
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [cameraRef, setCameraRef] = useState(null);
@@ -27,123 +28,143 @@ const FaceRecognitionExample = () => {
   const [cameraOn, setCameraOn] = useState(true);
   const [pictureUploading, setPictureUploading] = useState(false);
   const [faceLoc, setFaceLoc] = useState(null);
+  const [lastUploadTime, setLastUploadTime] = useState(null);
   // Turn on the camera when the component mounts
 
-  const turnOffCamera = async () => {
-    console.log('Turning off camera');
-
-    setCameraOn(false);
-    console.log('Camera is off');
-    cameraRef.stopRecording();
-    console.log('Camera recording is stopped');
-    cameraRef.pausePreview();
-    console.log('Camera preview is paused');
-  };
   // Set the cameraRef state variable when the camera is ready
   const handleCameraReady = ref => {
     setCameraRef(ref);
   };
 
+  const debouncedRecognizeFace = useCallback(
+    debounce(recognizeFace, 10000, {leading: true, trailing: false}),
+    [],
+  );
+
   // Handle face detection events
   const handleFacesDetected = async ({faces, camera}) => {
     if (faces.length > 0) {
-      console.log('Faces detected:', faces);
-      console.log('Face Bounds:', faces[0].bounds);
-      console.log('Face size:', faces[0].bounds.size);
-      console.log('Face origin:', faces[0].bounds.origin);
       const faceLocations = [];
       faceLocations.push(faces[0].bounds.origin.x);
       faceLocations.push(faces[0].bounds.origin.y);
       faceLocations.push(faces[0].bounds.size.width);
       faceLocations.push(faces[0].bounds.size.height);
-      console.log('Face Locations:', faceLocations);
       setFaceLoc(faceLocations);
     } else {
-      console.log('No faces detected');
       setFaceLoc(null);
       return;
     }
     try {
-      // your code
-      async function recognizeFace(imageUri) {
-        console.log('imageUri', imageUri);
-        const localUri = imageUri;
-        setPictureUploading(true);
-        const manipulatedImage = await manipulateAsync(
-          localUri,
-          [{resize: {width: 2000, height: 3000}}],
-          {
-            compress: 0.8,
-            format: ImageManipulator.SaveFormat.JPEG,
-          },
-        );
+      if (Date.now() - lastUploadTime > 10000) {
+        setLastUploadTime(Date.now());
 
-        const response = await fetch(manipulatedImage.uri);
-        const blob = await response.blob();
-        const userId = auth.currentUser.uid;
-        const path = `images/ml_images/${userId}.jpg`;
-        const task = storage.ref(path).put(blob);
-        task.on(
-          'state_changed',
-          snapshot => {
-            const progress =
-              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log(`Upload is ${progress}% done`);
-          },
-          error => {
-            console.log(error);
-            Alert.alert('An error occurred while uploading the photo.');
-          },
-          async () => {
-            console.log('Upload complete');
-            const formData = new FormData();
-            formData.append('path', path);
-            console.log('formData', formData);
-            try {
-              const response = await fetch(
-                'http://192.168.0.203:8000/api/facial-recognition',
-                {
-                  method: 'POST',
-                  body: formData,
-                },
-              );
-              const data = await response.json();
-              console.log('data', data);
-              if (data.message === 'No face found' || !data.predicted_person) {
-                console.log('No face found');
-                setPictureUploading(false);
-                return 'No face found';
-              }
-              console.log('data.predicted_person', data.predicted_person);
-              setPerson(data.predicted_person[0]);
-              // setFaceLoc(faceLoc); // Set the faceLoc state variable
-
-              setPersonIsSet(true);
-              setPictureUploading(false);
-              return data.predicted_person[0];
-            } catch (e) {
-              console.log('No person found OR Need to start server', e);
-            }
-            return 'No person found OR Need to start server';
-          },
-        );
-      }
-
-      if (faces.length > 0) {
-        if (pictureUploading) {
-          console.log('Picture is uploading');
-          return;
+        if (faces.length > 0) {
+          if (pictureUploading) {
+            return;
+          }
+          const photo = await camera.takePictureAsync();
+          console.log('Photo taken:');
+          debouncedRecognizeFace(photo.uri).then(r => console.log(r));
+        } else {
         }
-        const photo = await camera.takePictureAsync();
-        console.log('Photo taken:');
-        recognizeFace(photo.uri).then(r => console.log(r));
       } else {
-        console.log('No faces detected');
+        console.log('Uploading is still on cooldown');
       }
     } catch (error) {
       console.log('Error in handleFacesDetected', error);
     }
   };
+
+  async function recognizeFace(imageUri) {
+    const localUri = imageUri;
+    setPictureUploading(true);
+    const manipulatedImage = await manipulateAsync(
+      localUri,
+      [{resize: {width: 100, height: 100}}],
+      {
+        compress: 0.5,
+        format: ImageManipulator.SaveFormat.JPEG,
+      },
+    );
+
+    const response = await fetch(manipulatedImage.uri);
+    const blob = await response.blob();
+    const userId = auth.currentUser.uid;
+    const path = `images/ml_images/${userId}.jpg`;
+    const storageRef = storage.ref(path);
+    console.log('uploading image');
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+    // Listen for state changes, errors, and completion of the upload.
+    uploadTask.on(
+      'state_changed',
+      snapshot => {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+        }
+      },
+      error => {
+        this.setState({isLoading: false});
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/unauthorized':
+            console.log("User doesn't have permission to access the object");
+            break;
+          case 'storage/canceled':
+            console.log('User canceled the upload');
+            break;
+          case 'storage/unknown':
+            console.log('Unknown error occurred, inspect error.serverResponse');
+            break;
+        }
+      },
+      () => {
+        // Upload completed successfully, now we can get the download URL
+        setPictureUploading(false);
+
+        //perform your task
+      },
+    );
+    const formData = new FormData();
+    formData.append('path', path);
+    try {
+      const response = await fetch(
+        'http://192.168.0.203:8000/api/facial-recognition',
+        {
+          method: 'POST',
+          body: formData,
+        },
+      );
+      const data = await response.json();
+      if (data.message === 'No face found' || !data.predicted_person) {
+        setPictureUploading(false);
+        return 'No face found';
+      }
+      const str = data.predicted_person[0];
+      if (str === 'Unknown') {
+        setPictureUploading(false);
+        setPerson(str);
+      } else {
+        const name = str.split('_').slice(1).join(' ');
+        setPerson(name);
+      }
+      setPersonIsSet(true);
+      return data.predicted_person[0];
+    } catch (e) {
+      console.log('No person found OR Need to start server', e);
+    }
+    console.log('No person found OR Need to start server');
+    return 'No person found OR Need to start server';
+  }
 
   // Handle face detection errors
   const handleFaceDetectionError = error => {
@@ -166,18 +187,13 @@ const FaceRecognitionExample = () => {
   };
 
   const FaceBox = ({faceLoc}) => {
-    console.log('faceLoc', faceLoc);
     if (!faceLoc) {
       return null;
     }
     const top = faceLoc[0] + 25;
     const left = faceLoc[1] - 75;
-    console.log('top', top);
-    console.log('left', left);
     const height = faceLoc[2];
     const width = faceLoc[3];
-    console.log('height', height);
-    console.log('width', width);
     try {
       const styles = StyleSheet.create({
         faceBox: {
@@ -190,9 +206,22 @@ const FaceRecognitionExample = () => {
           width: width,
           height: height,
         },
+        nameText: {
+          position: 'absolute',
+          bottom: -30,
+          right: -20,
+          color: 'red',
+          padding: 5,
+          borderRadius: 5,
+          fontSize: 20,
+        },
       });
 
-      return <View style={styles.faceBox} />;
+      return (
+        <View style={styles.faceBox}>
+          {personIsSet && <Text style={styles.nameText}>{person}</Text>}
+        </View>
+      );
     } catch (e) {
       console.log('Error in FaceBox', e);
     }
@@ -223,14 +252,11 @@ const FaceRecognitionExample = () => {
             handleFacesDetected({faces, camera: cameraRef})
           }
           onFaceDetectionError={handleFaceDetectionError}
-          // adjust the maximum number of faces that can be detected
-          // adjust the detection interval
-          // adjust the minimum detection confidence
           faceDetectorSettings={{
             mode: FaceDetector.FaceDetectorMode.fast,
             detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
             runClassifications: FaceDetector.FaceDetectorClassifications.none,
-            minDetectionInterval: 1000,
+            minDetectionInterval: 5000,
             tracking: true,
           }}>
           <View style={styles.buttonContainer}>
