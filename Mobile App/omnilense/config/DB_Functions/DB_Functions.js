@@ -127,6 +127,31 @@ async function updateInterests(interests) {
   });
 }
 
+async function updateRecents(recentId) {
+  const user = auth.currentUser;
+  const userRef = db.collection('users').doc(user.uid);
+
+  // Get the current interests array from the document
+  const doc = await userRef.get();
+  let currentRecents = doc.data().recents || [];
+
+  // Check if the new interest is already in the array
+  const existingIndex = currentRecents.findIndex(int => int === recentId);
+
+  // If the new interest is already in the array, remove it from its current position
+  if (existingIndex !== -1) {
+    currentRecents.splice(existingIndex, 1);
+  }
+
+  // Add the new interest to the beginning of the array
+  currentRecents = [recentId, ...currentRecents.slice(0, 10)];
+  console.log('currentRecents', currentRecents);
+  // Update the document with the updated interests array
+  return userRef.update({
+    recents: currentRecents,
+  });
+}
+
 async function setImageForUser(user, photo, type) {
   if (!user) {
     return;
@@ -214,6 +239,20 @@ async function addSocialMediaProfiles() {
     });
 }
 
+async function getUserByName(name) {
+  const users = [];
+  const snapshot = await db.collection('users').get(); // retrieve all documents from 'users'
+  let userData = null;
+  await snapshot.forEach(doc => {
+    users.push(doc.data());
+    if (doc.data().name === name) {
+      userData = doc.data();
+      return userData;
+    }
+  });
+  return userData;
+}
+
 export {
   fetchUserData,
   createUser,
@@ -224,4 +263,6 @@ export {
   getAllUsers,
   getUserById,
   getAllUsersData,
+  getUserByName,
+  updateRecents,
 };

@@ -12,7 +12,13 @@ import {
   Alert,
   ActivityIndicator,
 } from 'react-native';
-import {setImageForUser} from '../../config/DB_Functions/DB_Functions';
+import {
+  getUserByName,
+  getUserNameById,
+  setImageForUser,
+  updateInterests,
+  updateRecents,
+} from '../../config/DB_Functions/DB_Functions';
 import {GestureObjects as Sentry} from 'react-native-gesture-handler/src/handlers/gestures/gestureObjects';
 import {manipulateAsync} from 'expo-image-manipulator';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -28,7 +34,7 @@ const FaceRecognitionExample = () => {
   const [cameraOn, setCameraOn] = useState(true);
   const [pictureUploading, setPictureUploading] = useState(false);
   const [faceLoc, setFaceLoc] = useState(null);
-  const [lastUploadTime, setLastUploadTime] = useState(null);
+  const [capturePressed, setCapturePressed] = useState(false);
   // Turn on the camera when the component mounts
 
   // Set the cameraRef state variable when the camera is ready
@@ -58,6 +64,9 @@ const FaceRecognitionExample = () => {
       if (faces.length > 0) {
         if (pictureUploading) {
           console.log('Picture is uploading');
+          return;
+        }
+        if (!capturePressed) {
           return;
         }
         const photo = await camera.takePictureAsync();
@@ -157,6 +166,12 @@ const FaceRecognitionExample = () => {
       } else {
         const name = str.split('_').slice(1).join(' ');
         setPerson(name);
+        const userByNameId = await getUserByName(name);
+        console.log('userByNameId', userByNameId);
+        if (userByNameId) {
+          console.log('Updating Interests');
+          await updateRecents(userByNameId.uid);
+        }
       }
       setPersonIsSet(true);
       setPictureUploading(false);
@@ -183,6 +198,29 @@ const FaceRecognitionExample = () => {
 
   const toggleCamera = () => {
     setCameraOn(prevState => !prevState);
+  };
+
+  const CaptureButton = () => {
+    const handlePressIn = () => {
+      setCapturePressed(true);
+    };
+
+    const handlePressOut = () => {
+      setCapturePressed(false);
+    };
+
+    return (
+      <TouchableOpacity
+        style={styles.captureButton}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}>
+        {capturePressed ? (
+          <Text style={styles.captureButtonText}>Stop Capture</Text>
+        ) : (
+          <Text style={styles.captureButtonText}>Capture</Text>
+        )}
+      </TouchableOpacity>
+    );
   };
 
   const FaceBox = ({faceLoc}) => {
@@ -263,6 +301,7 @@ const FaceRecognitionExample = () => {
               <Text style={styles.text}>Flip Camera</Text>
             </TouchableOpacity>
           </View>
+          <CaptureButton />
           {faceLoc && <FaceBox faceLoc={faceLoc} />}
         </Camera>
       ) : (
@@ -325,6 +364,17 @@ const styles = StyleSheet.create({
     flex: 0.1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  captureButton: {
+    backgroundColor: '#333',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  captureButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
   },
 });
 export default FaceRecognitionExample;

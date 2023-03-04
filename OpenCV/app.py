@@ -6,11 +6,13 @@ from downloadImgAndRec import FirebaseImageRecognizer
 app = Flask(__name__)
 recognizer = FirebaseImageRecognizer("omnilens-d5745-firebase-adminsdk-rorof-df461ea39d.json",
                                      "omnilens-d5745.appspot.com")
+recognizer.get_all_images()
 
 
 @app.route('/api/facial-recognition', methods=['POST'])
 def facial_recognition():
     # Get image data from request
+    recognizer.get_all_images()
     print(request.form)
     path = request.form['path']
     face_names, faceLoc = recognizer.recognize_faces(path)
@@ -18,23 +20,14 @@ def facial_recognition():
     if face_names is None or faceLoc is None:
         return jsonify({'message': 'No face found'})
     else:
-        # for face_loc, name in zip(face_locations, face_names):
-        #     y1, x2, y2, x1 = face_loc[0], face_loc[1], face_loc[2], face_loc[3]
-        #     # cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 0, 200), 4)
-        #     # cv2.putText(frame, name, (x1, y1 - 10), cv2.FONT_HERSHEY_DUPLEX, 1, (0, 0, 255), 2)
-        #     # cv2.imshow("frame", frame)
         try:
-            print(faceLoc)
             faceLoc_dict = {}
             for i in range(len(faceLoc)):
                 faceLoc_dict[i] = faceLoc[i]
-            print(faceLoc_dict)
-            # Create an example dictionary with NumPy arrays as values
             # Convert the NumPy arrays to nested lists using tolist()
             data_json = json.dumps(faceLoc[0].tolist())
 
             # Print the JSON string
-            print(data_json)
             print(face_names)
             jsonConv = jsonify({'predicted_person': face_names, 'face_loc': data_json, 'message': 'Face found'})
             print("Json: ", jsonConv)
