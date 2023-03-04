@@ -176,10 +176,6 @@ const FaceRecognitionExample = () => {
   };
 
   function toggleCameraType() {
-    if (pictureUploading) {
-      console.log('Picture is uploading');
-      return;
-    }
     setType(current =>
       current === CameraType.back ? CameraType.front : CameraType.back,
     );
@@ -288,6 +284,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     alignItems: 'center',
+    borderWidth: 8,
+    borderColor: 'grey',
   },
   buttonContainer: {
     flex: 1,
@@ -309,6 +307,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#333',
     padding: 10,
     borderRadius: 5,
+    alignItems: 'center',
   },
   toggleText: {
     color: '#fff',

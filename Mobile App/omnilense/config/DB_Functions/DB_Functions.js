@@ -131,16 +131,21 @@ async function setImageForUser(user, photo, type) {
   if (!user) {
     return;
   }
+  console.log('photo', photo);
+  console.log('type', type);
   if (type === 'Avatar') {
+    console.log('avatar');
     await db.collection('users').doc(user.uid).update({
       avatarPhotoUrl: photo,
     });
     return;
+  } else if (type === 'Cover') {
+    console.log('cover');
+    await db.collection('users').doc(user.uid).update({
+      coverPhotoUrl: photo,
+    });
+    return;
   }
-  await db.collection('users').doc(user.uid).update({
-    coverPhotoUrl: photo,
-  });
-  return;
 }
 
 async function getAllUsersData(users) {

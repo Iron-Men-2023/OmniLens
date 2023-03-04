@@ -34,7 +34,6 @@ class FirebaseImageRecognizer:
         self.app = firebase_admin.initialize_app(self.cred, {'storageBucket': storage_bucket}, name='storage')
         self.bucket = storage.bucket(app=self.app)
         self.db = firestore.client(app=self.app)
-        self.get_all_images()
         self.sr = cv2.dnn_superres.DnnSuperResImpl_create()
         self.sr.readModel("EDSR_x4.pb")
         self.sr.setModel("edsr", 4)
@@ -45,12 +44,12 @@ class FirebaseImageRecognizer:
         prefix = "images/Avatar"
         blobs = self.bucket.list_blobs(prefix=prefix)
         for blob in blobs:
-            print(blob.name)
+            print("Blob name: ", blob.name)
             start_index = blob.name.index("/")
-            end_index = blob.name.index("-")
+            end_index = blob.name.index(".")
             result = blob.name[start_index:end_index]
             name = result.split("/")[2]
-            print(name)
+            print('name', name)
             # Get the user associated with the image name from the Firebase database
             user_ref = self.db.collection('users').document(name).get()
             if not user_ref.exists:

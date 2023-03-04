@@ -17,7 +17,6 @@ import {
   setImageForUser,
 } from '../config/DB_Functions/DB_Functions';
 import * as Progress from 'react-native-progress';
-import {Asset} from 'expo-asset';
 import {manipulateAsync} from 'expo-image-manipulator';
 import * as ImageManipulator from 'expo-image-manipulator';
 import {uploadBytesResumable} from 'firebase/storage';
@@ -29,8 +28,10 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
   const [uploadPhoto, setUploadPhoto] = useState(false);
   const [userImageUrl, setUserImageUrl] = useState(() => {
     if (photoType === 'Avatar') {
+      console.log('user.avatarPhotoUrl', user.avatarPhotoUrl);
       return user.avatarPhotoUrl;
     } else if (photoType === 'Cover') {
+      console.log('user.coverPhotoUrl', user.coverPhotoUrl);
       return user.coverPhotoUrl;
     }
   });
@@ -56,6 +57,7 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
   };
 
   const uploadImage = async () => {
+    console.log('Photo Type', photoType);
     setUploadPhoto(false);
     const {uri} = image;
     const userId = auth.currentUser.uid;
@@ -116,7 +118,9 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
         // Upload completed successfully, now we can get the download URL
         const url = await storageRef.getDownloadURL();
         console.log('url', url);
-        await setImageForUser(user, url, 'Avatar');
+        console.log('user is being set');
+        await setImageForUser(user, url, photoType);
+        console.log('user is set');
         setImage(null);
         setUserImageUrl(url);
         Alert.alert(
