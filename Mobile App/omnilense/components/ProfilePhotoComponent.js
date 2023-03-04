@@ -45,12 +45,9 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
     };
     ImagePicker.launchImageLibraryAsync(options)
       .then(response => {
-        console.log('response', response);
         if (response.canceled) {
-          console.log('User cancelled image picker');
         } else {
           const source = {uri: response.assets[0].uri};
-          console.log('Source is', source);
           setImage(source);
           setUploadPhoto(true);
         }
