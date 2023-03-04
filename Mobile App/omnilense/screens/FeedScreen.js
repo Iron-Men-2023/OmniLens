@@ -21,7 +21,6 @@ function FeedScreen({navigation}) {
   function dynamicSearch(text) {
     setSearchText(text);
     setSearchedRecents(recents.filter(element => element.name.includes(text)));
-    console.log(searchedRecents, 'asdadsadasdas');
   }
 
   useEffect(() => {
@@ -30,21 +29,18 @@ function FeedScreen({navigation}) {
         //console.log('user data: ', r.userDoc);
         setUser(r.userDoc);
         setUserSet(true);
-        console.log('recents: ', r.userDoc.recents);
         for (let id in user.recents) {
           getUserById(user.recents[id]).then(a => {
-            console.log('recendassts: ', a.userDoc.email);
             if (!emailsRef.current.includes(a.userDoc.email)) {
               setRecents([a.userDoc, ...recentsRef.current]);
               // recentsRef.current = recents
               setEmails([...emailsRef.current, a.userDoc.email]);
               // emailsRef
             }
-            console.log('listt', recentsRef, emailsRef.current);
           });
         }
       })
-      .catch(e => console.log('es1', e));
+      .catch(e => console.log('', e));
   }, [userSet]);
 
   return (

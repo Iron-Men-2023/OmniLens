@@ -15,7 +15,6 @@ function RecentComponent({name,avatar,navigation,id}) {
     urlRef.current=avatar
     async function displayImage(){
         urlRef.current = await avatar.getDownloadURL()
-        console.log("THHH",urlRef.current)
     }
     function handleCheckPress(){
         setConnected(!connected)

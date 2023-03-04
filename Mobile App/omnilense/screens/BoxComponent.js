@@ -1,16 +1,18 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View,Pressable} from "react-native";
 import dimensions from "../config/DeviceSpecifications";
+import {purple} from "@mui/material/colors";
+import {getUserById} from "../config/DB_Functions/DB_Functions";
 
 //()=>Linking.openURL('https://www.instagram.com/rstarkid73/')
-function BoxComponent({title}) {
+function BoxComponent({title,friend}) {
 
     return(
         <View>
             <Text style={styles.title}>{title}</Text>
 
             <View style={styles.container}>
-
+                <Image  style={styles.image} source={{ uri: friend}}/>
             </View>
 
         </View>
@@ -29,9 +31,15 @@ const styles = StyleSheet.create({
     title: {
         marginLeft: dimensions.width*.12,
         fontWeight: '600',
-        fontSize: 22,
-        borderBottomColor: 'lightgray',
-        borderBottomWidth: 2,
+        fontSize: 18,
+        fontStyle: "italic",
+        color: "#4c00ab"
+    },
+    image: {
+        width: "100%",
+        height: "100%",
+        borderRadius: 5,
+
     }
 })
 export default BoxComponent;
