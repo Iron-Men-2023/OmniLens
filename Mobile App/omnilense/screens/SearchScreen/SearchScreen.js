@@ -11,6 +11,7 @@ import {
 import {auth, storage, db, firebaseApp} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
 import SearchInputComponent from '../../components/SearchInputComponent';
+import {sendFriendRequest} from '../../config/DB_Functions/DB_Functions';
 
 const FriendsPage = ({navigation}) => {
   const [users, setUsers] = useState([]);
@@ -69,19 +70,6 @@ const FriendsPage = ({navigation}) => {
         </TouchableOpacity>
       );
     }
-  };
-
-  const sendFriendRequest = userData => {
-    const currentUser = auth.currentUser;
-    db.collection('users')
-      .doc(userData.uid)
-      .update({
-        friendRequests: firebase.firestore.FieldValue.arrayUnion(
-          currentUser.uid,
-        ),
-      })
-      .then(r => console.log('Friend request sent successfully!'))
-      .catch(e => console.error('Error sending friend request:', e));
   };
 
   return (

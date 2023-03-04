@@ -253,6 +253,38 @@ async function getUserByName(name) {
   return userData;
 }
 
+async function sendFriendRequest(userData) {
+  const currentUser = auth.currentUser;
+  // Check if they are already friends
+  const userRef = db.collection('users').doc(currentUser.uid);
+  const doc = await userRef.get();
+  let currentFriends = doc.data().friends || [];
+  const existingIndex = currentFriends.findIndex(int => int === userData.uid);
+  if (existingIndex !== -1) {
+    console.log('You are already friends');
+    return;
+  }
+  // Check if they have already sent a friend request
+  const userRef2 = db.collection('users').doc(userData.uid);
+  const doc2 = await userRef2.get();
+  let currentFriendRequests = doc2.data().friendRequests || [];
+  const existingIndex2 = currentFriendRequests.findIndex(
+    int => int === currentUser.uid,
+  );
+  if (existingIndex2 !== -1) {
+    console.log('You have already sent a friend request');
+    return;
+  }
+  await db
+    .collection('users')
+    .doc(userData.uid)
+    .update({
+      friendRequests: firebase.firestore.FieldValue.arrayUnion(currentUser.uid),
+    })
+    .then(r => console.log('Friend request sent successfully!'))
+    .catch(e => console.error('Error sending friend request:', e));
+}
+
 export {
   fetchUserData,
   createUser,
@@ -265,4 +297,5 @@ export {
   getAllUsersData,
   getUserByName,
   updateRecents,
+  sendFriendRequest,
 };
