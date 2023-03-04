@@ -100,6 +100,10 @@ function createUser(user) {
     friendRequests: [],
     friends: [],
     recents: [],
+    instagram: '',
+    twitter: '',
+    facebook: '',
+    linkedin: '',
   });
 }
 
@@ -127,16 +131,21 @@ async function setImageForUser(user, photo, type) {
   if (!user) {
     return;
   }
+  console.log('photo', photo);
+  console.log('type', type);
   if (type === 'Avatar') {
+    console.log('avatar');
     await db.collection('users').doc(user.uid).update({
       avatarPhotoUrl: photo,
     });
     return;
+  } else if (type === 'Cover') {
+    console.log('cover');
+    await db.collection('users').doc(user.uid).update({
+      coverPhotoUrl: photo,
+    });
+    return;
   }
-  await db.collection('users').doc(user.uid).update({
-    coverPhotoUrl: photo,
-  });
-  return;
 }
 
 async function getAllUsersData(users) {
@@ -176,6 +185,32 @@ async function addRecents() {
     })
     .catch(error => {
       console.error('Error updating recents field:', error);
+    });
+}
+
+async function addSocialMediaProfiles() {
+  const users = [];
+  const docs = await db.collection('users').get();
+  docs.forEach(doc => {
+    users.push({id: doc.id, ...doc.data()});
+  });
+  const batch = db.batch();
+  users.forEach(user => {
+    const userRef = db.collection('users').doc(user.id);
+    batch.update(userRef, {
+      instagram: '',
+      twitter: '',
+      facebook: '',
+      linkedin: '',
+    });
+  });
+  batch
+    .commit()
+    .then(() => {
+      console.log('Social media field updated successfully');
+    })
+    .catch(error => {
+      console.error('Error updating social media field:', error);
     });
 }
 

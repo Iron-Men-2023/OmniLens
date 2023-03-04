@@ -22,7 +22,6 @@ function FeedScreen({navigation}) {
   function dynamicSearch(text) {
     setSearchText(text);
     setSearchedRecents(recents.filter(element => element.name.includes(text)));
-    console.log(searchedRecents, 'asdadsadasdas');
   }
 
   useEffect(() => {
@@ -36,6 +35,7 @@ function FeedScreen({navigation}) {
         setUser(userData);
         setUserSet(true);
         console.log('recents: ', userData.recents);
+        console.log('recents: ', userData);
 
         // Iterate through the recents array and get the user data for each recent user
         for (let id in userData.recents) {
@@ -46,7 +46,7 @@ function FeedScreen({navigation}) {
                 setRecents([a.userDoc, ...recentsRef.current]);
                 setEmails([...emailsRef.current, a.userDoc.email]);
               }
-              console.log('listt', recentsRef, emailsRef.current);
+              console.log('list', recentsRef, emailsRef.current);
             })
             .catch(e => console.log('es2', e));
         }
@@ -63,25 +63,29 @@ function FeedScreen({navigation}) {
     <View style={styles.container}>
       <SearchInputComponent changeText={dynamicSearch} />
       <ScrollView style={styles.scroll}>
-        <View key={user.uid}>
-          {searchedRecents.length === 0
-            ? recents.map(user => (
-                <RecentComponent
-                  avatar={user.avatarPhotoUrl}
-                  name={user.name}
-                  navigation={navigation}
-                  id={user.uid}
-                />
-              ))
-            : searchedRecents.map(user => (
-                <RecentComponent
-                  avatar={user.avatarPhotoUrl}
-                  name={user.name}
-                  navigation={navigation}
-                  id={user.uid}
-                />
-              ))}
-        </View>
+        {userSet ? (
+          <View key={user.uid}>
+            {searchedRecents.length === 0
+              ? recents.map(user => (
+                  <RecentComponent
+                    avatar={user.avatarPhotoUrl}
+                    name={user.name}
+                    navigation={navigation}
+                    id={user.uid}
+                  />
+                ))
+              : searchedRecents.map(user => (
+                  <RecentComponent
+                    avatar={user.avatarPhotoUrl}
+                    name={user.name}
+                    navigation={navigation}
+                    id={user.uid}
+                  />
+                ))}
+          </View>
+        ) : (
+          <Text>Loading...</Text>
+        )}
       </ScrollView>
     </View>
   );
