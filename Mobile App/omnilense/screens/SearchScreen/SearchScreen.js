@@ -6,12 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Pressable,
 } from 'react-native';
 import {auth, storage, db, firebaseApp} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
 import SearchInputComponent from '../../components/SearchInputComponent';
 
-const FriendsPage = () => {
+const FriendsPage = ({navigation}) => {
   const [users, setUsers] = useState([]);
   const [searchText, setSearchText] = useState('');
   const [searchedUsers, setSearchedUsers] = useState([]);
@@ -88,7 +89,16 @@ const FriendsPage = () => {
       <SearchInputComponent changeText={dynamicSearch} />
       {searchedUsers.map(user => (
         <View style={styles.row} key={user.id}>
-          <Image source={{uri: user.photoUrl}} style={styles.photo} />
+          <Pressable
+            style={({pressed}) => [
+              {backgroundColor: pressed ? 'black' : 'white'},
+              styles.photo,
+            ]}
+            onPress={() =>
+              navigation.navigate('OtherUserProfile', {uid: user.id})
+            }>
+            <Image style={styles.photo} source={{uri: user.photoUrl}} />
+          </Pressable>
           <Text style={styles.name}>{user.name}</Text>
           <View>{user.friendStatus}</View>
         </View>

@@ -8,10 +8,12 @@ import {
   StyleSheet,
   ScrollView,
   Alert,
+  Pressable,
 } from 'react-native';
 import {auth, db} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
 import {getAllUsersData} from '../../config/DB_Functions/DB_Functions';
+import {NavigationActions as navigation} from 'react-navigation';
 
 const FriendRequestsScreen = () => {
   const [friendRequests, setFriendRequests] = useState([]);
@@ -80,7 +82,16 @@ const FriendRequestsScreen = () => {
     return (
       <View style={{marginVertical: 10}}>
         <View style={styles.row}>
-          <Image source={{uri: item.avatarPhotoUrl}} style={styles.photo} />
+          <Pressable
+            style={({pressed}) => [
+              {backgroundColor: pressed ? 'black' : 'white'},
+              styles.photo,
+            ]}
+            onPress={() =>
+              navigation.navigate('OtherUserProfile', {uid: item.uid})
+            }>
+            <Image style={styles.photo} source={{uri: item.avatarPhotoUrl}} />
+          </Pressable>
           <Text style={styles.name}>{item.name}</Text>
           <Button
             title="Accept"
