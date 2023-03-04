@@ -66,7 +66,7 @@ class FirebaseImageRecognizer:
             image = cv2.imdecode(image_array, -1)
 
             # Save the original image with the user's name as the path
-            save_path = os.path.join("imagesTest", f"{user}.png")
+            save_path = os.path.join("images", f"{user}.png")
             print(save_path)
             if not os.path.exists(save_path):
                 cv2.imwrite(save_path, image)
