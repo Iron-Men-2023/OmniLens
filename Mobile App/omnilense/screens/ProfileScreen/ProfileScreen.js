@@ -8,24 +8,34 @@ import {
   TouchableOpacity,
   RefreshControl,
 } from 'react-native';
-import {fetchUserData} from '../../config/DB_Functions/DB_Functions';
+import {fetchUserData, getUserById} from '../../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
 import dimensions from '../../config/DeviceSpecifications';
 import FriendRequestsScreen from '../FriendRequestsScreen';
+import BoxComponent from "../BoxComponent";
+import InterestComponent from "../../components/InterestComponent";
+import { Chip } from 'react-native-paper';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [userSet, setUserSet] = useState(false);
   const [userData, setUserData] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [friendId, setFriendId] = useState(null)
+  const [friend, setFriend] = useState(null);
   useEffect(() => {
     fetchUserData()
       .then(r => {
-        console.log('user data: ', r.userDoc);
         setUser(r.userDoc);
         setUserSet(true);
-        console.log('user issss: ', user);
+        //get friend image for friend list display
+        setFriendId(r.userDoc.friends[user.friends.length-1])
+
+        getUserById(friendId)
+            .then(r => {
+              setFriend(r.userDoc);
+            })
+            .catch(e => console.log('e1', e));
       })
       .catch(e => console.log('e1', e));
   }, [userSet]);
@@ -36,7 +46,6 @@ const ProfilePage = () => {
       .then(r => {
         try {
           setUserData(r.userDoc);
-          console.log('user data: ', r.userDoc);
           setUser(r.userInfo);
           setUserSet(true);
         } catch (e) {
@@ -77,8 +86,22 @@ const ProfilePage = () => {
             />
             {/* Placeholder for profile picture */}
 
-            <Text style={styles.name}>Hi</Text>
+            <Text style={styles.name}>{user.name}</Text>
+            <ScrollView style={styles.scroll} horizontal={true}>
+              {user.interests.map(interest => (
+                  <View style={styles.chip}>
+                    <Chip icon={"heart"} onPress={() => console.log('Pressed')}>{interest}</Chip>
+                  </View>
+              ))}
+            </ScrollView>
+
+          </View>
+          <View style={styles.header2}>
             <Text style={styles.bio}>Bio: {user.bio}</Text>
+          </View>
+          <View style={styles.box}>
+            <BoxComponent title={user.friends.length+" Friends" } friend={friend.avatarPhotoUrl}/>
+            <BoxComponent title={"New viewers"} friend={friend.avatarPhotoUrl}/>
           </View>
           <View style={styles.stats}>
             {/* Placeholder for friends list */}
@@ -104,13 +127,24 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center',
+  },
+  row: {
+    flexDirection: "row"
   },
   header: {
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    borderBottomWidth: 1,
+    borderBottomWidth: 20,
+    borderBottomColor: 'lightgray',
+    paddingBottom: 10,
+    flex: 1,
+  },
+  header2: {
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+    borderBottomWidth: 2,
     borderBottomColor: 'lightgray',
     paddingBottom: 10,
     flex: 1,
@@ -118,7 +152,7 @@ const styles = StyleSheet.create({
   coverPhoto: {
     padding: 10,
     width: dimensions.width,
-    height: 300,
+    height: 225,
   },
   avatar: {
     width: 185,
@@ -133,9 +167,9 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#000000',
     fontWeight: '600',
-    marginTop: 70,
     alignSelf: 'flex-start',
     marginLeft: 10,
+
   },
   bio: {
     fontSize: 16,
@@ -144,6 +178,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'flex-start',
     marginLeft: 10,
+  },
+  chip: {
+    padding: 4,
+    marginTop: 10
+  },
+  box: {
+    flexDirection: "row",
+    alignItems: "stretch"
   },
   stats: {
     marginTop: 20,

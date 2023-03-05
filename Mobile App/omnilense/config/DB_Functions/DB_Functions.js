@@ -127,9 +127,6 @@ async function setImageForUser(user, photo, type) {
   if (!user) {
     return;
   }
-  console.log('user', user);
-  console.log('photo', photo);
-  console.log('type', type);
   if (type === 'Avatar') {
     await db.collection('users').doc(user.uid).update({
       avatarPhotoUrl: photo,
