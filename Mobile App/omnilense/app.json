@@ -2,6 +2,7 @@
   "expo": {
     "name": "omnilense",
     "slug": "omnilense",
+    "scheme": "omnilense",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -34,28 +35,18 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.omnilense"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.omnilense"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "hooks": {
-      "postPublish": [
-        {
-          "file": "sentry-expo/upload-sourcemaps",
-          "config": {
-            "organization": "university-of-iowa-oi",
-            "project": "react-native",
-            "authToken": "7227438c63014d65ba2f985e246b0a6e91f5ae83d91349c7819e0cd90feb2090"
-          }
-        }
-      ]
     }
   }
 }

@@ -1,18 +1,21 @@
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, ScrollView, TextInput} from 'react-native';
-import CustomInput from '../../components/CustomInput';
-import CustomButton from '../../components/CustomButton';
-import SocialSignInButton from '../../components/SocialSignInButtons';
-import {useNavigation} from '@react-navigation/core';
-import auth from '@react-native-firebase/auth';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Image,
+} from 'react-native';
+import {auth} from '../../config/firebaseConfig';
+import FormButtonComponent from '../../components/FormButtonComponent';
+import FormInputComponent from '../../components/FormInputComponent';
 
-const ForgotPasswordScreen = () => {
+const ForgotPasswordScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
 
-  const navigation = useNavigation();
-
   const onSendPressed = () => {
-    auth()
+    auth
       .sendPasswordResetEmail(email)
       .then(() => {
         console.log('Password reset email sent!');
@@ -20,6 +23,7 @@ const ForgotPasswordScreen = () => {
       .catch(error => {
         console.log(error);
       });
+    navigation.navigate('Sign In');
   };
 
   const onSignInPress = () => {
@@ -27,54 +31,56 @@ const ForgotPasswordScreen = () => {
   };
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      <View style={styles.root}>
-        <Text style={styles.title}>Reset your password</Text>
+    <View style={styles.container}>
+      <Image
+        source={require('../../assets/Logo-removebg.png')}
+        style={styles.logo}
+      />
+      <Text style={styles.text}>OmniLens</Text>
+      <Text style={styles.title}>Reset your password</Text>
 
-        <TextInput
-          style={styles.textInput}
-          placeholder="Email"
-          value={email}
-          setValue={setEmail}
-        />
-
-        <CustomButton text="Send" onPress={onSendPressed} />
-
-        <CustomButton
-          text="Back to Sign in"
-          onPress={onSignInPress}
-          type="TERTIARY"
-        />
-      </View>
-    </ScrollView>
+      <FormInputComponent
+        placeholderText="email"
+        icon="user"
+        keyboardType="email-address"
+        changeText={setEmail}
+      />
+      <FormButtonComponent text="Send" onPress={onSendPressed} />
+      <FormButtonComponent text="Sign In" onPress={onSignInPress} />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
+  container: {
     alignItems: 'center',
+    backgroundColor: '#b5c9fd',
+    flex: 1,
     padding: 20,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#051C60',
-    margin: 10,
+  logo: {
+    marginTop: 50,
+    height: 150,
+    width: 150,
+    resizeMode: 'cover',
   },
   text: {
-    color: 'gray',
-    marginVertical: 10,
+    fontSize: 28,
+    marginBottom: 10,
+    color: '#051d5f',
   },
-  link: {
-    color: '#FDB075',
+  navButton: {
+    marginTop: 15,
   },
-  textInput: {
-    height: 40,
-    width: 300,
-    borderColor: 'gray',
-    borderWidth: 1,
-    margin: 10,
-    padding: 10,
+  navButtonText: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'rgb(57,153,215)',
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 10,
+    color: '#051d5f',
   },
 });
 

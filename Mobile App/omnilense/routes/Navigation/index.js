@@ -26,6 +26,7 @@ import ViewOtherUser from '../../screens/ViewUserProfileScreen';
 import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
 import MLScreen from '../../screens/MLScreen';
+import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -196,6 +197,10 @@ export default function Navigation() {
         <Stack.Screen name={'Initial Info'} component={InitialInfoScreen} />
         <Stack.Screen name={'Interests'} component={InterestsScreen} />
         <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser} />
+        <Stack.Screen
+          name={'Forgot Password'}
+          component={ForgotPasswordScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

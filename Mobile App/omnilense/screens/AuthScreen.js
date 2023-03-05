@@ -14,7 +14,10 @@ import {AntDesign} from '@expo/vector-icons';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
 import {createUser} from '../config/DB_Functions/DB_Functions';
+import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
+
+WebBrowser.maybeCompleteAuthSession();
 
 function AuthScreen({navigation}) {
   const [email, setEmail] = useState('');
@@ -52,27 +55,46 @@ function AuthScreen({navigation}) {
       });
   }
 
-  const signInWithGoogleAsync = async () => {
-    try {
-      const result = Google.useAuthRequest({
-        expoClientId: '',
-        iosClientId: '',
-        androidClientId: '',
-        scopes: ['profile', 'email'],
-      });
+  // async function signInWithGoogleAsync() {
+  const [token, setToken] = useState('');
+  const [userInfo, setUserInfo] = useState(null);
 
-      if (result.type === 'success') {
-        // Use result.idToken to authenticate with Firebase
-        const credential = auth.GoogleAuthProvider.credential(
-          result.idToken,
-          result.accessToken,
-        );
-        await auth.signInWithCredential(credential);
-      } else {
-        console.log('Google sign-in was cancelled.');
-      }
-    } catch (e) {
-      console.log('Error with Google sign-in:', e);
+  const [request, response, promptAsync] = Google.useAuthRequest({
+    expoClientId:
+      '743604615483-509kk3blq1rauaf9qpu3ir2clg80df8j.apps.googleusercontent.com',
+    // androidClientId:
+    //   '743604615483-509kk3blq1rauaf9qpu3ir2clg80df8j.apps.googleusercontent.com',
+    // iosClientId:
+    //   '743604615483-m38ne2mm2ijiqatbri6kq0o100pvjci4.apps.googleusercontent.com',
+    scopes: ['profile', 'email'],
+  });
+
+  useEffect(() => {
+    if (response?.type === 'success') {
+      setToken(response.authentication.accessToken);
+      getUserInfo()
+        .then(r => {
+          console.log('r', r);
+        })
+        .catch(e => {
+          console.log('e', e);
+        });
+    }
+  }, [response, token]);
+
+  const getUserInfo = async () => {
+    try {
+      const response = await fetch(
+        'https://www.googleapis.com/userinfo/v2/me',
+        {
+          headers: {Authorization: `Bearer ${token}`},
+        },
+      );
+
+      const user = await response.json();
+      setUserInfo(user);
+    } catch (error) {
+      // Add your own error handler here
     }
   };
 
@@ -114,7 +136,9 @@ function AuthScreen({navigation}) {
         onSubmitEditing={signIn}
       />
       <FormButtonComponent text="Sign in" onPress={signIn} />
-      <TouchableOpacity style={styles.forgotButton}>
+      <TouchableOpacity
+        style={styles.forgotButton}
+        onPress={() => navigation.navigate('Forgot Password')}>
         <Text style={styles.navButtonText}>Forgot Password?</Text>
       </TouchableOpacity>
       <SocialButtonComponent
@@ -123,6 +147,18 @@ function AuthScreen({navigation}) {
         color="#4867aa"
         bgColor="#e6eaf4"
         onPress={fbSignIn}
+      />
+      <SocialButtonComponent
+        text="Sign in with Google"
+        socialName="google"
+        color="#de4d41"
+        bgColor="#f5e7ea"
+        disabled={!request}
+        onPress={() => {
+          promptAsync()
+            .then(r => console.log('r', r))
+            .catch(e => console.log('e', e));
+        }}
       />
       <SocialButtonComponent
         text="Sign in anonymously"

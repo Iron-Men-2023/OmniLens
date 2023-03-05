@@ -76,7 +76,6 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
 
     const response = await fetch(manipulatedImage.uri);
     const blob = await response.blob();
-
     const storageRef = storage.ref(path);
     setTransferred(0);
     const uploadTask = uploadBytesResumable(storageRef, blob);
