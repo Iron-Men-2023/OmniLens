@@ -1,10 +1,9 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View,Pressable} from "react-native";
+import {Image, StyleSheet, Text, TouchableOpacity, View, Pressable, TextInput} from "react-native";
 import dimensions from "../config/DeviceSpecifications";
 import {purple} from "@mui/material/colors";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 
-//()=>Linking.openURL('https://www.instagram.com/rstarkid73/')
 function BoxComponent({title,friend}) {
 
     return(
@@ -12,7 +11,10 @@ function BoxComponent({title,friend}) {
             <Text style={styles.title}>{title}</Text>
 
             <View style={styles.container}>
-                <Image  style={styles.image} source={{ uri: friend}}/>
+                {friend?
+                    <Image  style={styles.image} source={{ uri: friend}}/>
+                    : null
+                }
             </View>
 
         </View>

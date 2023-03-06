@@ -6,7 +6,7 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  RefreshControl,
+  RefreshControl, Linking,
 } from 'react-native';
 import {fetchUserData, getUserById} from '../../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
@@ -15,6 +15,9 @@ import FriendRequestsScreen from '../FriendRequestsScreen';
 import BoxComponent from "../BoxComponent";
 import InterestComponent from "../../components/InterestComponent";
 import { Chip } from 'react-native-paper';
+import igLogo from "../../assets/iglogo.jpg"
+import fbLogo from "../../assets/fblogo.jpg"
+import twitterLogo from "../../assets/twitter.jpg"
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
@@ -29,15 +32,14 @@ const ProfilePage = () => {
         setUser(r.userDoc);
         setUserSet(true);
         //get friend image for friend list display
-        setFriendId(r.userDoc.friends[user.friends.length-1])
-
-        getUserById(friendId)
+        getUserById(r.userDoc.friends[user.friends.length-1])
             .then(r => {
               setFriend(r.userDoc);
+              console.log(friend,"asdsad")
             })
-            .catch(e => console.log('e1', e));
+            .catch(e => console.log('easds1', e));
       })
-      .catch(e => console.log('e1', e));
+      .catch(e => console.log('e4', e));
   }, [userSet]);
 
   const onRefresh = async () => {
@@ -100,17 +102,34 @@ const ProfilePage = () => {
             <Text style={styles.bio}>Bio: {user.bio}</Text>
           </View>
           <View style={styles.box}>
-            <BoxComponent title={user.friends.length+" Friends" } friend={friend.avatarPhotoUrl}/>
-            <BoxComponent title={"New viewers"} friend={friend.avatarPhotoUrl}/>
+            {
+              friend?
+                  <BoxComponent title={user.friends.length+" Friends" } friend={friend.avatarPhotoUrl}/>
+                  : <BoxComponent title={user.friends.length+" Friends" }/>
+
+            }
+            {
+              friend?
+                  <BoxComponent title={"New viewers"} friend={friend.avatarPhotoUrl}/>
+                  :             <BoxComponent title={"New viewers"}/>
+
+
+            }
           </View>
-          <View style={styles.stats}>
-            {/* Placeholder for friends list */}
-            <Text style={styles.statText}>Friends: 10</Text>
-            {/* Placeholder for social media links */}
-            <Text style={styles.statText}>Instagram: @johndoe</Text>
-            <Text style={styles.statText}>Twitter: @johndoe</Text>
-            {/* Add more stats and links as needed */}
+          <Text style={styles.title}>Socials:</Text>
+
+          <View style={styles.socials}>
+            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://www.instagram.com/"+user.instagram+"/")}>
+              <Image source={fbLogo} style={styles.socialImage} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://www.instagram.com/"+user.instagram+"/")}>
+              <Image source={igLogo} style={styles.socialImage}/>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://twitter.com/"+user.twitter)}>
+              <Image source={twitterLogo} style={styles.socialImage}/>
+            </TouchableOpacity>
           </View>
+
           {/*<Posts />*/}
         </View>
       ) : (
@@ -131,12 +150,18 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: "row"
   },
+  socials: {
+    flexDirection: "row",
+  },
+  socialImageBtn: {
+
+  },
   header: {
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    borderBottomWidth: 20,
-    borderBottomColor: 'lightgray',
+    borderBottomWidth: 40,
+    borderBottomColor: 'lightgrey',
     paddingBottom: 10,
     flex: 1,
   },
@@ -144,8 +169,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    borderBottomWidth: 2,
-    borderBottomColor: 'lightgray',
+    borderBottomWidth: 5,
+    borderBottomColor: '#9a6cd9',
     paddingBottom: 10,
     flex: 1,
   },
@@ -171,6 +196,14 @@ const styles = StyleSheet.create({
     marginLeft: 10,
 
   },
+  title: {
+    fontSize: 22,
+    color: '#000000',
+    fontWeight: '600',
+    alignSelf: 'flex-start',
+    marginLeft: 20,
+    marginTop: 10
+  },
   bio: {
     fontSize: 16,
     color: '#696969',
@@ -179,13 +212,21 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginLeft: 10,
   },
+  socialImage: {
+    width: 80,
+    height: 80,
+    margin: 20,
+    borderRadius: 10
+  },
   chip: {
     padding: 4,
     marginTop: 10
   },
   box: {
     flexDirection: "row",
-    alignItems: "stretch"
+    alignItems: "stretch",
+    borderBottomWidth: 5,
+    borderBottomColor: '#9a6cd9',
   },
   stats: {
     marginTop: 20,
