@@ -39,7 +39,7 @@ async function fetchUserData() {
 
 async function getUserById(uid) {
   let userData = {};
-  const user = firebase.auth().currentUser;
+  const user = auth.currentUser;
 
   // // Get the user's idToken
   const idToken = await user.getIdToken();
@@ -57,11 +57,6 @@ async function getUserById(uid) {
         userData.userDoc = doc.data();
         // console.log('userDoc', doc.data());
       }
-      // const postsQuery = await firebase()
-      //     .firestore.collection('posts')
-      //     .where('userId', '==', user.uid)
-      //     .get();
-      // userData.postsData = postsQuery.docs.map(doc => doc.data());
     })
     .catch(e => {
       //console.log('Error getting document', e);

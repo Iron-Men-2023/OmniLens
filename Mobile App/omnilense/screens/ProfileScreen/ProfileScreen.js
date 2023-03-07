@@ -26,9 +26,7 @@ import twitterLogo from '../../assets/twitter.jpg';
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [userSet, setUserSet] = useState(false);
-  const [userData, setUserData] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [friendId, setFriendId] = useState(null);
   const [friend, setFriend] = useState(null);
 
   useEffect(() => {

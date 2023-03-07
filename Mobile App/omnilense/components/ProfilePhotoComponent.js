@@ -31,7 +31,7 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
       console.log('user.avatarPhotoUrl', user.avatarPhotoUrl);
       return user.avatarPhotoUrl;
     } else if (photoType === 'Cover') {
-      console.log('user.coverPhotoUrl', user.coverPhotoUrl);
+      console.log('user.coverPhotoUrlllllllll', user.coverPhotoUrl);
       return user.coverPhotoUrl;
     }
   });
