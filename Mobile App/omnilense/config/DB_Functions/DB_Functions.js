@@ -262,7 +262,7 @@ async function sendFriendRequest(userData) {
   const existingIndex = currentFriends.findIndex(int => int === userData.uid);
   if (existingIndex !== -1) {
     console.log('You are already friends');
-    return;
+    return 1;
   }
   // Check if they have already sent a friend request
   const userRef2 = db.collection('users').doc(userData.uid);
@@ -273,7 +273,7 @@ async function sendFriendRequest(userData) {
   );
   if (existingIndex2 !== -1) {
     console.log('You have already sent a friend request');
-    return;
+    return 2;
   }
   await db
     .collection('users')

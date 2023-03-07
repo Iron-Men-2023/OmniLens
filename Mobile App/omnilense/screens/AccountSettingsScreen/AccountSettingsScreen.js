@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,23 +8,26 @@ import {
   StyleSheet,
   Button,
 } from 'react-native';
-import auth from '@react-native-firebase/auth';
+import {auth} from '../../config/firebaseConfig';
+import {logout} from '../../config/DB_Functions/DB_Functions';
 
 const AccountSettings = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [userData, setUserData] = useState(null);
   const [userDataSet, setUserDataSet] = useState(null);
+  const [confirmChange, setConfirmChange] = useState(false);
 
-  const user = auth().currentUser;
+  const user = auth.currentUser;
 
   const updateUsername = () => {
     setLoading(true);
     user
       .updateProfile({
-        displayName: username,
+        username: username,
       })
       .then(() => {
         setLoading(false);
@@ -51,27 +54,60 @@ const AccountSettings = () => {
   };
 
   const updatePassword = () => {
-    setLoading(true);
-    user
-      .updatePassword(password)
-      .then(() => {
-        setLoading(false);
-        Alert.alert('Success', 'Password updated successfully');
-      })
-      .catch(error => {
-        setLoading(false);
-        Alert.alert('Error', error.message);
-      });
+    if (password.length < 6 || password !== confirmPassword) {
+      Alert.alert(
+        'Error',
+        'Passwords do not match or are not 6 characters long',
+      );
+      return;
+    }
+
+    if (!confirmChange) {
+      Alert.alert(
+        'Confirm Password Change',
+        'Are you sure you want to change your password?',
+        [
+          {
+            text: 'Cancel',
+            onPress: () => {},
+            style: 'cancel',
+          },
+          {
+            text: 'OK',
+            onPress: () => {
+              setConfirmChange(true);
+              setLoading(true);
+              user
+                .updatePassword(password)
+                .then(async () => {
+                  setLoading(false);
+                  setConfirmChange(false);
+                  setPassword('');
+                  setConfirmPassword('');
+                  await logout()
+                    .then(() => {
+                      navigator.navigate('Sign In');
+                    })
+                    .catch(error => {
+                      Alert.alert('Error', error.message);
+                    });
+                })
+                .catch(error => {
+                  setLoading(false);
+                  Alert.alert('Error', error.message);
+                });
+            },
+          },
+        ],
+        {cancelable: false},
+      );
+    }
   };
 
   useEffect(() => {
-    setUserData(auth().currentUser);
-    // fetchUserData().then(r => {
-    //   setUserData(r.userDoc);
-    //   console.log('userData', userData);
-    //   setUserDataSet(true);
-    // });
-  }, []);
+    setUserData(auth.currentUser);
+    setUserDataSet(true);
+  }, [userDataSet]);
 
   return (
     <>
@@ -82,7 +118,7 @@ const AccountSettings = () => {
             style={styles.textInput}
             value={username}
             onChangeText={setUsername}
-            placeholder={userData.displayName}
+            placeholder={userData.username}
           />
           <Button
             title={'Update Username'}
@@ -109,6 +145,13 @@ const AccountSettings = () => {
             value={password}
             onChangeText={setPassword}
             placeholder="Enter your password"
+            secureTextEntry
+          />
+          <TextInput
+            style={styles.textInput}
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholder="Confirm your password"
             secureTextEntry
           />
           <Button

@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   Image,
   StyleSheet,
@@ -8,12 +8,6 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
-import dimensions from "../config/DeviceSpecifications"
-import HorizontalLineComponent from "./HorizontalLineComponent";
-import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
-import NotificationTextComponent from "./NotificationTextComponent";
-
-
 import dimensions from '../config/DeviceSpecifications';
 import HorizontalLineComponent from './HorizontalLineComponent';
 import {AntDesign, Feather, Ionicons} from '@expo/vector-icons';
@@ -39,7 +33,13 @@ function RecentComponent({name, avatar, navigation, id, user}) {
 
   async function handleCheckPress() {
     if (!connected) {
-      await sendFriendRequest(user);
+      const friendCode = await sendFriendRequest(user);
+      if (friendCode === 1) {
+        Alert.alert('You are already friends');
+      } else if (friendCode === 2) {
+        Alert.alert('You have already sent a request');
+      }
+      setConnected(true);
 
       setConnectionNofification(true);
 
@@ -60,6 +60,17 @@ function RecentComponent({name, avatar, navigation, id, user}) {
       }, 1500);
     }
   }
+
+  useEffect(() => {
+    // Check if the user is already friends or have sent a request
+    if (
+      (user.friends && user.friends.includes(auth.currentUser.uid)) ||
+      (user.friendRequests &&
+        user.friendRequests.includes(auth.currentUser.uid))
+    ) {
+      setConnected(true);
+    }
+  }, []);
 
   return (
     <View>
