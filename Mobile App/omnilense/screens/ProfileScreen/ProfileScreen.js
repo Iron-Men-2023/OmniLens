@@ -6,28 +6,40 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  RefreshControl,
+  RefreshControl, Linking,
 } from 'react-native';
-import {fetchUserData} from '../../config/DB_Functions/DB_Functions';
+import {fetchUserData, getUserById} from '../../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
 import dimensions from '../../config/DeviceSpecifications';
 import FriendRequestsScreen from '../FriendRequestsScreen';
+import BoxComponent from "../BoxComponent";
+import InterestComponent from "../../components/InterestComponent";
+import { Chip } from 'react-native-paper';
+import igLogo from "../../assets/iglogo.jpg"
+import fbLogo from "../../assets/fblogo.jpg"
+import twitterLogo from "../../assets/twitter.jpg"
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [userSet, setUserSet] = useState(false);
   const [userData, setUserData] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-
+  const [friendId, setFriendId] = useState(null)
+  const [friend, setFriend] = useState(null);
   useEffect(() => {
     fetchUserData()
       .then(r => {
-        console.log('user data: ', r.userDoc);
         setUser(r.userDoc);
         setUserSet(true);
-        console.log('user issss: ', user);
+        //get friend image for friend list display
+        getUserById(r.userDoc.friends[user.friends.length-1])
+            .then(r => {
+              setFriend(r.userDoc);
+              console.log(friend,"asdsad")
+            })
+            .catch(e => console.log('easds1', e));
       })
-      .catch(e => console.log('e1', e));
+      .catch(e => console.log('e4', e));
   }, [userSet]);
 
   const onRefresh = async () => {
@@ -36,7 +48,6 @@ const ProfilePage = () => {
       .then(r => {
         try {
           setUserData(r.userDoc);
-          console.log('user data: ', r.userDoc);
           setUser(r.userInfo);
           setUserSet(true);
         } catch (e) {
@@ -77,17 +88,48 @@ const ProfilePage = () => {
             />
             {/* Placeholder for profile picture */}
 
-            <Text style={styles.name}>Hi</Text>
+            <Text style={styles.name}>{user.name}</Text>
+            <ScrollView style={styles.scroll} horizontal={true}>
+              {user.interests.map(interest => (
+                  <View style={styles.chip}>
+                    <Chip icon={"heart"} onPress={() => console.log('Pressed')}>{interest}</Chip>
+                  </View>
+              ))}
+            </ScrollView>
+
+          </View>
+          <View style={styles.header2}>
             <Text style={styles.bio}>Bio: {user.bio}</Text>
           </View>
-          <View style={styles.stats}>
-            {/* Placeholder for friends list */}
-            <Text style={styles.statText}>Friends: 10</Text>
-            {/* Placeholder for social media links */}
-            <Text style={styles.statText}>Instagram: @johndoe</Text>
-            <Text style={styles.statText}>Twitter: @johndoe</Text>
-            {/* Add more stats and links as needed */}
+          <View style={styles.box}>
+            {
+              friend?
+                  <BoxComponent title={user.friends.length+" Friends" } friend={friend.avatarPhotoUrl}/>
+                  : <BoxComponent title={user.friends.length+" Friends" }/>
+
+            }
+            {
+              friend?
+                  <BoxComponent title={"New viewers"} friend={friend.avatarPhotoUrl}/>
+                  :             <BoxComponent title={"New viewers"}/>
+
+
+            }
           </View>
+          <Text style={styles.title}>Socials:</Text>
+
+          <View style={styles.socials}>
+            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://www.instagram.com/"+user.instagram+"/")}>
+              <Image source={fbLogo} style={styles.socialImage} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://www.instagram.com/"+user.instagram+"/")}>
+              <Image source={igLogo} style={styles.socialImage}/>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://twitter.com/"+user.twitter)}>
+              <Image source={twitterLogo} style={styles.socialImage}/>
+            </TouchableOpacity>
+          </View>
+
           {/*<Posts />*/}
         </View>
       ) : (
@@ -104,21 +146,38 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    alignItems: 'center',
+  },
+  row: {
+    flexDirection: "row"
+  },
+  socials: {
+    flexDirection: "row",
+  },
+  socialImageBtn: {
+
   },
   header: {
     width: '100%',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    borderBottomWidth: 1,
-    borderBottomColor: 'lightgray',
+    borderBottomWidth: 40,
+    borderBottomColor: 'lightgrey',
+    paddingBottom: 10,
+    flex: 1,
+  },
+  header2: {
+    width: '100%',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+    borderBottomWidth: 5,
+    borderBottomColor: '#9a6cd9',
     paddingBottom: 10,
     flex: 1,
   },
   coverPhoto: {
     padding: 10,
     width: dimensions.width,
-    height: 300,
+    height: 225,
   },
   avatar: {
     width: 185,
@@ -133,9 +192,17 @@ const styles = StyleSheet.create({
     fontSize: 22,
     color: '#000000',
     fontWeight: '600',
-    marginTop: 70,
     alignSelf: 'flex-start',
     marginLeft: 10,
+
+  },
+  title: {
+    fontSize: 22,
+    color: '#000000',
+    fontWeight: '600',
+    alignSelf: 'flex-start',
+    marginLeft: 20,
+    marginTop: 10
   },
   bio: {
     fontSize: 16,
@@ -144,6 +211,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignSelf: 'flex-start',
     marginLeft: 10,
+  },
+  socialImage: {
+    width: 80,
+    height: 80,
+    margin: 20,
+    borderRadius: 10
+  },
+  chip: {
+    padding: 4,
+    marginTop: 10
+  },
+  box: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    borderBottomWidth: 5,
+    borderBottomColor: '#9a6cd9',
   },
   stats: {
     marginTop: 20,

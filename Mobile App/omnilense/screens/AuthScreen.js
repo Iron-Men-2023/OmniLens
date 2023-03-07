@@ -100,6 +100,7 @@ function AuthScreen({navigation}) {
         style={styles.logo}
       />
       <Text style={styles.text}>OmniLens</Text>
+
       <FormInputComponent
         placeholderText="email"
         icon="user"

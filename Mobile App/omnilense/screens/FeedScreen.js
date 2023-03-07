@@ -34,6 +34,7 @@ function FeedScreen({navigation}) {
         const userData = doc.data();
         setUser(userData);
         setUserSet(true);
+
         console.log('recents: ', userData.recents);
         console.log('recents: ', userData);
 

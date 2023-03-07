@@ -8,6 +8,12 @@ import {
   Pressable,
   Alert,
 } from 'react-native';
+import dimensions from "../config/DeviceSpecifications"
+import HorizontalLineComponent from "./HorizontalLineComponent";
+import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
+import NotificationTextComponent from "./NotificationTextComponent";
+
+
 import dimensions from '../config/DeviceSpecifications';
 import HorizontalLineComponent from './HorizontalLineComponent';
 import {AntDesign, Feather, Ionicons} from '@expo/vector-icons';
