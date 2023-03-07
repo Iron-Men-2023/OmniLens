@@ -1,24 +1,36 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Image, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  Pressable,
+} from 'react-native';
 import {auth, storage, db, firebaseApp} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
 
-const FriendsPage = () => {
+const FriendsPage = ({navigation}) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
     const unsubscribe = db.collection('users').onSnapshot(snapshot => {
       const usersList = [];
       snapshot.forEach(doc => {
-        if (doc.id !== auth.currentUser.uid) {
+        console.log('Doc', doc.data());
+        if (doc.uid !== auth.currentUser.uid) {
           const userData = doc.data();
-          const friendStatus = getFriendStatus(userData);
-          usersList.push({
-            id: doc.id,
-            name: userData.name,
-            photoUrl: userData.avatarPhotoUrl,
-            friendStatus,
-          });
+          console.log('Avatar', userData.avatarPhotoUrl);
+          const friends = userData.friends || [];
+          if (friends.includes(auth.currentUser.uid)) {
+            console.log('Friend', userData.name);
+            usersList.push({
+              id: doc.id,
+              name: userData.name,
+              photoUrl: userData.avatarPhotoUrl,
+              friendStatus: <Text style={styles.friendStatus}>Friends</Text>,
+            });
+          }
         }
       });
       setUsers(usersList);
@@ -28,20 +40,9 @@ const FriendsPage = () => {
 
   const getFriendStatus = userData => {
     const currentUser = auth.currentUser;
-    const friendRequests = userData.friendRequests || [];
     const friends = userData.friends || [];
     if (friends.includes(currentUser.uid)) {
       return <Text style={styles.friendStatus}>Friends</Text>;
-    } else if (friendRequests.includes(currentUser.uid)) {
-      return <Text style={styles.friendStatus}>Request Sent</Text>;
-    } else {
-      return (
-        <TouchableOpacity
-          style={styles.addButton}
-          onPress={() => sendFriendRequest(userData)}>
-          <Text style={styles.addButtonText}>Add Friend</Text>
-        </TouchableOpacity>
-      );
     }
   };
 
@@ -62,7 +63,32 @@ const FriendsPage = () => {
     <View>
       {users.map(user => (
         <View style={styles.row} key={user.id}>
-          <Image source={{uri: user.photoUrl}} style={styles.photo} />
+          {user.photoUrl ? (
+            <Pressable
+              style={({pressed}) => [
+                {backgroundColor: pressed ? 'black' : 'white'},
+                styles.photo,
+              ]}
+              onPress={() =>
+                navigation.navigate('OtherUserProfile', {uid: user.id})
+              }>
+              <Image style={styles.photo} source={{uri: user.photoUrl}} />
+            </Pressable>
+          ) : (
+            <Pressable
+              style={({pressed}) => [
+                {backgroundColor: pressed ? 'black' : 'white'},
+                styles.photo,
+              ]}
+              onPress={() =>
+                navigation.navigate('OtherUserProfile', {uid: item.uid})
+              }>
+              <Image
+                source={require('../../assets/Logo.png')}
+                style={styles.photo}
+              />{' '}
+            </Pressable>
+          )}
           <Text style={styles.name}>{user.name}</Text>
           <View>{user.friendStatus}</View>
         </View>

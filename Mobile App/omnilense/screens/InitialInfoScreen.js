@@ -11,6 +11,9 @@ import {
 } from '../config/DB_Functions/DB_Functions';
 import {auth, storage} from '../config/firebaseConfig';
 import * as Progress from 'react-native-progress';
+import {manipulateAsync} from 'expo-image-manipulator';
+import * as ImageManipulator from 'expo-image-manipulator';
+import {uploadBytesResumable} from 'firebase/storage';
 
 function InitialInfoScreen({navigation}) {
   const [uploaded, setUploaded] = useState(false);
@@ -46,38 +49,70 @@ function InitialInfoScreen({navigation}) {
     const {uri} = image;
     const userId = auth.currentUser.uid;
     const user = auth.currentUser;
-    const timestamp = new Date().getTime();
-    const path = `images/Avatar/${userId}-${timestamp}.jpg`;
+    const path = `images/Avatar/${userId}.jpg`;
 
     setUploading(true);
     console.log('Hereee', uri);
-    const response = await fetch(uri);
+    const manipulatedImage = await manipulateAsync(
+      uri,
+      [{resize: {width: 1800, height: 2700}}],
+      {
+        compress: 1,
+        format: ImageManipulator.SaveFormat.JPEG,
+      },
+    );
+    const response = await fetch(manipulatedImage.uri);
     const blob = await response.blob();
-
-    const task = storage.ref(path).put(blob);
+    const storageRef = storage.ref(path);
     setTransferred(0);
-    task.on(
+    const uploadTask = uploadBytesResumable(storageRef, blob);
+    // Listen for state changes, errors, and completion of the upload.
+    uploadTask.on(
       'state_changed',
       snapshot => {
+        // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log(`Upload is ${progress}% done`);
         setTransferred(progress / 100);
+        console.log('Upload is ' + progress + '% done');
+        switch (snapshot.state) {
+          case 'paused':
+            console.log('Upload is paused');
+            break;
+          case 'running':
+            console.log('Upload is running');
+            break;
+        }
       },
       error => {
-        console.log(error);
-        Alert.alert('An error occurred while uploading the photo.');
+        this.setState({isLoading: false});
+        // A full list of error codes is available at
+        // https://firebase.google.com/docs/storage/web/handle-errors
+        switch (error.code) {
+          case 'storage/unauthorized':
+            console.log("User doesn't have permission to access the object");
+            break;
+          case 'storage/canceled':
+            console.log('User canceled the upload');
+            break;
+          case 'storage/unknown':
+            console.log('Unknown error occurred, inspect error.serverResponse');
+            break;
+        }
       },
       async () => {
-        const url = await task.snapshot.ref.getDownloadURL();
+        // Upload completed successfully, now we can get the download URL
+        const url = await storageRef.getDownloadURL();
         console.log('url', url);
         await setImageForUser(user, url, 'Avatar');
-        setImage(null);
+        setImage();
         Alert.alert(
           'Photo uploaded!',
           'Your photo has been uploaded to Firebase Cloud Storage!',
         );
         setUploading(false);
+
+        //perform your task
       },
     );
     setUploaded(true);

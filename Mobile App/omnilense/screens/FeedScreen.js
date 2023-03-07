@@ -5,6 +5,7 @@ import RecentComponent from '../components/RecentComponent';
 import {getAllUsers} from '../config/DB_Functions/DB_Functions';
 import dimensions from '../config/DeviceSpecifications';
 import {fetchUserData, getUserById} from '../config/DB_Functions/DB_Functions';
+import {db, auth} from '../config/firebaseConfig';
 
 function FeedScreen({navigation}) {
   const [user, setUser] = useState(null);
@@ -24,46 +25,73 @@ function FeedScreen({navigation}) {
   }
 
   useEffect(() => {
-    fetchUserData()
-      .then(r => {
-        //console.log('user data: ', r.userDoc);
-        setUser(r.userDoc);
+    // Get the current user's doc reference
+    const userDocRef = db.collection('users').doc(auth.currentUser.uid);
+
+    // Get the current user's data and listen for changes to their recents field
+    const unsubscribe = userDocRef.onSnapshot(doc => {
+      if (doc.exists) {
+        const userData = doc.data();
+        setUser(userData);
         setUserSet(true);
-        for (let id in user.recents) {
-          getUserById(user.recents[id]).then(a => {
-            if (!emailsRef.current.includes(a.userDoc.email)) {
-              setRecents([a.userDoc, ...recentsRef.current]);
-              // recentsRef.current = recents
-              setEmails([...emailsRef.current, a.userDoc.email]);
-              // emailsRef
-            }
-          });
+
+        console.log('recents: ', userData.recents);
+        console.log('recents: ', userData);
+
+        // Iterate through the recents array and get the user data for each recent user
+        for (let id in userData.recents) {
+          getUserById(userData.recents[id])
+            .then(a => {
+              console.log('recendassts: ', a.userDoc.email);
+              if (!emailsRef.current.includes(a.userDoc.email)) {
+                setRecents([a.userDoc, ...recentsRef.current]);
+                setEmails([...emailsRef.current, a.userDoc.email]);
+              }
+              console.log('list', recentsRef, emailsRef.current);
+            })
+            .catch(e => console.log('es2', e));
         }
-      })
-      .catch(e => console.log('', e));
+      } else {
+        console.log('No user data found');
+      }
+    });
+
+    // Unsubscribe from the listener when the component unmounts
+    return () => unsubscribe();
   }, [userSet]);
 
   return (
     <View style={styles.container}>
       <SearchInputComponent changeText={dynamicSearch} />
       <ScrollView style={styles.scroll}>
-        {searchedRecents.length === 0
-          ? recents.map(user => (
-              <RecentComponent
-                avatar={user.avatarPhotoUrl}
-                name={user.name}
-                navigation={navigation}
-                id={user.uid}
-              />
-            ))
-          : searchedRecents.map(user => (
-              <RecentComponent
-                avatar={user.avatarPhotoUrl}
-                name={user.name}
-                navigation={navigation}
-                id={user.uid}
-              />
-            ))}
+        {userSet ? (
+          <>
+            {searchedRecents.length === 0
+              ? recents.map(user => (
+                  <View key={user.uid}>
+                    <RecentComponent
+                      avatar={user.avatarPhotoUrl}
+                      name={user.name}
+                      navigation={navigation}
+                      id={user.uid}
+                      user={user}
+                    />
+                  </View>
+                ))
+              : searchedRecents.map(user => (
+                  <View key={user.uid}>
+                    <RecentComponent
+                      avatar={user.avatarPhotoUrl}
+                      name={user.name}
+                      navigation={navigation}
+                      id={user.uid}
+                    />
+                  </View>
+                ))}
+          </>
+        ) : (
+          <Text>Loading...</Text>
+        )}
       </ScrollView>
     </View>
   );
