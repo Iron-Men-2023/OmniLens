@@ -30,6 +30,7 @@ const ProfilePage = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [friendId, setFriendId] = useState(null);
   const [friend, setFriend] = useState(null);
+
   useEffect(() => {
     fetchUserData()
       .then(r => {
@@ -48,12 +49,21 @@ const ProfilePage = () => {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    fetchUserData()
+    setUserSet(false);
+    await fetchUserData()
       .then(r => {
         try {
-          setUserData(r.userDoc);
-          setUser(r.userInfo);
+          setUser(r.userDoc);
           setUserSet(true);
+          console.log('user data: ', r.userDoc);
+          setUserSet(true);
+          //get friend image for friend list display
+          getUserById(r.userDoc.friends[user.friends.length - 1])
+            .then(r => {
+              setFriend(r.userDoc);
+              console.log(friend, 'asdsad');
+            })
+            .catch(e => console.log('easds1', e));
         } catch (e) {
           console.log('e1', e);
         }
