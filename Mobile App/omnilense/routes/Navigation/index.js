@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, Alert} from 'react-native';
-import {NavigationContainer} from '@react-navigation/native';
+import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {createStackNavigator} from '@react-navigation/stack';
 import AuthScreen from '../../screens/AuthScreen';
@@ -15,8 +15,6 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import OnboardingScreen from '../../screens/OnboardingScreen';
-import {getAuth, getAdditionalUserInfo, signOut} from 'firebase/auth';
-import HomeScreen from '../../screens/HomeScreen';
 import FeedScreen from '../../screens/FeedScreen';
 import InitialInfoScreen from '../../screens/InitialInfoScreen';
 import InterestsScreen from '../../screens/InterestsScreen';
@@ -27,6 +25,12 @@ import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
 import MLScreen from '../../screens/MLScreen';
 import AccountSettingsScreen from '../../screens/AccountSettingsScreen';
+import {
+  Provider,
+  MD3LightTheme,
+  adaptNavigationTheme,
+} from 'react-native-paper';
+import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -165,7 +169,7 @@ function SignOutComponent(props) {
 }
 
 const Stack = createStackNavigator();
-
+const {LightTheme} = adaptNavigationTheme({reactNavigationLight: false});
 export default function Navigation() {
   const [user, setUser] = useState();
   const [isUserSet, setIsUserSet] = useState(false);
@@ -182,22 +186,31 @@ export default function Navigation() {
 
     return () => unsubscribe();
   }, [isUserSet]);
+
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        {user ? <Stack.Screen name="Home" component={DrawerNavigator} /> : null}
-        <Stack.Screen name={'Onboarding'} component={OnboardingScreen} />
-        <Stack.Screen
-          name="Sign In"
-          component={AuthScreen}
-          initialParams={{data: 'signIn'}}
-        />
-        <Stack.Screen name="Sign Up" component={SignUpScreen} />
-        <Stack.Screen name={'Initial Info'} component={InitialInfoScreen} />
-        <Stack.Screen name={'Interests'} component={InterestsScreen} />
-        <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider theme={MD3LightTheme}>
+      <NavigationContainer theme={LightTheme}>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
+          {user ? (
+            <Stack.Screen name="Home" component={DrawerNavigator} />
+          ) : null}
+          <Stack.Screen name={'Onboarding'} component={OnboardingScreen} />
+          <Stack.Screen
+            name="Sign In"
+            component={AuthScreen}
+            initialParams={{data: 'signIn'}}
+          />
+          <Stack.Screen name="Sign Up" component={SignUpScreen} />
+          <Stack.Screen name={'Initial Info'} component={InitialInfoScreen} />
+          <Stack.Screen name={'Interests'} component={InterestsScreen} />
+          <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser} />
+          <Stack.Screen
+            name={'Forgot Password'}
+            component={ForgotPasswordScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
 // export default Navigation;

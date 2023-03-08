@@ -2860,6 +2860,15 @@
     "@types/scheduler" "*"
     csstype "^3.0.2"
 
+"@types/react@^16.8.8":
+  version "16.14.35"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-16.14.35.tgz#9d3cf047d85aca8006c4776693124a5be90ee429"
+  integrity sha512-NUEiwmSS1XXtmBcsm1NyRRPYjoZF2YTE89/5QiLt5mlGffYK9FQqOKuOLuXNrjPQV04oQgaZG+Yq02ZfHoFyyg==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
 "@types/scheduler@*":
   version "0.16.2"
   resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.2.tgz#1a62f89525723dde24ba1b01b092bf5df8ad4d39"
@@ -7215,7 +7224,7 @@ react-native-opencv3@^1.0.8:
   resolved "https://registry.yarnpkg.com/react-native-opencv3/-/react-native-opencv3-1.0.8.tgz#6511cb3d678b99efdffc18e79121b155c4e9272d"
   integrity sha512-v+tiiAtP0HAks7EwznmHvgMtdabAjJOURzmdV5OKSQpmf2zHHDyuCr5N3G3tX24x80wRX0YGpE4N4vh5lonegQ==
 
-react-native-paper@^5.2.0:
+react-native-paper@^5.3.1:
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.3.1.tgz#09a1164bcd8afa62063384646b9fb4bf563f407b"
   integrity sha512-AWs71G2L+Z51NAlWBKmRDiCOL9kPIMCtQ96aYACQTOLUPATguQA4xJEG0ju033uon9zmNHEr0MkQLcVx6E+WdA==
@@ -7244,10 +7253,10 @@ react-native-reanimated@~2.12.0:
     setimmediate "^1.0.5"
     string-hash-64 "^1.0.3"
 
-react-native-safe-area-context@4.4.1:
-  version "4.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.4.1.tgz#239c60b8a9a80eac70a38a822b04c0f1d15ffc01"
-  integrity sha512-N9XTjiuD73ZpVlejHrUWIFZc+6Z14co1K/p1IFMkImU7+avD69F3y+lhkqA2hN/+vljdZrBSiOwXPkuo43nFQA==
+react-native-safe-area-context@^4.5.0:
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area-context/-/react-native-safe-area-context-4.5.0.tgz#9208313236e8f49e1920ac1e2a2c975f03aed284"
+  integrity sha512-0WORnk9SkREGUg2V7jHZbuN5x4vcxj/1B0QOcXJjdYWrzZHgLcUzYWWIUecUPJh747Mwjt/42RZDOaFn3L8kPQ==
 
 react-native-safe-area-view@^0.14.9:
   version "0.14.9"
@@ -7255,6 +7264,13 @@ react-native-safe-area-view@^0.14.9:
   integrity sha512-WII/ulhpVyL/qbYb7vydq7dJAfZRBcEhg4/UWt6F6nAKpLa3gAceMOxBxI914ppwSP/TdUsandFy6lkJQE0z4A==
   dependencies:
     hoist-non-react-statics "^2.3.1"
+
+react-native-safe-area@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-safe-area/-/react-native-safe-area-0.5.1.tgz#b0263f5fcd1341c74dee0e5f0b296da965242a14"
+  integrity sha512-gBLv93P90sM6hk5HzUwTXzFuSDazTpg2ONi5iL9pnUsUfwdw2L9SKgjgVroxX10leGB9+0zz6/ycV+mItqr8OQ==
+  dependencies:
+    "@types/react" "^16.8.8"
 
 react-native-screens@~3.18.0:
   version "3.18.2"
