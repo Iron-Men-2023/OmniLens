@@ -39,7 +39,7 @@ async function fetchUserData() {
 
 async function getUserById(uid) {
   let userData = {};
-  const user = firebase.auth().currentUser;
+  const user = auth.currentUser;
 
   // // Get the user's idToken
   const idToken = await user.getIdToken();
@@ -57,11 +57,6 @@ async function getUserById(uid) {
         userData.userDoc = doc.data();
         // console.log('userDoc', doc.data());
       }
-      // const postsQuery = await firebase()
-      //     .firestore.collection('posts')
-      //     .where('userId', '==', user.uid)
-      //     .get();
-      // userData.postsData = postsQuery.docs.map(doc => doc.data());
     })
     .catch(e => {
       //console.log('Error getting document', e);
@@ -262,7 +257,7 @@ async function sendFriendRequest(userData) {
   const existingIndex = currentFriends.findIndex(int => int === userData.uid);
   if (existingIndex !== -1) {
     console.log('You are already friends');
-    return;
+    return 1;
   }
   // Check if they have already sent a friend request
   const userRef2 = db.collection('users').doc(userData.uid);
@@ -273,7 +268,7 @@ async function sendFriendRequest(userData) {
   );
   if (existingIndex2 !== -1) {
     console.log('You have already sent a friend request');
-    return;
+    return 2;
   }
   await db
     .collection('users')

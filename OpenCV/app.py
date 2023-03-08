@@ -42,5 +42,10 @@ def get():
     return jsonify({'message': 'Hello World!'})
 
 
+@app.route('/')
+def get1():
+    return jsonify({'message': 'Hello World111!'})
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000, debug=True)

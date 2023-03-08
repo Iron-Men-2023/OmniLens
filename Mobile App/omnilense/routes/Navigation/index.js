@@ -26,6 +26,7 @@ import ViewOtherUser from '../../screens/ViewUserProfileScreen';
 import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
 import MLScreen from '../../screens/MLScreen';
+import AccountSettingsScreen from '../../screens/AccountSettingsScreen';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -115,11 +116,10 @@ function DrawerNavigator() {
       <Drawer.Screen name={APPNAME} component={HomeTabs} />
       <Drawer.Screen name="Friends" component={FriendsScreen} />
       <Drawer.Screen name="Friend Requests" component={FriendRequestsScreen} />
-
-      {/*<Drawer.Screen*/}
-      {/*  name="Account Settings"*/}
-      {/*  component={AccountSettingsScreen}*/}
-      {/*/>*/}
+      <Drawer.Screen
+        name="Account Settings"
+        component={AccountSettingsScreen}
+      />
     </Drawer.Navigator>
   );
 }

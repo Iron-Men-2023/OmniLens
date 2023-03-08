@@ -6,50 +6,62 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  RefreshControl, Linking,
+  RefreshControl,
+  Linking,
 } from 'react-native';
-import {fetchUserData, getUserById} from '../../config/DB_Functions/DB_Functions';
+import {
+  fetchUserData,
+  getUserById,
+} from '../../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
 import dimensions from '../../config/DeviceSpecifications';
 import FriendRequestsScreen from '../FriendRequestsScreen';
-import BoxComponent from "../BoxComponent";
-import InterestComponent from "../../components/InterestComponent";
-import { Chip } from 'react-native-paper';
-import igLogo from "../../assets/iglogo.jpg"
-import fbLogo from "../../assets/fblogo.jpg"
-import twitterLogo from "../../assets/twitter.jpg"
+import BoxComponent from '../BoxComponent';
+import InterestComponent from '../../components/InterestComponent';
+import {Chip} from 'react-native-paper';
+import igLogo from '../../assets/iglogo.jpg';
+import fbLogo from '../../assets/fblogo.jpg';
+import twitterLogo from '../../assets/twitter.jpg';
 
 const ProfilePage = () => {
   const [user, setUser] = useState(null);
   const [userSet, setUserSet] = useState(false);
-  const [userData, setUserData] = useState(null);
   const [refreshing, setRefreshing] = useState(false);
-  const [friendId, setFriendId] = useState(null)
   const [friend, setFriend] = useState(null);
+
   useEffect(() => {
     fetchUserData()
       .then(r => {
         setUser(r.userDoc);
         setUserSet(true);
         //get friend image for friend list display
-        getUserById(r.userDoc.friends[user.friends.length-1])
-            .then(r => {
-              setFriend(r.userDoc);
-              console.log(friend,"asdsad")
-            })
-            .catch(e => console.log('easds1', e));
+        getUserById(r.userDoc.friends[user.friends.length - 1])
+          .then(r => {
+            setFriend(r.userDoc);
+            console.log(friend, 'asdsad');
+          })
+          .catch(e => console.log('easds1', e));
       })
       .catch(e => console.log('e4', e));
   }, [userSet]);
 
   const onRefresh = async () => {
     setRefreshing(true);
-    fetchUserData()
+    setUserSet(false);
+    await fetchUserData()
       .then(r => {
         try {
-          setUserData(r.userDoc);
-          setUser(r.userInfo);
+          setUser(r.userDoc);
           setUserSet(true);
+          console.log('user data: ', r.userDoc);
+          setUserSet(true);
+          //get friend image for friend list display
+          getUserById(r.userDoc.friends[user.friends.length - 1])
+            .then(r => {
+              setFriend(r.userDoc);
+              console.log(friend, 'asdsad');
+            })
+            .catch(e => console.log('easds1', e));
         } catch (e) {
           console.log('e1', e);
         }
@@ -91,42 +103,62 @@ const ProfilePage = () => {
             <Text style={styles.name}>{user.name}</Text>
             <ScrollView style={styles.scroll} horizontal={true}>
               {user.interests.map(interest => (
-                  <View style={styles.chip}>
-                    <Chip icon={"heart"} onPress={() => console.log('Pressed')}>{interest}</Chip>
-                  </View>
+                <View style={styles.chip} key={interest}>
+                  <Chip icon={'heart'} onPress={() => console.log('Pressed')}>
+                    {interest}
+                  </Chip>
+                </View>
               ))}
             </ScrollView>
-
           </View>
           <View style={styles.header2}>
             <Text style={styles.bio}>Bio: {user.bio}</Text>
           </View>
           <View style={styles.box}>
-            {
-              friend?
-                  <BoxComponent title={user.friends.length+" Friends" } friend={friend.avatarPhotoUrl}/>
-                  : <BoxComponent title={user.friends.length+" Friends" }/>
-
-            }
-            {
-              friend?
-                  <BoxComponent title={"New viewers"} friend={friend.avatarPhotoUrl}/>
-                  :             <BoxComponent title={"New viewers"}/>
-
-
-            }
+            {friend ? (
+              <BoxComponent
+                title={user.friends.length + ' Friends'}
+                friend={friend.avatarPhotoUrl}
+              />
+            ) : (
+              <BoxComponent title={user.friends.length + ' Friends'} />
+            )}
+            {friend ? (
+              <BoxComponent
+                title={'New viewers'}
+                friend={friend.avatarPhotoUrl}
+              />
+            ) : (
+              <BoxComponent title={'New viewers'} />
+            )}
           </View>
           <Text style={styles.title}>Socials:</Text>
 
           <View style={styles.socials}>
-            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://www.instagram.com/"+user.instagram+"/")}>
+            <TouchableOpacity
+              style={styles.socialImageBtn}
+              onPress={() =>
+                Linking.openURL(
+                  'https://www.instagram.com/' + user.instagram + '/',
+                )
+              }>
               <Image source={fbLogo} style={styles.socialImage} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://www.instagram.com/"+user.instagram+"/")}>
-              <Image source={igLogo} style={styles.socialImage}/>
+            <TouchableOpacity
+              style={styles.socialImageBtn}
+              onPress={() =>
+                Linking.openURL(
+                  'https://www.instagram.com/' + user.instagram + '/',
+                )
+              }>
+              <Image source={igLogo} style={styles.socialImage} />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialImageBtn} onPress={()=>Linking.openURL("https://twitter.com/"+user.twitter)}>
-              <Image source={twitterLogo} style={styles.socialImage}/>
+            <TouchableOpacity
+              style={styles.socialImageBtn}
+              onPress={() =>
+                Linking.openURL('https://twitter.com/' + user.twitter)
+              }>
+              <Image source={twitterLogo} style={styles.socialImage} />
             </TouchableOpacity>
           </View>
 
@@ -148,14 +180,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   row: {
-    flexDirection: "row"
+    flexDirection: 'row',
   },
   socials: {
-    flexDirection: "row",
+    flexDirection: 'row',
   },
-  socialImageBtn: {
-
-  },
+  socialImageBtn: {},
   header: {
     width: '100%',
     alignItems: 'center',
@@ -194,7 +224,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     alignSelf: 'flex-start',
     marginLeft: 10,
-
   },
   title: {
     fontSize: 22,
@@ -202,7 +231,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     alignSelf: 'flex-start',
     marginLeft: 20,
-    marginTop: 10
+    marginTop: 10,
   },
   bio: {
     fontSize: 16,
@@ -216,15 +245,15 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     margin: 20,
-    borderRadius: 10
+    borderRadius: 10,
   },
   chip: {
     padding: 4,
-    marginTop: 10
+    marginTop: 10,
   },
   box: {
-    flexDirection: "row",
-    alignItems: "stretch",
+    flexDirection: 'row',
+    alignItems: 'stretch',
     borderBottomWidth: 5,
     borderBottomColor: '#9a6cd9',
   },
