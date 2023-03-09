@@ -35,12 +35,17 @@ const ProfilePage = () => {
         setUser(r.userDoc);
         setUserSet(true);
         //get friend image for friend list display
-        getUserById(r.userDoc.friends[user.friends.length - 1])
-          .then(r => {
-            setFriend(r.userDoc);
-            console.log(friend, 'asdsad');
-          })
-          .catch(e => console.log('easds1', e));
+        if (user.friends) {
+          getUserById(r.userDoc.friends[user.friends.length - 1])
+            .then(r => {
+              setFriend(r.userDoc);
+              console.log(friend, 'asdsad');
+            })
+            .catch(e => console.log('easds1', e));
+        } else {
+          setFriend(null);
+          console.log('no friends');
+        }
       })
       .catch(e => console.log('e4', e));
   }, [userSet]);
@@ -55,13 +60,19 @@ const ProfilePage = () => {
           setUserSet(true);
           console.log('user data: ', r.userDoc);
           setUserSet(true);
-          //get friend image for friend list display
-          getUserById(r.userDoc.friends[user.friends.length - 1])
-            .then(r => {
-              setFriend(r.userDoc);
-              console.log(friend, 'asdsad');
-            })
-            .catch(e => console.log('easds1', e));
+          if (user.friends) {
+            console.log('user friends: ', user.friends);
+            //get friend image for friend list display
+            getUserById(r.userDoc.friends[user.friends.length - 1])
+              .then(r => {
+                setFriend(r.userDoc);
+                console.log(friend, 'asdsad');
+              })
+              .catch(e => console.log('easds1', e));
+          } else {
+            setFriend(null);
+            console.log('no friends');
+          }
         } catch (e) {
           console.log('e1', e);
         }
@@ -121,7 +132,7 @@ const ProfilePage = () => {
                 friend={friend.avatarPhotoUrl}
               />
             ) : (
-              <BoxComponent title={user.friends.length + ' Friends'} />
+              <BoxComponent title={'0 Friends'} />
             )}
             {friend ? (
               <BoxComponent

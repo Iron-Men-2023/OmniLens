@@ -86,9 +86,6 @@ function RecentComponent({name, avatar, navigation, id, user}) {
         <View style={styles.textContainer}>
           <Text style={styles.text}>{name}</Text>
         </View>
-        {/*<View style={styles.line}>*/}
-        {/*    <HorizontalLineComponent/>*/}
-        {/*</View>*/}
         <View style={styles.icons}>
           <TouchableOpacity onPress={handleCheckPress}>
             {connected ? (
