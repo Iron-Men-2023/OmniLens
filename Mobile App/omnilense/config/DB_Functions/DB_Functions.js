@@ -3,6 +3,7 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import {db, storage, auth} from '../firebaseConfig';
 import {Platform} from 'react-native';
+import {defaultAvatar} from '../../config';
 
 async function fetchUserData() {
   let userData = {};
@@ -80,8 +81,7 @@ function createUser(user) {
   if (!user) {
     return;
   }
-  let photo =
-    'https://firebasestorage.googleapis.com/v0/b/omnilens-d5745.appspot.com/o/images%2Flogo.png?alt=media&token=33463096-3586-4e32-86a4-213fdeabe8a9';
+  let photo = defaultAvatar;
   let username = user.email.split('@')[0];
   return db.collection('users').doc(user.uid).set({
     email: user.email,

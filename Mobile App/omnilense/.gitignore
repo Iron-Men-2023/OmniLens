@@ -12,4 +12,8 @@ web-build/
 
 # macOS
 .DS_Store
-/yarn.lock
+yarn.lock
+yarn-error.log
+my-release-key.keystore
+
+/config.js
