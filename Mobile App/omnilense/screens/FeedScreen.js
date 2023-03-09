@@ -6,6 +6,8 @@ import {getAllUsers} from '../config/DB_Functions/DB_Functions';
 import dimensions from '../config/DeviceSpecifications';
 import {fetchUserData, getUserById} from '../config/DB_Functions/DB_Functions';
 import {db, auth} from '../config/firebaseConfig';
+import * as Notifications from 'expo-notifications';
+import {Platform} from 'react-native';
 
 function FeedScreen({navigation}) {
   const [user, setUser] = useState(null);
@@ -16,8 +18,49 @@ function FeedScreen({navigation}) {
   const [searchText, setSearchText] = useState('');
   const recentsRef = useRef([]);
   const emailsRef = useRef([]);
+  const [token, setToken] = useState(null);
   recentsRef.current = recents;
   emailsRef.current = emails;
+
+  // Request permission to send notifications
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+
+    // Check if the user has granted permission
+    const {status: existingStatus} = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== 'granted') {
+      // If the user hasn't granted permission, ask for it
+      const {status} = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+
+    // Get the user's push token
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+    setToken(token);
+    await db.collection('users').doc(auth.currentUser.uid).update({
+      token: token,
+    });
+  }
+
+  // Register for push notifications when the component mounts
+  useEffect(() => {
+    registerForPushNotificationsAsync()
+      .then(r => console.log('Registered for push notifications'))
+      .catch(e => console.log('Error registering for push notifications', e));
+  }, []);
 
   function dynamicSearch(text) {
     setSearchText(text);
@@ -35,24 +78,17 @@ function FeedScreen({navigation}) {
         setUser(userData);
         setUserSet(true);
 
-        console.log('recents: ', userData.recents);
-        console.log('recents: ', userData);
-
         // Iterate through the recents array and get the user data for each recent user
         for (let id in userData.recents) {
           getUserById(userData.recents[id])
             .then(a => {
-              console.log('recendassts: ', a.userDoc.email);
               if (!emailsRef.current.includes(a.userDoc.email)) {
                 setRecents([a.userDoc, ...recentsRef.current]);
                 setEmails([...emailsRef.current, a.userDoc.email]);
               }
-              console.log('list', recentsRef, emailsRef.current);
             })
             .catch(e => console.log('es2', e));
         }
-      } else {
-        console.log('No user data found');
       }
     });
 

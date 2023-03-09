@@ -18,8 +18,8 @@ import OnboardingScreen from '../../screens/OnboardingScreen';
 import FeedScreen from '../../screens/FeedScreen';
 import InitialInfoScreen from '../../screens/InitialInfoScreen';
 import InterestsScreen from '../../screens/InterestsScreen';
-import {logout} from '../../config/DB_Functions/DB_Functions';
-import {auth} from '../../config/firebaseConfig';
+import {getAllUsersData, logout} from '../../config/DB_Functions/DB_Functions';
+import {auth, db} from '../../config/firebaseConfig';
 import ViewOtherUser from '../../screens/ViewUserProfileScreen';
 import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
@@ -31,6 +31,9 @@ import {
   adaptNavigationTheme,
 } from 'react-native-paper';
 import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
+import {Platform} from 'react-native';
+import * as Notifications from 'expo-notifications';
+import * as TaskManager from 'expo-task-manager';
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -111,7 +114,100 @@ function HomeTabs() {
 const APPNAME = 'OmniLense';
 const Drawer = createDrawerNavigator();
 
+async function sendNotification(title, body) {
+  // Get the token from the user in firebase
+  let token = await db
+    .collection('users')
+    .doc(auth.currentUser.uid)
+    .get()
+    .then(doc => {
+      return doc.data().token;
+    });
+  if (!token) {
+    console.log('No token found');
+    return;
+  }
+  let message = {
+    to: token,
+    sound: 'default',
+    title: title,
+    body: body,
+    data: {data: 'goes here'},
+    ios: {
+      _displayInForeground: true,
+    },
+    android: {
+      channelId: 'default',
+    },
+  };
+
+  await fetch('https://exp.host/--/api/v2/push/send', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Accept-encoding': 'gzip, deflate',
+      'Content-Type': 'application/json',
+      host: 'exp.host',
+      'accept-encoding': 'gzip, deflate',
+      'accept-language': 'en-US,en;q=0.9',
+    },
+    body: JSON.stringify(message),
+  });
+}
+
+TaskManager.defineTask('sendNotification', async ({data, error}) => {
+  if (error) {
+    console.log('TaskManager Error:', error);
+    return;
+  }
+  if (data && data.type === 'newFriendRequest') {
+    const {friendRequests} = data;
+    const lastFriendRequest = friendRequests[friendRequests.length - 1];
+    if (lastFriendRequest) {
+      await sendNotification(
+        'New Friend Request',
+        `${lastFriendRequest.name} wants to be your friend!`,
+      );
+    }
+  }
+});
+
 function DrawerNavigator() {
+  useEffect(() => {
+    const currentUser = auth.currentUser;
+    const unsubscribe = db
+      .collection('users')
+      .doc(currentUser.uid)
+      .onSnapshot(async doc => {
+        const data = doc.data();
+        const friendRequestsData = data.friendRequests;
+        console.log('Friends', friendRequestsData);
+        try {
+          const friendData = await getAllUsersData(friendRequestsData);
+          console.log('Friend Data', friendData);
+          // Get the lst friend request
+          const lastFriendRequest = friendData[friendData.length - 1];
+          console.log('Last Friend Request in update', lastFriendRequest);
+          if (lastFriendRequest) {
+            await TaskManager.getRegisteredTasksAsync().then(tasks => {
+              console.log('Tasks', tasks);
+              if (tasks.length === 0) {
+                Notifications.scheduleNotificationAsync({
+                  content: {
+                    title: 'New Friend Request',
+                    body: `${lastFriendRequest.name} wants to be your friend!`,
+                  },
+                  trigger: null,
+                });
+              }
+            });
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      });
+    return () => unsubscribe();
+  }, []);
   return (
     <Drawer.Navigator
       initialRouteName={'Home'}

@@ -32,7 +32,6 @@ function SignInScreen({navigation}) {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(user => {
       if (user) {
-        console.log('User is signed in');
         navigation.navigate('Home');
       } else {
         console.log('User is signed out');
@@ -46,7 +45,6 @@ function SignInScreen({navigation}) {
     auth
       .signInWithEmailAndPassword(email, password)
       .then(userCredential => {
-        console.log('Signed in');
         navigation.navigate('Home');
       })
       .catch(error => {
@@ -78,19 +76,6 @@ function SignInScreen({navigation}) {
     } catch (e) {
       console.log('Error with Google sign-in:', e);
     }
-  };
-
-  const signInAnonymously = () => {
-    auth
-      .signInAnonymously()
-      .then(userCredential => {
-        console.log('Anonymous user signed in');
-        navigation.navigate('Home');
-      })
-      .catch(error => {
-        console.log(error);
-        Alert.alert('Error', 'An error occurred while signing in anonymously.');
-      });
   };
 
   const fbSignIn = () => {
