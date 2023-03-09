@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Text, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  Image,
+  Text,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 import {auth} from '../config/firebaseConfig';

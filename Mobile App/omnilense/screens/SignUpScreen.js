@@ -32,29 +32,34 @@ function SignUpScreen({navigation}) {
   const [errorMessage, setErrorMessage] = useState(null);
 
   function createAccount() {
-    password === confirmPassword
-      ? auth
-          .createUserWithEmailAndPassword(email, password)
-          .then(userCredential => {
-            // Signed in
-            const user = userCredential.user;
-            createUser(user).then(r => {
-              console.log('r', r);
-            });
-            // ...
-            navigation.navigate('Initial Info');
-          })
-          .catch(error => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // ..
-            setErrorMessage(errorMessage);
-          })
-      : setErrorMessage("Password confirmation doesn't match");
+    if (password === confirmPassword) {
+      auth
+        .createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          // Signed in
+          const user = userCredential.user;
+          createUser(user).then(r => {
+            console.log('r', r);
+          });
+          // ...
+          navigation.navigate('Initial Info');
+        })
+        .catch(error => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // ..
+          setErrorMessage(errorMessage);
+        });
+    } else {
+      setErrorMessage("Password confirmation doesn't match");
+    }
   }
 
   return (
     <PaperProvider theme={theme}>
+      {errorMessage ? (
+        <Text style={{color: 'red', textAlign: 'center'}}>{errorMessage}</Text>
+      ) : null}
       <View style={styles.container}>
         <Image
           source={require('../assets/Logo-removebg.png')}
@@ -85,12 +90,14 @@ function SignUpScreen({navigation}) {
           socialName="facebook"
           color="#4867aa"
           bgColor="#e6eaf4"
+          onPress={() => alert('Facebook button pressed')}
         />
         <SocialButtonComponent
           text="Sign up with Google"
           socialName="facebook"
           color="#de4d41"
           bgColor="#f5e7ea"
+          onPress={() => alert('Google button pressed')}
         />
         <TouchableOpacity
           style={styles.forgotButton}
