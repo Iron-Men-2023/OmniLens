@@ -14,7 +14,38 @@ import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
 //   },
 // };
 
+import * as TaskManager from 'expo-task-manager';
+import {useEffect} from 'react';
+
+TaskManager.defineTask('myTask', ({data, error}) => {
+  if (error) {
+    console.log('TaskManager Error:', error);
+    return;
+  }
+  if (data) {
+    const {taskId} = data;
+    console.log(`TaskManager Data: ${JSON.stringify(data)}`);
+    TaskManager.finishTaskAsync(taskId);
+  }
+});
+
+async function registerBackgroundTask() {
+  await TaskManager.registerTaskAsync('myTask', {
+    minimumInterval: 60,
+    allowsExecutionInForeground: true,
+  });
+}
+
 export default function App() {
+  useEffect(() => {
+    registerBackgroundTask()
+      .then(r => {
+        console.log('Background Task Set: ', r);
+      })
+      .catch(e => {
+        console.log('Background Task Error: ', e);
+      });
+  }, []);
   return (
     <PaperProvider>
       <Navigation />

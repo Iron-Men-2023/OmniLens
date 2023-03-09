@@ -140,7 +140,6 @@ async function updateRecents(recentId) {
 
   // Add the new interest to the beginning of the array
   currentRecents = [recentId, ...currentRecents.slice(0, 10)];
-  console.log('currentRecents', currentRecents);
   // Update the document with the updated interests array
   return userRef.update({
     recents: currentRecents,
@@ -151,16 +150,12 @@ async function setImageForUser(user, photo, type) {
   if (!user) {
     return;
   }
-  console.log('photo', photo);
-  console.log('type', type);
   if (type === 'Avatar') {
-    console.log('avatar');
     await db.collection('users').doc(user.uid).update({
       avatarPhotoUrl: photo,
     });
     return;
   } else if (type === 'Cover') {
-    console.log('cover');
     await db.collection('users').doc(user.uid).update({
       coverPhotoUrl: photo,
     });
@@ -200,9 +195,7 @@ async function addRecents() {
   });
   batch
     .commit()
-    .then(() => {
-      console.log('Recents field updated successfully');
-    })
+    .then(() => {})
     .catch(error => {
       console.error('Error updating recents field:', error);
     });
@@ -226,9 +219,7 @@ async function addSocialMediaProfiles() {
   });
   batch
     .commit()
-    .then(() => {
-      console.log('Social media field updated successfully');
-    })
+    .then(() => {})
     .catch(error => {
       console.error('Error updating social media field:', error);
     });

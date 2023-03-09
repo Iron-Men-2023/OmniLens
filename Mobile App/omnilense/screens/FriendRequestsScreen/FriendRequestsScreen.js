@@ -25,13 +25,17 @@ const FriendRequestsScreen = () => {
       .doc(currentUser.uid)
       .onSnapshot(async doc => {
         const data = doc.data();
-        const friendRequestsData = data.friendRequests;
-        console.log('Friends', friendRequestsData);
-        try {
-          const friendData = await getAllUsersData(friendRequestsData);
-          setFriendRequests(friendData);
-        } catch (error) {
-          console.log(error);
+        if (data.friendRequests) {
+          const friendRequestsData = data.friendRequests;
+          console.log('Friends', friendRequestsData);
+          try {
+            const friendData = await getAllUsersData(friendRequestsData);
+            setFriendRequests(friendData);
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          setFriendRequests([]);
         }
       });
 
