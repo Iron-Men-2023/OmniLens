@@ -17,13 +17,12 @@ const FriendsPage = ({navigation}) => {
     const unsubscribe = db.collection('users').onSnapshot(snapshot => {
       const usersList = [];
       snapshot.forEach(doc => {
-        console.log('Doc', doc.data());
         if (doc.uid !== auth.currentUser.uid) {
           const userData = doc.data();
-          console.log('Avatar', userData.avatarPhotoUrl);
           const friends = userData.friends || [];
+          console.log(friends,friends.length)
+
           if (friends.includes(auth.currentUser.uid)) {
-            console.log('Friend', userData.name);
             usersList.push({
               id: doc.id,
               name: userData.name,
