@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "743604615483",
+    "project_id": "omnilens-d5745",
+    "storage_bucket": "omnilens-d5745.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:743604615483:android:3d7eeb3360d714733a1f1e",
+        "android_client_info": {
+          "package_name": "com.omnilense"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "743604615483-nqkh5807cchm398g1ah5npuk2si5htt6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCTNS4wguGwR0fm1EztTC4zxjrgcBiojAU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "743604615483-294qdnnn9na2e4igavnqmm67ja49pqmk.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "743604615483-om7i9tarvl21rpjb1jeh6nje56etp8do.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.omnilense"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
