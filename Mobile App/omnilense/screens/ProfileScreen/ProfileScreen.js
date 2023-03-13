@@ -28,7 +28,6 @@ const ProfilePage = ({navigation}) => {
   const [userSet, setUserSet] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [friend, setFriend] = useState(null);
-
   useEffect(() => {
     fetchUserData()
       .then(r => {
@@ -130,6 +129,8 @@ const ProfilePage = ({navigation}) => {
                 friend={friend.avatarPhotoUrl}
                 navigation={navigation}
                 screen={"Friends"}
+                currentUser={user.uid}
+
               />
             ) : (
               <BoxComponent title={user.friends.length + ' Friends'} navigation={navigation}
@@ -141,6 +142,7 @@ const ProfilePage = ({navigation}) => {
                 friend={friend.avatarPhotoUrl}
                 navigation={navigation}
                 screen={"Recents"}
+                currentUser={user.uid}
               />
             ) : (
               <BoxComponent title={'New viewers'} navigation={navigation}

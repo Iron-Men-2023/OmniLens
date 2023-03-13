@@ -28,6 +28,7 @@ import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
 import MLScreen from '../../screens/MLScreen';
 import AccountSettingsScreen from '../../screens/AccountSettingsScreen';
 import RecentsScreen from "../../screens/RecentsScreen";
+import ViewUserFriendsScreen from "../../screens/ViewUserFriendsScreen";
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -199,6 +200,7 @@ export default function Navigation() {
         <Stack.Screen name={'Interests'} component={InterestsScreen} />
         <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser} />
         <Stack.Screen name={'Recents'} component={RecentsScreen} options={{title: "Viewed By",headerShown: true}}/>
+        <Stack.Screen name={'OtherUserFriends'} component={ViewUserFriendsScreen} options={{title: "Friends",headerShown: true}}/>
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -18,7 +18,7 @@ import fbLogo from '../assets/fblogo.jpg';
 import igLogo from '../assets/iglogo.jpg';
 import twitterLogo from '../assets/twitter.jpg';
 
-const ViewOtherUser = ({route}) => {
+const ViewOtherUser = ({route,navigation,screen}) => {
   const [user, setUser] = useState(null);
   const [userSet, setUserSet] = useState(false);
   const [friend, setFriend] = useState(null);
@@ -78,20 +78,27 @@ const ViewOtherUser = ({route}) => {
           </View>
           <View style={styles.box}>
             {friend ? (
-              <BoxComponent
-                title={user.friends.length + ' Friends'}
-                friend={friend.avatarPhotoUrl}
-              />
+                <BoxComponent
+                    title={user.friends.length + ' Friends'}
+                    friend={friend.avatarPhotoUrl}
+                    navigation={navigation}
+                    screen={"OtherUserFriends"}
+                    currentUser={uid}
+                />
             ) : (
-              <BoxComponent title={user.friends.length + ' Friends'} />
+                <BoxComponent title={user.friends.length + ' Friends'} navigation={navigation}
+                              screen={"OtherUserFriends"} />
             )}
             {friend ? (
-              <BoxComponent
-                title={'New viewers'}
-                friend={friend.avatarPhotoUrl}
-              />
+                <BoxComponent
+                    title={'New viewers'}
+                    friend={friend.avatarPhotoUrl}
+                    navigation={navigation}
+                    screen={"Recents"}
+                />
             ) : (
-              <BoxComponent title={'New viewers'} />
+                <BoxComponent title={'New viewers'} navigation={navigation}
+                              screen={"Recents"}/>
             )}
           </View>
           <Text style={styles.title}>Socials:</Text>

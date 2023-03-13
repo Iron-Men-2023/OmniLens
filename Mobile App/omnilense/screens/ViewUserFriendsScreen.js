@@ -7,39 +7,64 @@ import {
     StyleSheet,
     Pressable,
 } from 'react-native';
-import {auth, storage, db, firebaseApp} from '../config/firebaseConfig';
-import firebase from 'firebase/compat/app';
 import {getUserById} from "../config/DB_Functions/DB_Functions";
+import {auth, db} from "../config/firebaseConfig";
+import firebase from "firebase/compat/app";
 
-const RecentsScreen = ({navigation,route}) => {
-    const {user} = route.params
+
+const ViewUserFriendsScreen = ({navigation,route}) => {
     const [users, setUsers] = useState([]);
-    const [recents,setRecents] = useState([])
-    const recentsRef = useRef([])
-    const usersRef = useRef([])
-
-    recentsRef.current= recents
-    usersRef.current= users
-
+    const {user} = route.params
+    const [emails, setEmails] = useState([]);
+    const userListRef = useRef(null)
+    const emailsRef = useRef([])
+    emailsRef.current = emails
+    userListRef.current = users;
+    console.log(user,"usrs")
     useEffect(() => {
-        const usersList = []
         getUserById(user)
-            .then(r => {
-                setRecents(r.userDoc.recents)
-                recentsRef.current.forEach(ref=> {
-                    getUserById(ref)
-                        .then(a => {
-                            setUsers([{
-                                    id: a.id,
-                                    name: a.name,
-                                    photoUrl: a.avatarPhotoUrl,
+            .then(doc=> {
+                const userData = doc.userDoc;
+
+                userData.friends.forEach(friend => {
+                    getUserById(friend)
+                        .then(a=>{
+                            if(!emailsRef.current.includes(a.userDoc.email))
+                            {
+                                setUsers([{
+                                    id: a.userDoc.id,
+                                    name: a.userDoc.name,
+                                    photoUrl: a.userDoc.avatarPhotoUrl,
                                     friendStatus: <Text style={styles.friendStatus}>Friends</Text>,
-                                }, ...usersRef.current]);
-                            })
-                })
-            }
-        )
-    }, []);
+                                },...userListRef.current]);
+                                setEmails([a.userDoc.email,...emailsRef.current])
+                            }
+                        }).catch(e => console.log(e))
+                });
+
+            }).catch(e => console.log('es2', e));
+    }, [])
+
+    const getFriendStatus = userData => {
+        const currentUser = auth.currentUser;
+        const friends = userData.friends || [];
+        if (friends.includes(currentUser.uid)) {
+            return <Text style={styles.friendStatus}>Friends</Text>;
+        }
+    };
+
+    const sendFriendRequest = userData => {
+        const currentUser = auth.currentUser;
+        db.collection('users')
+            .doc(userData.uid)
+            .update({
+                friendRequests: firebase.firestore.FieldValue.arrayUnion(
+                    currentUser.uid,
+                ),
+            })
+            .then(r => console.log('Friend request sent successfully!'))
+            .catch(e => console.error('Error sending friend request:', e));
+    };
 
     return (
         <View>
@@ -116,4 +141,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default RecentsScreen;
+export default ViewUserFriendsScreen;

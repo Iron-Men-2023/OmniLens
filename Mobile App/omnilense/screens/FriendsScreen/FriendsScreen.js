@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -9,33 +9,41 @@ import {
 } from 'react-native';
 import {auth, storage, db, firebaseApp} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
+import {getUserById} from "../../config/DB_Functions/DB_Functions";
 
-const FriendsPage = ({navigation}) => {
+const FriendsPage = ({navigation,route}) => {
   const [users, setUsers] = useState([]);
-
+  const {user} = route.params || auth.currentUser.uid
+  const [emails, setEmails] = useState([]);
+  const userListRef = useRef(null)
+  const emailsRef = useRef([])
+  emailsRef.current = emails
+  userListRef.current = users;
+  console.log(user,"usrs")
   useEffect(() => {
-    const unsubscribe = db.collection('users').onSnapshot(snapshot => {
-      const usersList = [];
-      snapshot.forEach(doc => {
-        if (doc.uid !== auth.currentUser.uid) {
-          const userData = doc.data();
-          const friends = userData.friends || [];
-          console.log(friends,friends.length)
+   getUserById(user)
+   .then(doc=> {
+      const userData = doc.userDoc;
 
-          if (friends.includes(auth.currentUser.uid)) {
-            usersList.push({
-              id: doc.id,
-              name: userData.name,
-              photoUrl: userData.avatarPhotoUrl,
-              friendStatus: <Text style={styles.friendStatus}>Friends</Text>,
-            });
-          }
-        }
+     userData.friends.forEach(friend => {
+        getUserById(friend)
+          .then(a=>{
+            if(!emailsRef.current.includes(a.userDoc.email))
+            {
+              setUsers([{
+                id: a.userDoc.id,
+                name: a.userDoc.name,
+                photoUrl: a.userDoc.avatarPhotoUrl,
+                friendStatus: <Text style={styles.friendStatus}>Friends</Text>,
+              },...userListRef.current]);
+              setEmails([a.userDoc.email,...emailsRef.current])
+            }
+          }).catch(e => console.log(e))
       });
-      setUsers(usersList);
-    });
-    return unsubscribe;
-  }, []);
+      console.log(userrs)
+    }).catch(e => console.log('es2', e));
+  }, [])
+
 
   const getFriendStatus = userData => {
     const currentUser = auth.currentUser;
