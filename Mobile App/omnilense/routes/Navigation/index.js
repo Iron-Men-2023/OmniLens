@@ -29,6 +29,7 @@ import MLScreen from '../../screens/MLScreen';
 import AccountSettingsScreen from '../../screens/AccountSettingsScreen';
 import RecentsScreen from "../../screens/RecentsScreen";
 import ViewUserFriendsScreen from "../../screens/ViewUserFriendsScreen";
+import Feed from "../../screens/Feed";
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -40,7 +41,7 @@ function HomeTabs() {
     <Tab.Navigator screenOptions={{showLabel: false}}>
       <Tab.Screen
         name={'Feed'}
-        component={FeedScreen}
+        component={Feed}
         options={{
           tabBarIcon: ({focused}) => (
             <View>
