@@ -8,7 +8,6 @@ import {SubInfo} from "./SubInfo";
 const Recent= ({data,loggedInUser}) =>{
     const navigation = useNavigation()
     const [connected, setConnected] = useState(false)
-    console.log(data)
     const IconSizes = 30;
 
     return(
@@ -42,7 +41,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: "#fff",
         marginBottom: 24,
-        margin: 8,
+        margin: 14,
         borderRadius: 14
 
     },

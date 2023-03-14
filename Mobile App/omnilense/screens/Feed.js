@@ -14,8 +14,7 @@ function Feed({navigation}) {
     const [searchText, setSearchText] = useState('');
     const recentsRef = useRef([]);
     const emailsRef = useRef([]);
-    recentsRef.current = recents;
-    emailsRef.current = emails;
+
 
     function dynamicSearch(text) {
         setSearchText(text);
@@ -42,8 +41,8 @@ function Feed({navigation}) {
                         .then(a => {
                             console.log('recendassts: ', a.userDoc.email);
                             if (!emailsRef.current.includes(a.userDoc.email)) {
-                                setRecents([a.userDoc, ...recentsRef.current]);
-                                setEmails([...emailsRef.current, a.userDoc.email]);
+                                recentsRef.current.push(a.userDoc)
+                                emailsRef.current.push(a.userDoc.email)
                             }
                             console.log('list', recentsRef, emailsRef.current);
                         })
@@ -62,7 +61,7 @@ function Feed({navigation}) {
             <View style={{flex: 1}}>
                 <View style={{zIndex: 0}}>
                     <FlatList
-                        data={recents}
+                        data={recentsRef.current}
                         renderItem={({item})=><Recent data={item} loggedInUser={user}/>}
                         keyExtractor={(item)=>item.id}
                         showsVerticalScrollIndicator={false}

@@ -2,8 +2,7 @@ import React, {useEffect, useRef, useState} from "react"
 import {View, Text, Image} from "react-native"
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 
-export const ImageComponent = ({src,count}) => {
-    console.log("IDX",count)
+export const ImageComponent = ({src,index}) => {
     return(
         <Image
             source={{uri: src}}
@@ -12,39 +11,36 @@ export const ImageComponent = ({src,count}) => {
                 width: 48,
                 height: 48,
                 borderRadius: 40,
-                marginLeft: count===0? 0: -18
+                marginLeft: index===0? 0: -18
             }}
         />
     )
 }
 export const Mutuals = ({loggedInUser,data}) =>{
-    const [mutuals,setMutuals] = useState([])
-    const [emails, setEmails] = useState([]);
+    const [render, Rerender] = useState(true);
     const mutualsRef = useRef([]);
-    const emailsRef = useRef([]);
-
+    const friendRef = useRef([]);
     useEffect(() => {
-
-    loggedInUser.friends.forEach(friend =>{
-
-        getUserById(friend)
-            .then(a => {
-
-                if(a.userDoc.recents.includes(data.uid) && !emailsRef.current.includes(a.userDoc.email)){
-                     setMutuals([...mutualsRef.current,a.userDoc])
-                     setEmails([...emailsRef.current,a.userDoc.email])
-                    console.log(a.userDoc.name,"Has ssee",data.name)
+        data.friends?
+            data.friends.forEach(friend => {
+                if (loggedInUser.friends.includes(friend) && !friendRef.current.includes(friend)) {
+                    getUserById(friend)
+                        .then(a => {
+                            mutualsRef.current.push(a.userDoc)
+                            friendRef.current.push( friend)
+                        })
+                        .catch(e => console.log('e2s', e));
                 }
             })
-            .catch(e => console.log('es2', e));
-    })
+
+        : null
     })
     return(
     <View style={{
         flexDirection: "row"
     }}>
-        {mutualsRef.current.map((mutual,index) => (
-            <ImageComponent src={mutual.avatarPhotoUrl ? mutual.avatarPhotoUrl: null} count={index}/>
+        {mutualsRef.current.map((mutual,index )=> (
+            <ImageComponent src={mutual.avatarPhotoUrl ? mutual.avatarPhotoUrl: null} index={index}/>
         ))}
     </View>
     )
