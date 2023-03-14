@@ -32,14 +32,10 @@ function Feed({navigation}) {
                 setUser(userData);
                 setUserSet(true);
 
-                console.log('recents: ', userData.recents);
-                console.log('recents: ', userData);
-
                 // Iterate through the recents array and get the user data for each recent user
                 for (let id in userData.recents) {
                     getUserById(userData.recents[id])
                         .then(a => {
-                            console.log('recendassts: ', a.userDoc.email);
                             if (!emailsRef.current.includes(a.userDoc.email)) {
                                 recentsRef.current.push(a.userDoc)
                                 emailsRef.current.push(a.userDoc.email)
@@ -72,6 +68,7 @@ function Feed({navigation}) {
                     <View style={{height: 300 ,backgroundColor: '#001F2D'}}/>
                 </View>
             </View>
+
         </SafeAreaView>
     );
 }
