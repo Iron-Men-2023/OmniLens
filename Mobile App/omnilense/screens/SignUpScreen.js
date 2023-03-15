@@ -14,6 +14,16 @@ import {AntDesign} from '@expo/vector-icons';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
 import {createUser} from '../config/DB_Functions/DB_Functions';
+import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
+
+const theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'rgb(57,153,215)',
+    secondary: '#f1c40f',
+  },
+};
 
 function SignUpScreen({navigation}) {
   const [email, setEmail] = useState('');
@@ -22,36 +32,39 @@ function SignUpScreen({navigation}) {
   const [errorMessage, setErrorMessage] = useState(null);
 
   function createAccount() {
-    password === confirmPassword
-      ? auth
-          .createUserWithEmailAndPassword(email, password)
-          .then(userCredential => {
-            // Signed in
-            const user = userCredential.user;
-            createUser(user).then(r => {
-              console.log('r', r);
-            });
-            // ...
-            navigation.navigate('Initial Info');
-          })
-          .catch(error => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            // ..
-            setErrorMessage(errorMessage);
-          })
-      : setErrorMessage("Password confirmation doesn't match");
+    if (password === confirmPassword) {
+      auth
+        .createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          // Signed in
+          const user = userCredential.user;
+          createUser(user).then(r => {
+            console.log('r', r);
+          });
+          // ...
+          navigation.navigate('Initial Info');
+        })
+        .catch(error => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // ..
+          setErrorMessage(errorMessage);
+        });
+    } else {
+      setErrorMessage("Password confirmation doesn't match");
+    }
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        {errorMessage ? (
-          <Text style={styles.errorText}>{errorMessage}</Text>
-        ) : (
-          <Text style={styles.text}>Create an account</Text>
-        )}
-
+    <PaperProvider theme={theme}>
+      {errorMessage ? (
+        <Text style={{color: 'red', textAlign: 'center'}}>{errorMessage}</Text>
+      ) : null}
+      <View style={styles.container}>
+        <Image
+          source={require('../assets/Logo-removebg.png')}
+          style={styles.logo}
+        />
         <FormInputComponent
           placeholderText="email"
           icon="user"
@@ -72,20 +85,19 @@ function SignUpScreen({navigation}) {
         />
 
         <FormButtonComponent text="Sign up" onPress={createAccount} />
-        <TouchableOpacity style={styles.forgotButton}>
-          <Text style={styles.navButtonText}>Forgot Password?</Text>
-        </TouchableOpacity>
         <SocialButtonComponent
           text="Sign up with Facebook"
           socialName="facebook"
           color="#4867aa"
           bgColor="#e6eaf4"
+          onPress={() => alert('Facebook button pressed')}
         />
         <SocialButtonComponent
           text="Sign up with Google"
           socialName="facebook"
           color="#de4d41"
           bgColor="#f5e7ea"
+          onPress={() => alert('Google button pressed')}
         />
         <TouchableOpacity
           style={styles.forgotButton}
@@ -94,25 +106,17 @@ function SignUpScreen({navigation}) {
             Already have an account? Sign in
           </Text>
         </TouchableOpacity>
-      </ScrollView>
-    </View>
+      </View>
+    </PaperProvider>
   );
 }
-
-export default SignUpScreen;
 
 const styles = StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 1,
     padding: 20,
-    backgroundColor: '#b5c9fd',
-    height: '100%',
-  },
-  errorText: {
-    fontSize: 28,
-    marginBottom: 10,
-    color: '#fa0416',
   },
   logo: {
     height: 150,
@@ -120,13 +124,9 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   text: {
-    padding: 20,
     fontSize: 28,
     marginBottom: 10,
     color: '#051d5f',
-  },
-  navButton: {
-    marginTop: 15,
   },
   forgotButton: {
     marginVertical: 20,
@@ -137,3 +137,5 @@ const styles = StyleSheet.create({
     color: 'rgb(57,153,215)',
   },
 });
+
+export default SignUpScreen;

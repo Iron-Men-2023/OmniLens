@@ -35,11 +35,15 @@ const ProfilePage = ({navigation}) => {
         setUser(r.userDoc);
         setUserSet(true);
         //get friend image for friend list display
-        getUserById(r.userDoc.friends[user.friends.length - 1])
-          .then(r => {
-            setFriend(r.userDoc);
-          })
-          .catch(e => console.log('easds1', e));
+        if (user.friends) {
+          getUserById(r.userDoc.friends[user.friends.length - 1])
+            .then(r => {
+              setFriend(r.userDoc);
+            })
+            .catch(e => console.log('easds1', e));
+        } else {
+          setFriend(null);
+        }
       })
       .catch(e => console.log('e4', e));
   }, [userSet]);
@@ -54,12 +58,17 @@ const ProfilePage = ({navigation}) => {
           setUser(r.userDoc);
           setUserSet(true);
           setUserSet(true);
-          //get friend image for friend list display
-          getUserById(r.userDoc.friends[user.friends.length - 1])
-            .then(r => {
-              setFriend(r.userDoc);
-            })
-            .catch(e => console.log('easds1', e));
+
+          if (user.friends) {
+            //get friend image for friend list display
+            getUserById(r.userDoc.friends[user.friends.length - 1])
+              .then(r => {
+                setFriend(r.userDoc);
+              })
+              .catch(e => console.log('easds1', e));
+          } else {
+            setFriend(null);
+          }
         } catch (e) {
           console.log('e1', e);
         }
@@ -135,6 +144,7 @@ const ProfilePage = ({navigation}) => {
             ) : (
               <BoxComponent title={user.friends.length + ' Friends'} navigation={navigation}
                             screen={"Friends"} />
+
             )}
             {friend ? (
               <BoxComponent

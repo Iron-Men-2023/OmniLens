@@ -28,10 +28,8 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
   const [uploadPhoto, setUploadPhoto] = useState(false);
   const [userImageUrl, setUserImageUrl] = useState(() => {
     if (photoType === 'Avatar') {
-      console.log('user.avatarPhotoUrl', user.avatarPhotoUrl);
       return user.avatarPhotoUrl;
     } else if (photoType === 'Cover') {
-      console.log('user.coverPhotoUrlllllllll', user.coverPhotoUrl);
       return user.coverPhotoUrl;
     }
   });
@@ -117,10 +115,7 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly}) => {
       async () => {
         // Upload completed successfully, now we can get the download URL
         const url = await storageRef.getDownloadURL();
-        console.log('url', url);
-        console.log('user is being set');
         await setImageForUser(user, url, photoType);
-        console.log('user is set');
         setImage(null);
         setUserImageUrl(url);
         Alert.alert(
