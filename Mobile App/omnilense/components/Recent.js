@@ -1,22 +1,25 @@
 import React, {useEffect, useRef, useState} from "react"
-import {View, Text, StyleSheet, Image, TouchableOpacity, Alert} from "react-native"
+import {View, Text, StyleSheet, Image, TouchableOpacity, Alert, Pressable} from "react-native"
 import {useNavigation} from "@react-navigation/native";
 import dimensions from "../config/DeviceSpecifications";
 import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
-import {DetailComponent, NameComponent, SubInfo} from "./SubInfo";
+import {DetailComponent, SubInfo} from "./SubInfo";
 import {sendFriendRequest} from "../config/DB_Functions/DB_Functions";
 import NotificationTextComponent from "./NotificationTextComponent";
 import {auth} from "../config/firebaseConfig";
 
-const Recent= ({data,loggedInUser}) =>{
-    const navigation = useNavigation()
+const Recent= ({data,loggedInUser,navigation}) =>{
     const [connected, setConnected] = useState(data.friends && data.friends.includes(auth.currentUser.uid),
     )
     const [saved, setSaved] = useState(false);
     const [connectionNofification, setConnectionNofification] = useState(false);
     const [saveNotification, setSaveNotification] = useState(false);
     const IconSizes = 30;
+    const [detailColor,setDetailColor] =useState("#fff")
 
+    function handleRecentComponentPress(){
+        navigation.navigate('OtherUserProfile', {uid: data.uid})
+    }
     function handleBookmarkPress() {
         setSaved(!saved);
         if (!saved) {
@@ -49,6 +52,14 @@ const Recent= ({data,loggedInUser}) =>{
     }
     return(
         <View style={styles.container}>
+            <Pressable
+                style={({pressed}) => [
+                    {backgroundColor: pressed ? 'black' : 'white'},
+                ]}
+                onPressIn={()=>setDetailColor("#283441")}
+                onPressOut={()=>setDetailColor("white")}
+                onPress={handleRecentComponentPress}>
+
             <View style={styles.imageView}>
                 <Image source={{uri: data.avatarPhotoUrl}} resizeMode={"cover"} style={{width: "100%", height: "90%",borderTopLeftRadius: 14,borderTopRightRadius: 14}}/>
             </View>
@@ -57,7 +68,8 @@ const Recent= ({data,loggedInUser}) =>{
                 width: "100%",
                 padding: 20,
                 flexDirection: "row",
-                justifyContent: "space-between"
+                justifyContent: "space-between",
+                backgroundColor: detailColor
             }}>
                 <DetailComponent
                     title={data.name}
@@ -107,15 +119,14 @@ const Recent= ({data,loggedInUser}) =>{
                     </TouchableOpacity>
                 </View>
             </View>
+            </Pressable>
+
             <View style={styles.center}>
                 {connectionNofification ? (
                     <NotificationTextComponent
                         text="Connection request sent"
                         icon={'pluscircle'}
                     />
-                ) : null}
-                {saveNotification ? (
-                    <NotificationTextComponent text="Profile saved" icon={'pluscircle'} />
                 ) : null}
             </View>
         </View>
@@ -127,7 +138,6 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         marginBottom: 24,
         margin: 14,
-        borderRadius: 14
 
     },
     center: {

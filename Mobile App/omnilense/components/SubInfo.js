@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react"
-import {View, Text, Image} from "react-native"
+import {View, Text, Image, TouchableOpacity} from "react-native"
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 
 export const TimeDetails =() =>{
@@ -42,20 +42,38 @@ export const DetailComponent = ({title}) => {
         </View>
     )
 }
-export const ImageComponent = ({src,index}) => {
+export const ImageComponent = ({src,index,onPressAction}) => {
     return(
-        <Image
-            source={{uri: src}}
-            resizeMode={"contain"}
-            style={{
-                width: 48,
-                height: 48,
-                borderRadius: 40,
-                marginLeft: index===0? 0: -18,
-                borderColor: "#22262f",
-                borderWidth: 3
-            }}
-        />
+
+            onPressAction ?
+                <TouchableOpacity  onPress={onPressAction}>
+                    <Image
+                        source={{uri: src}}
+                        resizeMode={"contain"}
+                        style={{
+                            width: 48,
+                            height: 48,
+                            borderRadius: 40,
+                            marginLeft: index===0? 0: -18,
+                            borderColor: "#22262f",
+                            borderWidth: 3
+                        }}/>
+                </TouchableOpacity>
+
+                :
+                <Image
+                    source={{uri: src}}
+                    resizeMode={"contain"}
+                    style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: 40,
+                        marginLeft: index===0? 0: -18,
+                        borderColor: "#22262f",
+                        borderWidth: 3
+                    }}/>
+
+
     )
 }
 export const Mutuals = ({loggedInUser,data,setConnected}) =>{

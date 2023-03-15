@@ -18,7 +18,7 @@ function Feed({navigation}) {
 
     function dynamicSearch(text) {
         setSearchText(text);
-        setSearchedRecents(recents.filter(element => element.name.includes(text)));
+        setSearchedRecents(recentsRef.current.filter(element => element.name.includes(text)));
     }
 
     useEffect(() => {
@@ -57,11 +57,11 @@ function Feed({navigation}) {
             <View style={{flex: 1}}>
                 <View style={{zIndex: 0}}>
                     <FlatList
-                        data={recentsRef.current}
-                        renderItem={({item})=><Recent data={item} loggedInUser={user}/>}
+                        data={searchText.length === 0? recentsRef.current: searchedRecents}
+                        renderItem={({item})=><Recent data={item} loggedInUser={user} navigation={navigation}/>}
                         keyExtractor={(item)=>item.id}
                         showsVerticalScrollIndicator={false}
-                        ListHeaderComponent={Header}/>
+                        ListHeaderComponent={user? <Header user={user} search={dynamicSearch} navigation={navigation}/>: null}/>
 
                 </View>
                 <View style={styles.backPanel}>
