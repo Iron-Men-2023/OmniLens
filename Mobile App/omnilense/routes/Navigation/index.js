@@ -33,8 +33,8 @@ import Feed from "../../screens/Feed";
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
-const focusColor = 'red';
-const restColor = 'blue';
+const focusColor = '#3b84a6';
+const restColor = '#341062';
 
 function HomeTabs() {
   return (
