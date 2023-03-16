@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="866fb290-b5f1-4286-a87d-128b8a0d49e1" name="Changes" comment="Using config.js for keys to be stored.">
+      <change beforePath="$PROJECT_DIR$/../.expo/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.expo/packager-info.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.expo/settings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.eslintrc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/auto-assign.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/pull_request_template.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/auto-assign.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/proof-html.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/omnilense.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.prettierrc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Logo-removebg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/Logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/adaptive-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/favicon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fb.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fblogo.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/fblogo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/iglogo.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/iglogo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/onboard1new.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/onboard2new.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/onboard3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/splash.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/twitter.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/twitter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/babel.config.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/FormButtonComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/FormInputComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/FriendsComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HeaderComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/HorizontalLineComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ImagePickerComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/InterestComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/NotificationTextComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/ProfilePhotoComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/RecentComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/RectangleComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/SearchInputComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/SocialButtonComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/TextButtonComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/DB_Functions/DB_Functions.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/DeviceSpecifications.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/firebaseConfig.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/BottomTabNavigator.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/Drawer.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/HomeStack.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/LoginStack.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/Navigation/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/SettingsStack.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/AccountSettingsScreen/AccountSettingsScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/AccountSettingsScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/AuthScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/BoxComponent.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/ConfirmEmailScreen/ConfirmEmailScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/ConfirmEmailScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/FeedScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/ForgotPasswordScreen/ForgotPasswordScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/ForgotPasswordScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/FriendRequestsScreen/FriendRequestsScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/FriendRequestsScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/FriendsScreen/FriendsScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/FriendsScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/HomeScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/InitialInfoScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/InterestsScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/MLScreen/MLScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/MLScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/NewPasswordScreen/NewPasswordScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/NewPasswordScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/OnboardingScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/ProfileScreen/ProfileScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/ProfileScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/SearchScreen/SearchScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/SearchScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/SettingsScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/SignUpScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/TermsOfServiceScreen/TermsOfServiceScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/TermsOfServiceScreen/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/screens/ViewUserProfileScreen.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../.." value="ben_3/6" />
+      </map>
+    </option>
+  </component>
+  <component name="JsBowerSettings">
+    <bower-package value="" />
+    <bower.json value="" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectId" id="2M0n2fureBponsRtQTjb30WU1cF" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Git.Branch.Popup.ShowAllRemotes&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/bendesollar/Coding_Projects/Senior_Design/OmniLens/Mobile App/omnilense&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.standard&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.standard&quot;: &quot;&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;yarn&quot;,
+    &quot;prettierjs.PrettierConfiguration.Package&quot;: &quot;/Users/bendesollar/Coding_Projects/Senior_Design/OmniLens/Mobile App/omnilense/node_modules/prettier&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/bendesollar/Library/Application Support/JetBrains/Toolbox/apps/WebStorm/ch-0/223.8617.44/WebStorm.app/Contents/plugins/javascript-impl/jsLanguageServicesImpl/external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/config" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration name="lint" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="lint" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.lint" />
+        <item itemvalue="npm.lint" />
+        <item itemvalue="npm.lint" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration>$USER_HOME$/.subversion</configuration>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="866fb290-b5f1-4286-a87d-128b8a0d49e1" name="Changes" comment="" />
+      <created>1676913161418</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1676913161418</updated>
+      <workItem from="1676913162643" duration="604000" />
+      <workItem from="1676948432567" duration="136000" />
+      <workItem from="1676948573588" duration="42474000" />
+      <workItem from="1677259862083" duration="17130000" />
+      <workItem from="1677509384864" duration="1078000" />
+      <workItem from="1677522842141" duration="7670000" />
+      <workItem from="1677537832569" duration="25585000" />
+      <workItem from="1677687336395" duration="50823000" />
+      <workItem from="1677892793418" duration="48062000" />
+      <workItem from="1678401615183" duration="3858000" />
+    </task>
+    <task id="LOCAL-00001" summary="Added in some more navigation.">
+      <created>1676949613595</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1676949613595</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Finished up initial fix of navigation.">
+      <created>1676950532944</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1676950532944</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Added pull request template.">
+      <created>1676950830123</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1676950830123</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Added in cleanup files abd updated screen UI">
+      <created>1676993850182</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1676993850182</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Added in some more firebase functionality.">
+      <created>1677001101702</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1677001101702</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Added in uploading images to firebase storage.">
+      <created>1677018651036</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1677018651036</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Fixed some navigation with auth.">
+      <created>1677020010397</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1677020010397</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Updated API">
+      <created>1677022680876</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1677022680876</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Added in profile page. Still some bugs.">
+      <created>1677042229970</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1677042229970</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Updated code for picking an image for the profile">
+      <created>1677258788577</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1677258788577</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Updated profile and auth screen.">
+      <created>1677277856779</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1677277856779</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Updated users auth and added a friends screen.">
+      <created>1677455585775</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1677455585775</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Updates to friends requests">
+      <created>1677474734737</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1677474734737</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Added in friend requests update.">
+      <created>1677537644050</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1677537644050</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Added db function">
+      <created>1677538654907</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1677538654907</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Updated a fix for sign up.">
+      <created>1677542629967</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1677542629967</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Added initial facial recognition on app.">
+      <created>1677625804662</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1677625804662</updated>
+    </task>
+    <task id="LOCAL-00018" summary="Added a toggle to turn camera on and off because it was being annoying">
+      <created>1677626067479</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1677626067479</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Updated app and ML Screen. Images are still not high enough quality to have facial recognizer recognize the photo.">
+      <created>1677682773909</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1677682773909</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Updated ML Screen and app code.">
+      <created>1677687225870</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1677687225870</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Updated ML code.">
+      <created>1677689769754</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1677689769754</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Updated ML app code.">
+      <created>1677689913569</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1677689913569</updated>
+    </task>
+    <task id="LOCAL-00023" summary="Updated ML app code.">
+      <created>1677703665353</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1677703665353</updated>
+    </task>
+    <task id="LOCAL-00024" summary="Added to ML screen.">
+      <created>1677715904178</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1677715904178</updated>
+    </task>
+    <task id="LOCAL-00025" summary="feed">
+      <created>1677716487041</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1677716487041</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Updated the image size to help the upload to firebase to cause app not to crash.">
+      <created>1677728325290</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1677728325290</updated>
+    </task>
+    <task id="LOCAL-00027" summary="More changes to image size.">
+      <created>1677728807511</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1677728807511</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Added a box around the face.">
+      <created>1677795362648</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1677795362648</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Updated model.">
+      <created>1677819202137</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1677819202137</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Updated model.">
+      <created>1677819307827</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1677819307827</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Updated model.">
+      <created>1677865970089</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1677865970089</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Updates to the uploads of photos to prevent crashing by shrinking the image size.">
+      <created>1677872609786</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1677872609786</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Updated search screen.">
+      <created>1677877125489</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1677877125489</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Updated the feed screen to catch errors and use an on Snapshot so it looks for changes in that users recents. Updated friends screen so only current friends are shown.">
+      <created>1677886599166</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1677886599166</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Added code to filter in search">
+      <created>1677891240014</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1677891240014</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Added in being able to see profile of another user on the friends and search pages.">
+      <created>1677892468959</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1677892468959</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Edited feed screen to not have repeat children of the list.">
+      <created>1677893322836</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1677893322836</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Updated profiles for social media.">
+      <created>1677894708777</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1677894708777</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Updated an error in uplaoding images.">
+      <created>1677898015082</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1677898015082</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Added so you can choose when to capture images and update the recent people yiou have seen.">
+      <created>1677901331767</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1677901331767</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Can add friends with the check mark as well on the recents page.">
+      <created>1677902270988</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1677902270988</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Updated auth and forgot password.">
+      <created>1677989403730</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1677989403730</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Updated the app to have account settings and added in some big fixes to the recents page.">
+      <created>1678163870837</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1678163870837</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Updated to refresh">
+      <created>1678164743778</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1678164743778</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Updates to viewing other users profiles">
+      <created>1678166281294</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1678166281294</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Updates to sign in page and sign up page.">
+      <created>1678247915320</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1678247915320</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Fix to having no friends... :(">
+      <created>1678321130827</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1678321130827</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Added in notifications and got rid of some console.log statements.">
+      <created>1678328703531</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1678328703531</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Using config.js for keys to be stored.">
+      <created>1678378038796</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1678378038796</updated>
+    </task>
+    <option name="localTasksCounter" value="50" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Added to ML screen." />
+    <MESSAGE value="feed" />
+    <MESSAGE value="Updated the image size to help the upload to firebase to cause app not to crash." />
+    <MESSAGE value="More changes to image size." />
+    <MESSAGE value="Added a box around the face." />
+    <MESSAGE value="Updated model." />
+    <MESSAGE value="Updates to the uploads of photos to prevent crashing by shrinking the image size." />
+    <MESSAGE value="Updated search screen." />
+    <MESSAGE value="Updated the feed screen to catch errors and use an on Snapshot so it looks for changes in that users recents. Updated friends screen so only current friends are shown." />
+    <MESSAGE value="Added code to filter in search" />
+    <MESSAGE value="Added in being able to see profile of another user on the friends and search pages." />
+    <MESSAGE value="Edited feed screen to not have repeat children of the list." />
+    <MESSAGE value="Updated profiles for social media." />
+    <MESSAGE value="Updated an error in uplaoding images." />
+    <MESSAGE value="Added so you can choose when to capture images and update the recent people yiou have seen." />
+    <MESSAGE value="Can add friends with the check mark as well on the recents page." />
+    <MESSAGE value="Added a reset password button." />
+    <MESSAGE value="Updated auth and forgot password." />
+    <MESSAGE value="Updated the app to have account settings and added in some big fixes to the recents page." />
+    <MESSAGE value="Updated to refresh" />
+    <MESSAGE value="Updates to viewing other users profiles" />
+    <MESSAGE value="Updates to sign in page and sign up page." />
+    <MESSAGE value="Fix to having no friends... :(" />
+    <MESSAGE value="Added in notifications and got rid of some console.log statements." />
+    <MESSAGE value="Using config.js for keys to be stored." />
+    <option name="LAST_COMMIT_MESSAGE" value="Using config.js for keys to be stored." />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/components/ProfilePhotoComponent.js</url>
+          <line>184</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

@@ -1,7 +1,7 @@
 import cv2
 import os
 
-# Create directory for storing images
+# Create directory for storing images11
 if not os.path.exists('images'):
     os.makedirs('images')
 
@@ -14,7 +14,7 @@ cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
 count = 0
 for filename in os.listdir('imagesTest'):
     count += 1
-# Counter for keeping track of number of images captured
+# Counter for keeping track of number of images11 captured
 test = 0
 while test < 1:
     # Capture a frame from the video capture device
