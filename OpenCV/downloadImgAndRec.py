@@ -38,10 +38,10 @@ class FirebaseImageRecognizer:
         self.sr.readModel("EDSR_x4.pb")
         self.sr.setModel("edsr", 4)
         self.sfr = RecognitionHelper()
-        self.sfr.load_images("images")
+        self.sfr.load_images("images11")
 
     def get_all_images(self):
-        prefix = "images/Avatar"
+        prefix = "images11/Avatar"
         blobs = self.bucket.list_blobs(prefix=prefix)
         for blob in blobs:
             print("Blob name: ", blob.name)
@@ -104,7 +104,7 @@ class FirebaseImageRecognizer:
 
                     # Initialize the face recognition model and detect known faces in the image
                     sfr = RecognitionHelper()
-                    sfr.load_images("images")
+                    sfr.load_images("images11")
                     face_locations, face_names = sfr.detect_known_faces(upscaled_image)
 
                     # Print the detected face names, or "No face found" if none were detected

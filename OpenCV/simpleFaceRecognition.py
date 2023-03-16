@@ -2,7 +2,7 @@ import cv2
 from simple_facerec import RecognitionHelper
 
 sfr = RecognitionHelper()
-sfr.load_images("images")
+sfr.load_images("images11")
 
 cap = cv2.VideoCapture(0)
 while True:
