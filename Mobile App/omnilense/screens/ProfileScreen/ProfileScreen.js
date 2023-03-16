@@ -9,64 +9,120 @@ import {
   RefreshControl,
   Linking,
 } from 'react-native';
-import {fetchUserData, getUserById} from '../config/DB_Functions/DB_Functions';
-import ProfilePhotoComponent from '../components/ProfilePhotoComponent';
-import dimensions from '../config/DeviceSpecifications';
-import {Chip} from 'react-native-paper';
-import BoxComponent from './BoxComponent';
-import fbLogo from '../assets/fblogo.jpg';
-import igLogo from '../assets/iglogo.jpg';
-import twitterLogo from '../assets/twitter.jpg';
+import {
+  fetchUserData,
+  getUserById,
+} from '../../config/DB_Functions/DB_Functions';
+import ProfilePhotoComponent from '../../components/ProfilePhotoComponent';
+import dimensions from '../../config/DeviceSpecifications';
+import FriendRequestsScreen from '../FriendRequestsScreen';
+import BoxComponent from '../BoxComponent';
+import InterestComponent from '../../components/InterestComponent';
+import {Chip,Button} from 'react-native-paper';
+import igLogo from '../../assets/iglogo.jpg';
+import fbLogo from '../../assets/fblogo.jpg';
+import twitterLogo from '../../assets/twitter.jpg';
 
-const ViewOtherUser = ({route,navigation,screen}) => {
+const ProfilePage = ({navigation}) => {
   const [user, setUser] = useState(null);
   const [userSet, setUserSet] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [friend, setFriend] = useState(null);
-  const {uid} = route.params;
-
   useEffect(() => {
-    getUserById(uid)
+    fetchUserData()
       .then(r => {
-        console.log('user data: ', r.userDoc);
+
         setUser(r.userDoc);
         setUserSet(true);
-        console.log('user issss: ', user);
-        getUserById(r.userDoc.friends[user.friends.length - 1])
-          .then(r => {
-            setFriend(r.userDoc);
-            console.log(friend, 'asdsad');
-          })
-          .catch(e => console.log('easds1', e));
+        //get friend image for friend list display
+        if (user.friends) {
+          getUserById(r.userDoc.friends[user.friends.length - 1])
+            .then(r => {
+              setFriend(r.userDoc);
+            })
+            .catch(e => console.log('easds1', e));
+        } else {
+          setFriend(null);
+        }
       })
-      .catch(e => console.log('e1', e));
+      .catch(e => console.log('e4', e));
   }, [userSet]);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    setUserSet(false);
+    await fetchUserData()
+      .then(r => {
+        try {
+
+          setUser(r.userDoc);
+          setUserSet(true);
+          setUserSet(true);
+
+          if (user.friends) {
+            //get friend image for friend list display
+            getUserById(r.userDoc.friends[user.friends.length - 1])
+              .then(r => {
+                setFriend(r.userDoc);
+              })
+              .catch(e => console.log('easds1', e));
+          } else {
+            setFriend(null);
+          }
+        } catch (e) {
+          console.log('e1', e);
+        }
+      })
+      .catch(e => console.log('e2', e));
+    // Perform the refresh logic here, such as fetching new data from an API.
+    try {
+      setTimeout(() => {
+        setRefreshing(false);
+      }, 2000);
+    } catch (e) {
+      console.log('e3', e);
+    }
+  };
+
   return (
-    <ScrollView style={styles.scrollView}>
+    <ScrollView
+      style={styles.scrollView}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }>
       {user ? (
         <View style={styles.container}>
           {/*</View>*/}
           <View style={styles.header}>
             {/*Placeholder for cover photo */}
             <ProfilePhotoComponent
-              imageStyle={styles.coverPhoto}
-              photoType={'Cover'}
-              user={user}
-              viewOnly={true}
+                imageStyle={styles.coverPhoto}
+                photoType={'Cover'}
+                user={user}
             />
-            <ProfilePhotoComponent
-              imageStyle={styles.avatar}
-              photoType={'Avatar'}
-              user={user}
-              viewOnly={true}
-            />
-            {/* Placeholder for profile picture */}
+            <View style={styles.row}>
+              <ProfilePhotoComponent
+                  imageStyle={styles.avatar}
+                  photoType={'Avatar'}
+                  user={user}
+              />
+              <View style={styles.icon}>
+                <Button icon="pencil-plus-outline"  onPress={()=>console.log("asdas")} labelStyle={{fontSize: 50}}>
+                </Button>
+              </View>
 
-            <Text style={styles.name}>{user.name}</Text>
+            </View>
+
+            {/* Placeholder for profile picture */}
+            <View style={styles.profileText}>
+              <Text style={styles.name}>{user.name}</Text>
+              <Text style={styles.bio}>Bio: {user.bio}</Text>
+            </View>
+
             <ScrollView style={styles.scroll} horizontal={true}>
               {user.interests.map(interest => (
                 <View style={styles.chip} key={interest}>
-                  <Chip icon={'heart'} onPress={() => console.log('Pressed')}>
+                  <Chip icon={'heart'}>
                     {interest}
                   </Chip>
                 </View>
@@ -74,31 +130,33 @@ const ViewOtherUser = ({route,navigation,screen}) => {
             </ScrollView>
           </View>
           <View style={styles.header2}>
-            <Text style={styles.bio}>Bio: {user.bio}</Text>
           </View>
           <View style={styles.box}>
             {friend ? (
-                <BoxComponent
-                    title={user.friends.length + ' Friends'}
-                    friend={friend.avatarPhotoUrl}
-                    navigation={navigation}
-                    screen={"OtherUserFriends"}
-                    currentUser={uid}
-                />
+              <BoxComponent
+                title={user.friends.length + ' Friends'}
+                friend={friend.avatarPhotoUrl}
+                navigation={navigation}
+                screen={"Friends"}
+                currentUser={user.uid}
+
+              />
             ) : (
-                <BoxComponent title={user.friends.length + ' Friends'} navigation={navigation}
-                              screen={"OtherUserFriends"} />
+              <BoxComponent title={user.friends.length + ' Friends'} navigation={navigation}
+                            screen={"Friends"} />
+
             )}
             {friend ? (
-                <BoxComponent
-                    title={'New viewers'}
-                    friend={friend.avatarPhotoUrl}
-                    navigation={navigation}
-                    screen={"Recents"}
-                />
+              <BoxComponent
+                title={'New viewers'}
+                friend={friend.avatarPhotoUrl}
+                navigation={navigation}
+                screen={"Recents"}
+                currentUser={user.uid}
+              />
             ) : (
-                <BoxComponent title={'New viewers'} navigation={navigation}
-                              screen={"Recents"}/>
+              <BoxComponent title={'New viewers'} navigation={navigation}
+                            screen={"Recents"}/>
             )}
           </View>
           <Text style={styles.title}>Socials:</Text>
@@ -145,14 +203,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F5FCFF',
   },
+  icon: {
+      marginLeft: 100,
+      marginTop: -10,
+  },
   container: {
     flex: 1,
   },
   row: {
     flexDirection: 'row',
+
   },
   socials: {
     flexDirection: 'row',
+  },
+  profileText: {
+    marginTop: -30
   },
   socialImageBtn: {},
   header: {
@@ -176,15 +242,15 @@ const styles = StyleSheet.create({
   coverPhoto: {
     padding: 10,
     width: dimensions.width,
-    height: 225,
+    height: 200,
   },
   avatar: {
-    width: 185,
-    height: 185,
+    width: 170,
+    height: 170,
     borderRadius: 150,
     borderWidth: 4,
-    marginTop: -125,
-    marginLeft: -165,
+    marginTop: -115,
+    marginLeft: 10,
     borderColor: 'white',
   },
   name: {
@@ -206,9 +272,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#696969',
     marginTop: 10,
-    textAlign: 'center',
+    textAlign: 'left',
     alignSelf: 'flex-start',
     marginLeft: 10,
+
   },
   socialImage: {
     width: 80,
@@ -239,4 +306,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-export default ViewOtherUser;
+
+export default ProfilePage;

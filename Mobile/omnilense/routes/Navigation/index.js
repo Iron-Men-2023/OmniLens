@@ -25,6 +25,10 @@ import FriendsScreen from '../../screens/FriendsScreen';
 import FriendRequestsScreen from '../../screens/FriendRequestsScreen';
 import MLScreen from '../../screens/MLScreen';
 import AccountSettingsScreen from '../../screens/AccountSettingsScreen';
+import RecentsScreen from "../../screens/RecentsScreen";
+import ViewUserFriendsScreen from "../../screens/ViewUserFriendsScreen";
+import Feed from "../../screens/Feed";
+
 import {
   Provider,
   MD3LightTheme,
@@ -34,18 +38,17 @@ import ForgotPasswordScreen from '../../screens/ForgotPasswordScreen';
 import {Platform} from 'react-native';
 import * as Notifications from 'expo-notifications';
 import * as TaskManager from 'expo-task-manager';
-
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
-const focusColor = 'red';
-const restColor = 'blue';
+const focusColor = '#3b84a6';
+const restColor = '#341062';
 
 function HomeTabs() {
   return (
     <Tab.Navigator screenOptions={{showLabel: false}}>
       <Tab.Screen
         name={'Feed'}
-        component={FeedScreen}
+        component={Feed}
         options={{
           tabBarIcon: ({focused}) => (
             <View>
@@ -284,6 +287,7 @@ export default function Navigation() {
   }, [isUserSet]);
 
   return (
+
     <Provider theme={MD3LightTheme}>
       <NavigationContainer theme={LightTheme}>
         <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -299,7 +303,10 @@ export default function Navigation() {
           <Stack.Screen name="Sign Up" component={SignUpScreen} />
           <Stack.Screen name={'Initial Info'} component={InitialInfoScreen} />
           <Stack.Screen name={'Interests'} component={InterestsScreen} />
+          <Stack.Screen name={'Recents'} component={RecentsScreen} options={{title: "Viewed By",headerShown: true}}/>
           <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser} />
+          <Stack.Screen name={'OtherUserFriends'} component={ViewUserFriendsScreen} options={{title: "Friends",headerShown: true}}/>
+
           <Stack.Screen
             name={'Forgot Password'}
             component={ForgotPasswordScreen}
