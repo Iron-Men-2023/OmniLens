@@ -14,9 +14,6 @@ import {
 } from 'react-native';
 import {
     getUserByName,
-    getUserNameById,
-    setImageForUser,
-    updateInterests,
     updateRecents,
 } from '../../config/DB_Functions/DB_Functions';
 import {GestureObjects as Sentry} from 'react-native-gesture-handler/src/handlers/gestures/gestureObjects';
