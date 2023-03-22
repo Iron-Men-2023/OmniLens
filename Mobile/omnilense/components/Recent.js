@@ -57,7 +57,7 @@ const Recent = ({data, loggedInUser, navigation}) => {
     }
 
     function handleChatPress() {
-        navigation.navigate('Chats', {id: data.uid})
+        navigation.navigate('Messages', {id: data.uid})
     }
 
     useEffect(() => {

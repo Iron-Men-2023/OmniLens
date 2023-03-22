@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import {db, auth} from "../config/firebaseConfig";
 import {StyleSheet, View} from "react-native";
 import firebase from 'firebase/compat/app';
+import {getUserById} from "../config/DB_Functions/DB_Functions";
 
 // Create ChatScreen component
 const MessagingScreen = ({navigation, route}) => {
@@ -41,21 +42,47 @@ const MessagingScreen = ({navigation, route}) => {
         const message = newMessages[0];
         console.log(message);
         console.log(firebase.firestore.FieldValue.serverTimestamp());
-        db.collection('chats')
-            .doc(id)
-            .collection('messages')
+
+        const chatRef = db.collection('chats').doc(id);
+
+        chatRef.get().then(async (docSnapshot) => {
+            if (!docSnapshot.exists) {
+                try {
+                    // Make sure you're passing the correct ID to getUseById
+                    const recipientId = id;
+                    const userData = await getUserById(recipientId);
+                    const user = userData.userDoc;
+                    console.log('User object:', user);
+                    console.log('User ID:', user.uid);
+
+                    if (user) {
+                        await chatRef.set({
+                            // Add any additional chat properties you need here
+                            lastMessage: message.text,
+                            recipientId: user.uid,
+                            recipientName: user.name,
+                            recipientAvatarPhotoURL: user.avatarPhotoUrl,
+                        });
+                    } else {
+                        console.error('User not found');
+                    }
+                } catch (error) {
+                    console.error('Error fetching user:', error);
+                }
+            }
+        });
+
+        chatRef.collection('messages')
             .add({
                 ...message,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            }).then(r =>
-            db.collection('chats')
-                .doc(id)
-                .update({
-                    lastMessage: message.text,
-                })
-        );
-
+            }).then(r => {
+            chatRef.update({
+                lastMessage: message.text,
+            });
+        });
     };
+
 
     const renderBubble = (props) => {
         return (

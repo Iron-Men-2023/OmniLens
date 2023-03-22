@@ -135,14 +135,15 @@ const FaceRecognitionExample = () => {
                 //perform your task
             },
         );
-        const formData = new FormData();
-        formData.append('path', path);
+        // const formData = new FormData();
+        const jsonData = JSON.stringify({path: path, user_id: userId});
+        // formData.append('path', path);
         try {
             const response = await fetch(
-                'http://192.168.4.36:8000/api/facial-recognition',
+                'http://192.168.4.36:8000/api/facial_recognition',
                 {
                     method: 'POST',
-                    body: formData,
+                    body: jsonData,
                 },
             );
             const data = await response.json();
