@@ -1,5 +1,5 @@
 import requests
-
+from lcd import *
 class FacialRecognitionAPI:
     def __init__(self, base_url):
         self.base_url = base_url
@@ -32,10 +32,12 @@ class FacialRecognitionAPI:
             print(f"Error: {e}")
             return None
 
-
-#api = FacialRecognitionAPI("https://flask-api-omnilense.herokuapp.com")
-# Example of a user ID
-#user_id = "LfqBYBcq1BhHUvmE7803PhCFxeI2"
-#path = "images/ml_images/{}.jpg".format(user_id)
-#result = api.recognize_face(path)
+print("setting api")
+api = FacialRecognitionAPI("https://flask-api-omnilense.herokuapp.com")
+#Example of a user ID
+user_id = "LfqBYBcq1BhHUvmE7803PhCFxeI2"
+path = "images/ml_images/{}.jpg".format(user_id)
+print("calling api")
+result = api.recognize_face(path)
+display1(result)
 #print(result)

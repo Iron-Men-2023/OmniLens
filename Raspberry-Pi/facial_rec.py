@@ -7,7 +7,7 @@ from api_call import *
 from lcd import *
 import io
 
-#stream = io.BytesIO()
+
 api = FacialRecognitionAPI("https://flask-api-omnilense.herokuapp.com")
 # Load the face cascade classifier
 face_cascade = cv2.CascadeClassifier('/home/pi/Desktop/OmniLens/OpenCV/haarcascade_frontalface_default.xml')
@@ -29,16 +29,11 @@ with picamera.PiCamera() as camera:
 
             # Draw rectangles around the detected faces
             if len(faces)!=0:
-                #cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
                 print("face detected")
                 camera.capture("/home/pi/Desktop/holder/local.jpeg")
                 upload1("LfqBYBcq1BhHUvmE7803PhCFxeI2","/home/pi/Desktop/holder/local.jpeg")
                 result_call=api.recognize_face("images/ml_images/LfqBYBcq1BhHUvmE7803PhCFxeI2.jpg")
                 display1(result_call)
-
-            # Display the resulting image
-            #resized_frame= cv2.resize(frame, (640, 480))
-            #cv2.imshow('Face Detection', resized_frame)
 
             # Clear the stream for the next frame
             output.truncate(0)
