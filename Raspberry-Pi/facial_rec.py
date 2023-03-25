@@ -16,7 +16,7 @@ with picamera.PiCamera() as camera:
     with picamera.array.PiRGBArray(camera) as output:
         while True:
             # Capture a frame from the camera
-            camera.resolution= (320,240)
+            camera.resolution= (640,480)
             camera.capture(output, 'bgr')
             frame= cv2.resize(output.array,(640,480))
 
@@ -32,7 +32,10 @@ with picamera.PiCamera() as camera:
                 print("face detected")
                 camera.capture("/home/pi/Desktop/holder/local.jpeg")
                 upload1("LfqBYBcq1BhHUvmE7803PhCFxeI2","/home/pi/Desktop/holder/local.jpeg")
+                start_time=time.time()
                 result_call=api.recognize_face("images/ml_images/LfqBYBcq1BhHUvmE7803PhCFxeI2.jpg")
+                print(time.time()-start_time)
+                #print(result_call)
                 display1(result_call)
 
             # Clear the stream for the next frame

@@ -1,15 +1,17 @@
 import requests
+import json
 from lcd import *
 class FacialRecognitionAPI:
     def __init__(self, base_url):
         self.base_url = base_url
 
     def recognize_face(self, path):
-        url = f"{self.base_url}/api/facial-recognition"
+        url = f"{self.base_url}/api/facial_recognition"
         data = {"path": path}
+        data = json.dumps(data)
 
         try:
-            response = requests.post(url, data=data)
+            response = requests.post(url, json=data)
 
             if response.status_code == 200:
                 data = response.json()
@@ -21,7 +23,8 @@ class FacialRecognitionAPI:
                 if predicted_person == "Unknown":
                     return predicted_person
 
-                name = " ".join(predicted_person.split("_")[1:])
+                name = " ".join(predicted_person.split("_"))
+                
                 return name
 
             else:
@@ -32,12 +35,12 @@ class FacialRecognitionAPI:
             print(f"Error: {e}")
             return None
 
-print("setting api")
-api = FacialRecognitionAPI("https://flask-api-omnilense.herokuapp.com")
-#Example of a user ID
-user_id = "LfqBYBcq1BhHUvmE7803PhCFxeI2"
-path = "images/ml_images/{}.jpg".format(user_id)
-print("calling api")
-result = api.recognize_face(path)
-display1(result)
-#print(result)
+# print("setting api")
+# api = FacialRecognitionAPI("https://flask-api-omnilense.herokuapp.com")
+# #Example of a user ID
+# user_id = "LfqBYBcq1BhHUvmE7803PhCFxeI2"
+# path = "images/ml_images/{}.jpg".format(user_id)
+# print("calling api")
+# result = api.recognize_face(path)
+# display1(result)
+# print(result)
