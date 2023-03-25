@@ -14,6 +14,8 @@ function Feed({navigation}) {
     const [searchText, setSearchText] = useState('');
     const recentsRef = useRef([]);
     const emailsRef = useRef([]);
+    recentsRef.current = recents;
+    emailsRef.current = emails;
 
 
     function dynamicSearch(text) {
@@ -36,16 +38,17 @@ function Feed({navigation}) {
                 for (let id in userData.recents) {
                     getUserById(userData.recents[id])
                         .then(a => {
+
                             if (!emailsRef.current.includes(a.userDoc.email)) {
-                                recentsRef.current.push(a.userDoc)
-                                emailsRef.current.push(a.userDoc.email)
+                                setEmails([...emailsRef.current, a.userDoc.email]);
+                                setRecents([a.userDoc, ...recentsRef.current]);
                             }
                             console.log('list', recentsRef, emailsRef.current);
                         })
                         .catch(e => console.log('es2', e));
                 }
             } else {
-                console.log('No user data found');
+                console.log('No ur data found');
             }
         });
 
@@ -57,7 +60,7 @@ function Feed({navigation}) {
             <View style={{flex: 1}}>
                 <View style={{zIndex: 0}}>
                     <FlatList
-                        data={searchText.length === 0? recentsRef.current: searchedRecents}
+                        data={searchedRecents.length === 0? recents:searchedRecents}
                         renderItem={({item})=><Recent data={item} loggedInUser={user} navigation={navigation}/>}
                         keyExtractor={(item)=>item.id}
                         showsVerticalScrollIndicator={false}
