@@ -20,29 +20,21 @@ def display1(name):
     try:
         disp = OLED_1in51.OLED_1in51()
 
-        #logging.info("\r1.51inch OLED ")
         # Initialize library.
         disp.Init()
         # Clear display.
-        #logging.info("clear display")
         disp.clear()
 
         # Create blank image for drawing.
         image1 = Image.new('1', (disp.width, disp.height), "WHITE")
         draw = ImageDraw.Draw(image1)
         font1 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
-        font2 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
-        #logging.info ("***draw line")
-        draw.line([(0,0),(127,0)], fill = 0)
-        draw.line([(0,0),(0,63)], fill = 0)
-        draw.line([(0,63),(127,63)], fill = 0)
-        draw.line([(127,0),(127,63)], fill = 0)
-        #logging.info ("***draw text")
+        font2 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 21)
         draw.text((0,2), str(name), font = font1, fill = 0)
-        draw.text((8,18), 'Iron Men ', font = font2, fill = 0)
+        draw.text((10,18), 'Iron Men', font = font2, fill = 0)
         image1 = image1.rotate(180) 
         disp.ShowImage(disp.getbuffer(image1))
-        time.sleep(3)
+        time.sleep(5)
         
         disp.clear()
 

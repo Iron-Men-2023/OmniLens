@@ -25,17 +25,15 @@ with picamera.PiCamera() as camera:
 
             # Detect faces in the grayscale image
             faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
-            #print(str(faces))
+
 
             # Draw rectangles around the detected faces
             if len(faces)!=0:
                 print("face detected")
                 camera.capture("/home/pi/Desktop/holder/local.jpeg")
                 upload1("LfqBYBcq1BhHUvmE7803PhCFxeI2","/home/pi/Desktop/holder/local.jpeg")
-                start_time=time.time()
-                result_call=api.recognize_face("images/ml_images/LfqBYBcq1BhHUvmE7803PhCFxeI2.jpg")
-                print(time.time()-start_time)
-                #print(result_call)
+                
+                result_call=api.api.recognize_face("/home/pi/Desktop/holder/local.jpeg", "LfqBYBcq1BhHUvmE7803PhCFxeI2", "web")
                 display1(result_call)
 
             # Clear the stream for the next frame
