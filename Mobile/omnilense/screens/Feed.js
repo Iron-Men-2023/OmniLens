@@ -60,7 +60,7 @@ function Feed({navigation}) {
             <View style={{flex: 1}}>
                 <View style={{zIndex: 0}}>
                     <FlatList
-                        data={searchedRecents.length === 0? recents:searchedRecents}
+                        data={searchedRecents.length === 0 && searchText.length===0? recents: searchedRecents}
                         renderItem={({item})=><Recent data={item} loggedInUser={user} navigation={navigation}/>}
                         keyExtractor={(item)=>item.id}
                         showsVerticalScrollIndicator={false}

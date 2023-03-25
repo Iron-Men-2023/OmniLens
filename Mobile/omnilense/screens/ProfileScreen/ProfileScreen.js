@@ -134,7 +134,7 @@ const ProfilePage = ({navigation}) => {
                     <View style={styles.box}>
                         {friend ? (
                             <BoxComponent
-                                title={user.friends.length + ' Friends'}
+                                title={user.friends? user.friends.length + ' Friends': "0 Friends"}
                                 friend={friend.avatarPhotoUrl}
                                 navigation={navigation}
                                 screen={"Friends"}
@@ -142,7 +142,7 @@ const ProfilePage = ({navigation}) => {
 
                             />
                         ) : (
-                            <BoxComponent title={user.friends.length + ' Friends'} navigation={navigation}
+                            <BoxComponent title={user.friends? user.friends.length + ' Friends': "0 Friends"} navigation={navigation}
                                           screen={"Friends"} />
 
                         )}
