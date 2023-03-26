@@ -10,193 +10,208 @@ import {
     StyleSheet,
     Text,
     Alert,
-    ActivityIndicator,
+    ActivityIndicator, FlatList,
 } from 'react-native';
 import {
     getUserByName,
     updateRecents,
 } from '../../config/DB_Functions/DB_Functions';
-import {GestureObjects as Sentry} from 'react-native-gesture-handler/src/handlers/gestures/gestureObjects';
 import {manipulateAsync} from 'expo-image-manipulator';
 import * as ImageManipulator from 'expo-image-manipulator';
-import {debounce} from 'lodash';
 import {uploadBytesResumable} from 'firebase/storage';
+import {apiUrl} from "../../config";
 
-const FaceRecognitionExample = () => {
+const MLScreen = () => {
     const [type, setType] = useState(CameraType.back);
-    const [permission, requestPermission] = Camera.useCameraPermissions();
     const [cameraRef, setCameraRef] = useState(null);
-    const [person, setPerson] = useState(null);
-    const [personIsSet, setPersonIsSet] = useState(false);
-    const [cameraOn, setCameraOn] = useState(true);
-    const [pictureUploading, setPictureUploading] = useState(false);
-    const [faceLoc, setFaceLoc] = useState(null);
+    const [faceLocations, setFaceLocations] = useState([]);
     const [capturePressed, setCapturePressed] = useState(false);
-    // Turn on the camera when the component mounts
+    const [apiFaceLocations, setApiFaceLocations] = useState([]);
+    const [apiFaceNames, setApiFaceNames] = useState([]);
+    const [pictureUploading, setPictureUploading] = useState(false);
+    const [permission, requestPermission] = Camera.useCameraPermissions();
+    const [uploadingComplete, setUploadingComplete] = useState(false);
 
-    // Set the cameraRef state variable when the camera is ready
-    const handleCameraReady = ref => {
-        setCameraRef(ref);
-    };
-
-    // const debouncedRecognizeFace = useCallback(
-    //   debounce(recognizeFace, 3000, {leading: true, trailing: false}),
-    //   [],
-    // );
-
-    // Handle face detection events
-    const handleFacesDetected = async ({faces, camera}) => {
-        if (faces.length > 0) {
-            const faceLocations = [];
-            faceLocations.push(faces[0].bounds.origin.x);
-            faceLocations.push(faces[0].bounds.origin.y);
-            faceLocations.push(faces[0].bounds.size.width);
-            faceLocations.push(faces[0].bounds.size.height);
-            setFaceLoc(faceLocations);
-        } else {
-            setFaceLoc(null);
-            return;
-        }
-        try {
-            if (faces.length > 0) {
-                if (pictureUploading) {
-                    console.log('Picture is uploading');
-                    return;
-                }
-                if (!capturePressed) {
-                    return;
-                }
-                const photo = await camera.takePictureAsync();
-                console.log('Photo taken:');
-                recognizeFace(photo.uri).then(r => console.log(r));
-            }
-        } catch (error) {
-            console.log('Error in handleFacesDetected', error);
-        }
-    };
-
-    async function recognizeFace(imageUri) {
-        const localUri = imageUri;
-        setPictureUploading(true);
-        setPerson('Loading...');
-        const manipulatedImage = await manipulateAsync(
-            localUri,
-            [{resize: {width: 400, height: 500}}],
-            {
-                compress: 1,
-                format: ImageManipulator.SaveFormat.JPEG,
-            },
-        );
-
-        const response = await fetch(manipulatedImage.uri);
-        const blob = await response.blob();
-        const userId = auth.currentUser.uid;
-        const path = `images/ml_images/${userId}.jpg`;
-        const storageRef = storage.ref(path);
-        console.log('uploading image');
-        const uploadTask = uploadBytesResumable(storageRef, blob);
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.on(
-            'state_changed',
-            snapshot => {
-                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                const progress =
-                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log('Upload is ' + progress + '% done');
-                switch (snapshot.state) {
-                    case 'paused':
-                        console.log('Upload is paused');
-                        break;
-                    case 'running':
-                        console.log('Upload is running');
-                        break;
-                }
-            },
-            error => {
-                this.setState({isLoading: false});
-                // A full list of error codes is available at
-                // https://firebase.google.com/docs/storage/web/handle-errors
-                switch (error.code) {
-                    case 'storage/unauthorized':
-                        console.log("User doesn't have permission to access the object");
-                        break;
-                    case 'storage/canceled':
-                        console.log('User canceled the upload');
-                        break;
-                    case 'storage/unknown':
-                        console.log('Unknown error occurred, inspect error.serverResponse');
-                        break;
-                }
-            },
-            () => {
-                // Upload completed successfully, now we can get the download URL
-                console.log('Upload completed');
-
-                //perform your task
-            },
-        );
-        // const formData = new FormData();
-        const jsonData = JSON.stringify({path: path, user_id: userId});
-        // formData.append('path', path);
-        try {
-            const response = await fetch(
-                'http://192.168.4.36:8000/api/facial_recognition',
-                {
-                    method: 'POST',
-                    body: jsonData,
-                },
-            );
-            const data = await response.json();
-            if (
-                data.message === 'No face found' ||
-                !data.predicted_person ||
-                data.message === 'Error'
-            ) {
-                console.log(data.message);
-                setPictureUploading(false);
-                setPerson('Face Not Found');
-                return 'No face found';
-            }
-            const str = data.predicted_person[0];
-            if (str === 'Unknown') {
-                setPictureUploading(false);
-                setPerson(str);
-            } else {
-                console.log('Name is: ', str);
-                const name = str.split('_').join(' ').split('.')[0];
-                setPerson(name);
-                const userByNameId = await getUserByName(name);
-                console.log('userByNameId', userByNameId);
-                if (userByNameId) {
-                    console.log('Updating Interests');
-                    await updateRecents(userByNameId.uid);
-                }
-            }
-            setPersonIsSet(true);
-            setPictureUploading(false);
-            return data.predicted_person[0];
-        } catch (e) {
-            console.log('No person found OR Need to start server', e);
-            setPictureUploading(false);
-        }
-        console.log('No person found OR Need to start server');
-        return 'No person found OR Need to start server';
+    // async function recognizeFace(imageUri, num_of_faces) {
+    //     const localUri = imageUri;
+    //     const manipulatedImage = await manipulateAsync(
+    //         localUri,
+    //         [{resize: {width: 400}}],
+    //         {
+    //             compress: 1,
+    //             format: ImageManipulator.SaveFormat.JPEG,
+    //         },
+    //     );
+    //
+    //     // Upload image and process API data
+    //     const uploadTask = await uploadImage(manipulatedImage.uri);
+    //     console.log('uploadTask result', uploadTask);
+    //     if (uploadTask) {
+    //         console.log('Api data is being processed');
+    //         const jsonData = JSON.stringify({
+    //             path: uploadTask.path,
+    //             user_id: uploadTask.userId,
+    //             num_of_faces: num_of_faces
+    //         });
+    //         const apiData = await fetchApiData(jsonData);
+    //         processApiData(apiData);
+    //     } else {
+    //         setPictureUploading(false);
+    //     }
+    // }
+    //
+    // async function uploadImage(uri) {
+    //     const response = await fetch(uri);
+    //     const blob = await response.blob();
+    //     const userId = auth.currentUser.uid;
+    //     const path = `images/ml_images/${userId}.jpg`;
+    //     const storageRef = storage.ref(path);
+    //     // console.log('uploading image');
+    //     const uploadTask = uploadBytesResumable(storageRef, blob);
+    //     // Listen for state changes, errors, and completion of the upload.
+    //     uploadTask.on(
+    //         'state_changed',
+    //         snapshot => {
+    //             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+    //             const progress =
+    //                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    //             console.log('Upload is ' + progress + '% done');
+    //             switch (snapshot.state) {
+    //                 case 'paused':
+    //                     break;
+    //                 case 'running':
+    //                     break;
+    //             }
+    //         },
+    //         error => {
+    //             this.setState({isLoading: false});
+    //             switch (error.code) {
+    //                 case 'storage/unauthorized':
+    //                     console.log("User doesn't have permission to access the object");
+    //                     break;
+    //                 case 'storage/canceled':
+    //                     console.log('User canceled the upload');
+    //                     break;
+    //                 case 'storage/unknown':
+    //                     console.log('Unknown error occurred, inspect error.serverResponse');
+    //                     break;
+    //             }
+    //         },
+    //         () => {
+    //             console.log('Upload completed');
+    //             setUploadingComplete(true);
+    //         },
+    //     );
+    //     console.log('completed', uploadingComplete);
+    //     if (!uploadingComplete) {
+    //         return null;
+    //     } else {
+    //         setUploadingComplete(false);
+    //         return {path, userId};
+    //     }
+    // }
+    //
+    // async function fetchApiData(jsonData) {
+    //     // Implement the API data fetching logic here
+    //     console.log('json data: ', jsonData);
+    //     try {
+    //         const response = await fetch(
+    //             `${apiUrl}/api/facial_recognition`,
+    //             {
+    //                 method: 'POST',
+    //                 body: jsonData,
+    //             },
+    //         );
+    //         // Return the data on success, or null on failure
+    //         return response.ok ? await response.json() : null;
+    //     } catch (e) {
+    //         console.log(e);
+    //         return null;
+    //     }
+    // }
+    async function recognizeFace(imageUri, num_of_faces) {
+        const base64Image = await uriToBase64(imageUri);
+        const jsonData = JSON.stringify({
+            image: base64Image,
+            user_id: auth.currentUser.uid,
+            num_of_faces: num_of_faces,
+            device_sent_from: "app"
+        });
+        const apiData = await fetchApiData(jsonData);
+        processApiData(apiData);
     }
 
-    // Handle face detection errors
-    const handleFaceDetectionError = error => {
-        requestPermission().then(r => console.log(r));
-        console.error('Error detecting faces:', error);
-    };
+    async function uriToBase64(uri) {
+        const response = await fetch(uri);
+        const blob = await response.blob();
+        const reader = new FileReader();
+        return new Promise((resolve, reject) => {
+            reader.onerror = () => {
+                reader.abort();
+                reject(new Error('Problem parsing input file.'));
+            };
+            reader.onload = () => {
+                resolve(reader.result.split(',')[1]);
+            };
+            reader.readAsDataURL(blob);
+        });
+    }
 
-    function toggleCameraType() {
+    async function fetchApiData(jsonData) {
+        // console.log('json data: ', jsonData);
+        try {
+            const response = await fetch(`${apiUrl}/api/facial_recognition`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: jsonData,
+            });
+            return response.ok ? await response.json() : null;
+        } catch (e) {
+            console.log(e);
+            return null;
+        }
+    }
+
+
+    function processApiData(data) {
+        console.log('data', data);
+        if (!data || data.message === 'No face found' || !data.predicted_person || data.message === 'Error') {
+            console.log(data?.message);
+            setPictureUploading(false);
+            return;
+        }
+
+        const faceLocations = JSON.parse(data.face_loc);
+        setApiFaceLocations(faceLocations);
+
+        const faceNames = data.predicted_person.map((name, i) => {
+            const processedName = name.split('_').join(' ').split('.')[0];
+            if (i >= 1) {
+                return ', ' + processedName;
+            }
+            return processedName;
+        });
+        setApiFaceNames(faceNames);
+
+        // Additional logic to handle userByNameId, updating recents, etc.
+        for (let i = 0; i < faceNames.length; i++) {
+            getUserByName(faceNames[i]).then((user) => {
+                console.log('user', user);
+                if (user) {
+                    updateRecents(user.uid).then(r => console.log(r));
+                }
+            });
+        }
+
+        console.log('Hereeeeee', faceLocations);
+
+        setPictureUploading(false);
+    }
+
+    const toggleCameraType = () => {
         setType(current =>
             current === CameraType.back ? CameraType.front : CameraType.back,
         );
-    }
-
-    const toggleCamera = () => {
-        setCameraOn(prevState => !prevState);
     };
 
     const CaptureButton = () => {
@@ -222,92 +237,119 @@ const FaceRecognitionExample = () => {
         );
     };
 
-    const FaceBox = ({faceLoc}) => {
-        if (!faceLoc) {
+    const FaceBox = ({face, apiFace, apiFaceName}) => {
+        if (!face) {
             return null;
         }
-        const top = faceLoc[0] + 25;
-        const left = faceLoc[1] - 75;
-        const height = faceLoc[2];
-        const width = faceLoc[3];
-        try {
-            const styles = StyleSheet.create({
-                faceBox: {
-                    position: 'absolute',
-                    borderColor: 'red',
-                    borderWidth: 2,
-                    borderRadius: 10,
-                    top: top,
-                    left: left,
-                    width: width,
-                    height: height,
-                },
-                nameText: {
-                    position: 'absolute',
-                    bottom: -30,
-                    right: -20,
-                    color: 'red',
-                    padding: 5,
-                    borderRadius: 5,
-                    fontSize: 20,
-                },
-            });
 
-            return (
-                <View style={styles.faceBox}>
-                    {personIsSet && <Text style={styles.nameText}>{person}</Text>}
-                </View>
-            );
-        } catch (e) {
-            console.log('Error in FaceBox', e);
+        const top = face.bounds.origin.y - 10;
+        const left = face.bounds.origin.x - 5;
+        const height = face.bounds.size.height;
+        const width = face.bounds.size.width;
+        const fontSize = Math.min(height, width) / 9;
+        const textBottom = top + height + 10;
+        const textRight = left + width + 10;
+
+        const boxStyles = StyleSheet.create({
+            faceBox: {
+                position: 'absolute',
+                borderColor: 'red',
+                borderWidth: 2,
+                borderRadius: 10,
+                top: top,
+                left: left,
+                width: width,
+                height: height,
+            },
+            nameText: {
+                position: 'absolute',
+                bottom: -35,
+                right: -15,
+                color: 'red',
+                padding: 5,
+                borderRadius: 5,
+                fontSize: fontSize,
+            },
+        });
+
+        const personName = apiFace ? apiFaceName : 'API Loading...';
+
+        return (
+            <View style={boxStyles.faceBox}>
+                <Text style={boxStyles.nameText}>{personName}</Text>
+            </View>
+        );
+    };
+
+    const handleFacesDetected = async ({faces, camera}) => {
+        setFaceLocations(faces);
+        if (!capturePressed || pictureUploading) {
+            return;
+        }
+        if (capturePressed && !pictureUploading && faces.length > 0) {
+            setPictureUploading(true);
+            const photo = await camera.takePictureAsync();
+            console.log('faces', faces.length);
+            await recognizeFace(photo.uri, faces.length);
         }
     };
 
+    const handleFaceDetectionError = error => {
+        requestPermission().then(r => console.log(r));
+        console.error('Error detecting faces:', error);
+    };
+
+    const handleCameraReady = ref => {
+        setCameraRef(ref);
+    }
+
     return (
         <View style={styles.container}>
-            <View style={styles.toggleContainer}>
-                <TouchableOpacity style={styles.toggleButton} onPress={toggleCamera}>
-                    <Text style={styles.toggleText}>
-                        {cameraOn ? 'Turn Camera Off' : 'Turn Camera On'}
-                    </Text>
-                </TouchableOpacity>
-            </View>
             {pictureUploading && (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color="#0000ff"/>
                     <Text>Uploading image...</Text>
                 </View>
             )}
-            {cameraOn ? (
-                <Camera
-                    style={styles.camera}
-                    type={type}
-                    ref={handleCameraReady}
-                    onCameraReady={requestPermission}
-                    onFacesDetected={({faces}) =>
-                        handleFacesDetected({faces, camera: cameraRef})
-                    }
-                    onFaceDetectionError={handleFaceDetectionError}
-                    faceDetectorSettings={{
-                        mode: FaceDetector.FaceDetectorMode.fast,
-                        detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
-                        runClassifications: FaceDetector.FaceDetectorClassifications.none,
-                        minDetectionInterval: 1000,
-                        tracking: true,
-                    }}>
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-                            <Text style={styles.text}>Flip Camera</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <CaptureButton/>
-                    {faceLoc && <FaceBox faceLoc={faceLoc}/>}
-                </Camera>
-            ) : (
-                <Text>Camera is off</Text>
-            )}
+            <Camera
+                style={styles.camera}
+                ref={handleCameraReady}
+                type={type}
+                onCameraReady={requestPermission}
+                onFacesDetected={({faces}) =>
+                    handleFacesDetected({faces, camera: cameraRef})
+                } onFaceDetectionError={handleFaceDetectionError}
+                faceDetectorSettings={{
+                    mode: FaceDetector.FaceDetectorMode.accurate,
+                    detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
+                    runClassifications: FaceDetector.FaceDetectorClassifications.none,
+                    minDetectionInterval: 2000,
+                    tracking: true,
+                }}>
+                {faceLocations.map((face, index) => (
+                    <FaceBox
+                        key={index}
+                        face={face}
+                        apiFace={apiFaceLocations[index]}
+                        apiFaceName={apiFaceNames[index]}
+                    />
+                ))}
+                <CaptureButton/>
+                <TouchableOpacity style={styles.flipButton} onPress={toggleCameraType}>
+                    <Text style={styles.flipButtonText}>Flip</Text>
+                </TouchableOpacity>
+            </Camera>
             <View style={styles.personContainer}>
-                {personIsSet && <Text style={styles.personText}>Person: {person}</Text>}
+                {apiFaceNames && (
+                    <View>
+                        <Text style={styles.personText}>People in the room:</Text>
+                        <FlatList
+                            data={apiFaceNames}
+                            renderItem={({item}) => <Text style={styles.personText}>{item}</Text>}
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                    </View>
+                )}
             </View>
         </View>
     );
@@ -320,9 +362,8 @@ const styles = StyleSheet.create({
     },
     camera: {
         flex: 1,
-        justifyContent: 'flex-end',
-        alignItems: 'center',
         borderWidth: 8,
+        alignItems: 'center',
         borderColor: 'grey',
     },
     buttonContainer: {
@@ -374,6 +415,16 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
         fontSize: 20,
-    },
+    }, flipButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 20,
+    }, flipButton: {
+        backgroundColor: '#333',
+        padding: 10,
+        borderRadius: 5,
+        alignItems: 'center',
+    }
 });
-export default FaceRecognitionExample;
+
+export default MLScreen;

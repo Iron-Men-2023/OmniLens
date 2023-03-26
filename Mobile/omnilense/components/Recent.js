@@ -88,7 +88,6 @@ const Recent = ({data, loggedInUser, navigation}) => {
                     <Image source={{uri: data.avatarPhotoUrl}} resizeMode={"cover"}
                            style={{width: "100%", height: "90%", borderTopLeftRadius: 14, borderTopRightRadius: 14}}/>
                 </View>
-                <SubInfo loggedInUser={loggedInUser} data={data} setConnected={setConnected}/>
                 <View style={{
                     width: "100%",
                     padding: 20,

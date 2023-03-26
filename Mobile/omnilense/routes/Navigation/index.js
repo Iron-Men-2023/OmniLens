@@ -223,6 +223,7 @@ function DrawerNavigator() {
             <Drawer.Screen name={APPNAME} component={HomeTabs}/>
             <Drawer.Screen name="Friends" component={FriendsScreen}/>
             <Drawer.Screen name="Friend Requests" component={FriendRequestsScreen}/>
+            <Stack.Screen name={'Chats'} component={ChatsScreen}/>
             <Drawer.Screen
                 name="Account Settings"
                 component={AccountSettingsScreen}
@@ -316,7 +317,6 @@ export default function Navigation() {
                         name={'Forgot Password'}
                         component={ForgotPasswordScreen}
                     />
-                    <Stack.Screen name={'Chats'} component={ChatsScreen}/>
                     <Stack.Screen name={'Messages'} component={MessagingScreen}/>
                 </Stack.Navigator>
             </NavigationContainer>

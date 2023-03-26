@@ -27,7 +27,11 @@ const ChatsScreen = ({navigation}) => {
             return chat;
         } else {
             console.log('To filter: ', chat);
-            return chat.data.name.toLowerCase().includes(searchText.toLowerCase());
+            if (chat.data.name) {
+                return chat.data.name.toLowerCase().includes(searchText.toLowerCase());
+            } else {
+                return chat;
+            }
         }
     });
 
