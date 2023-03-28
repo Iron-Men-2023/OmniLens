@@ -13,13 +13,10 @@ import {
     ActivityIndicator, FlatList,
 } from 'react-native';
 import {
+    fetchApiData,
     getUserByName,
-    updateRecents,
+    updateRecents, uriToBase64,
 } from '../../config/DB_Functions/DB_Functions';
-import {manipulateAsync} from 'expo-image-manipulator';
-import * as ImageManipulator from 'expo-image-manipulator';
-import {uploadBytesResumable} from 'firebase/storage';
-import {apiUrl} from "../../config";
 
 const MLScreen = () => {
     const [type, setType] = useState(CameraType.back);
@@ -30,146 +27,27 @@ const MLScreen = () => {
     const [apiFaceNames, setApiFaceNames] = useState([]);
     const [pictureUploading, setPictureUploading] = useState(false);
     const [permission, requestPermission] = Camera.useCameraPermissions();
-    const [uploadingComplete, setUploadingComplete] = useState(false);
+    const [confidence, setConfidence] = useState(0.5);
 
-    // async function recognizeFace(imageUri, num_of_faces) {
-    //     const localUri = imageUri;
-    //     const manipulatedImage = await manipulateAsync(
-    //         localUri,
-    //         [{resize: {width: 400}}],
-    //         {
-    //             compress: 1,
-    //             format: ImageManipulator.SaveFormat.JPEG,
-    //         },
-    //     );
-    //
-    //     // Upload image and process API data
-    //     const uploadTask = await uploadImage(manipulatedImage.uri);
-    //     console.log('uploadTask result', uploadTask);
-    //     if (uploadTask) {
-    //         console.log('Api data is being processed');
-    //         const jsonData = JSON.stringify({
-    //             path: uploadTask.path,
-    //             user_id: uploadTask.userId,
-    //             num_of_faces: num_of_faces
-    //         });
-    //         const apiData = await fetchApiData(jsonData);
-    //         processApiData(apiData);
-    //     } else {
-    //         setPictureUploading(false);
-    //     }
-    // }
-    //
-    // async function uploadImage(uri) {
-    //     const response = await fetch(uri);
-    //     const blob = await response.blob();
-    //     const userId = auth.currentUser.uid;
-    //     const path = `images/ml_images/${userId}.jpg`;
-    //     const storageRef = storage.ref(path);
-    //     // console.log('uploading image');
-    //     const uploadTask = uploadBytesResumable(storageRef, blob);
-    //     // Listen for state changes, errors, and completion of the upload.
-    //     uploadTask.on(
-    //         'state_changed',
-    //         snapshot => {
-    //             // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-    //             const progress =
-    //                 (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    //             console.log('Upload is ' + progress + '% done');
-    //             switch (snapshot.state) {
-    //                 case 'paused':
-    //                     break;
-    //                 case 'running':
-    //                     break;
-    //             }
-    //         },
-    //         error => {
-    //             this.setState({isLoading: false});
-    //             switch (error.code) {
-    //                 case 'storage/unauthorized':
-    //                     console.log("User doesn't have permission to access the object");
-    //                     break;
-    //                 case 'storage/canceled':
-    //                     console.log('User canceled the upload');
-    //                     break;
-    //                 case 'storage/unknown':
-    //                     console.log('Unknown error occurred, inspect error.serverResponse');
-    //                     break;
-    //             }
-    //         },
-    //         () => {
-    //             console.log('Upload completed');
-    //             setUploadingComplete(true);
-    //         },
-    //     );
-    //     console.log('completed', uploadingComplete);
-    //     if (!uploadingComplete) {
-    //         return null;
-    //     } else {
-    //         setUploadingComplete(false);
-    //         return {path, userId};
-    //     }
-    // }
-    //
-    // async function fetchApiData(jsonData) {
-    //     // Implement the API data fetching logic here
-    //     console.log('json data: ', jsonData);
-    //     try {
-    //         const response = await fetch(
-    //             `${apiUrl}/api/facial_recognition`,
-    //             {
-    //                 method: 'POST',
-    //                 body: jsonData,
-    //             },
-    //         );
-    //         // Return the data on success, or null on failure
-    //         return response.ok ? await response.json() : null;
-    //     } catch (e) {
-    //         console.log(e);
-    //         return null;
-    //     }
-    // }
     async function recognizeFace(imageUri, num_of_faces) {
         const base64Image = await uriToBase64(imageUri);
-        const jsonData = JSON.stringify({
-            image: base64Image,
-            user_id: auth.currentUser.uid,
-            num_of_faces: num_of_faces,
-            device_sent_from: "app"
-        });
-        const apiData = await fetchApiData(jsonData);
+        // Try sending as form data
+        const formData = new FormData();
+        formData.append('image', base64Image);
+        formData.append('user_id', auth.currentUser.uid);
+        formData.append('num_of_faces', num_of_faces);
+        formData.append('device_sent_from', 'app');
+        // console.log('form data: ', formData);
+        const apiData = await fetchApiData(formData, '/api/facial_recognition');
         processApiData(apiData);
-    }
-
-    async function uriToBase64(uri) {
-        const response = await fetch(uri);
-        const blob = await response.blob();
-        const reader = new FileReader();
-        return new Promise((resolve, reject) => {
-            reader.onerror = () => {
-                reader.abort();
-                reject(new Error('Problem parsing input file.'));
-            };
-            reader.onload = () => {
-                resolve(reader.result.split(',')[1]);
-            };
-            reader.readAsDataURL(blob);
-        });
-    }
-
-    async function fetchApiData(jsonData) {
-        // console.log('json data: ', jsonData);
-        try {
-            const response = await fetch(`${apiUrl}/api/facial_recognition`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: jsonData,
-            });
-            return response.ok ? await response.json() : null;
-        } catch (e) {
-            console.log(e);
-            return null;
-        }
+        // const jsonData = JSON.stringify({
+        //     image: base64Image,
+        //     user_id: auth.currentUser.uid,
+        //     num_of_faces: num_of_faces,
+        //     device_sent_from: "app"
+        // });
+        // const apiData = await fetchApiData(jsonData);
+        // processApiData(apiData);
     }
 
 
@@ -177,6 +55,9 @@ const MLScreen = () => {
         console.log('data', data);
         if (!data || data.message === 'No face found' || !data.predicted_person || data.message === 'Error') {
             console.log(data?.message);
+            setApiFaceNames([]);
+            setApiFaceLocations([]);
+            setConfidence(0);
             setPictureUploading(false);
             return;
         }
@@ -202,9 +83,8 @@ const MLScreen = () => {
                 }
             });
         }
-
-        console.log('Hereeeeee', faceLocations);
-
+        setConfidence(data.confidence);
+        console.log('confidence', data.confidence);
         setPictureUploading(false);
     }
 
@@ -237,7 +117,7 @@ const MLScreen = () => {
         );
     };
 
-    const FaceBox = ({face, apiFace, apiFaceName}) => {
+    const FaceBox = ({face, apiFace, apiFaceName, confidence}) => {
         if (!face) {
             return null;
         }
@@ -246,9 +126,11 @@ const MLScreen = () => {
         const left = face.bounds.origin.x - 5;
         const height = face.bounds.size.height;
         const width = face.bounds.size.width;
-        const fontSize = Math.min(height, width) / 9;
+        const fontSize = Math.min(height, width) / 10;
         const textBottom = top + height + 10;
         const textRight = left + width + 10;
+
+        confidence = Math.round(confidence * 100);
 
         const boxStyles = StyleSheet.create({
             faceBox: {
@@ -263,7 +145,7 @@ const MLScreen = () => {
             },
             nameText: {
                 position: 'absolute',
-                bottom: -35,
+                bottom: -85,
                 right: -15,
                 color: 'red',
                 padding: 5,
@@ -276,7 +158,7 @@ const MLScreen = () => {
 
         return (
             <View style={boxStyles.faceBox}>
-                <Text style={boxStyles.nameText}>{personName}</Text>
+                <Text style={boxStyles.nameText}>{personName} with {confidence}% Confidence</Text>
             </View>
         );
     };
@@ -332,6 +214,7 @@ const MLScreen = () => {
                         face={face}
                         apiFace={apiFaceLocations[index]}
                         apiFaceName={apiFaceNames[index]}
+                        confidence={confidence[index]}
                     />
                 ))}
                 <CaptureButton/>

@@ -3,8 +3,10 @@ import 'firebase/firestore';
 import 'firebase/storage';
 import {db, storage, auth} from '../firebaseConfig';
 import {Platform} from 'react-native';
-import {defaultAvatar} from '../../config';
+import {apiUrl, defaultAvatar} from '../../config';
 import {faker} from '@faker-js/faker';
+import {manipulateAsync} from "expo-image-manipulator";
+import * as ImageManipulator from "expo-image-manipulator";
 
 async function fetchUserData() {
     let userData = {};
@@ -316,8 +318,43 @@ const generateFakeChats = async (numberOfChats = 5, messagesPerUser = 5) => {
     await batch.commit();
 };
 
-// Call the function to generate fake chats and messages
-// generateFakeChats(5, 5);
+async function uriToBase64(uri) {
+    const resizedImage = await manipulateAsync(
+        uri,
+        [{resize: {width: 600}}],
+        {compress: 1, format: ImageManipulator.SaveFormat.JPEG},
+    );
+    const response = await fetch(resizedImage.uri);
+    const blob = await response.blob();
+    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+        reader.onerror = () => {
+            reader.abort();
+            reject(new Error('Problem parsing input file.'));
+        };
+        reader.onload = () => {
+            resolve(reader.result.split(',')[1]);
+        };
+        reader.readAsDataURL(blob);
+    });
+}
+
+async function fetchApiData(jsonData, path) {
+    // console.log('json data: ', jsonData);
+    try {
+        const response = await fetch(`${apiUrl}${path}`, {
+            method: 'POST',
+            // Send form data
+            headers: {'Content-Type': 'multipart/form-data'},
+            // headers: {'Content-Type': 'application/data'},
+            body: jsonData,
+        });
+        return response.ok ? await response.json() : null;
+    } catch (e) {
+        console.log(e);
+        return null;
+    }
+}
 
 export {
     fetchUserData,
@@ -333,4 +370,6 @@ export {
     updateRecents,
     sendFriendRequest,
     generateFakeChats,
+    uriToBase64,
+    fetchApiData,
 };

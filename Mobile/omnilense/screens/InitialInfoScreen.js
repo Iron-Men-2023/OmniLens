@@ -6,8 +6,9 @@ import ImagePickerComponent from '../components/ImagePickerComponent';
 import TextButtonComponent from '../components/TextButtonComponent';
 import dimensions from '../config/DeviceSpecifications';
 import {
+    fetchApiData,
     setImageForUser,
-    updateUserName,
+    updateUserName, uriToBase64,
 } from '../config/DB_Functions/DB_Functions';
 import {auth, storage} from '../config/firebaseConfig';
 import * as Progress from 'react-native-progress';
@@ -116,38 +117,42 @@ function InitialInfoScreen({navigation}) {
                 //perform your task
             },
         );
-        const jsonData = JSON.stringify({path: path, user_id: userId});
-        // console.log('json data: ', jsonData);
-        // formData.append('path', path);
-        console.log('json data for checking photo: ', jsonData);
+        const base64Image = await uriToBase64(uri);
+        // Try sending as form data
+        const formData = new FormData();
+        formData.append('image', base64Image);
+        formData.append('user_id', auth.currentUser.uid);
+        formData.append('device_sent_from', 'app');
+        // console.log('form data: ', formData);
         setCheckingPhoto(true);
         try {
-            const response = await fetch(
-                `${apiUrl}/api/facial_recognition/check`,
-                {
-                    method: 'POST',
-                    body: jsonData,
-                },
-            );
-            const data = await response.json();
-            console.log('Data for photo: ', data);
-            if (
-                data.message === 'No face found') {
+            const apiData = await fetchApiData(formData, '/api/facial_recognition/check');
+
+            if (apiData) {
+                console.log('Data for photo: ', apiData);
+                if (
+                    apiData.message === 'No face found') {
+                    Alert.alert(
+                        'No face found',
+                        'Please upload a better image with a single picture of your face',
+                    );
+                } else if (apiData.message === 'Face found') {
+                    Alert.alert(
+                        'Face found',
+                        'Your face has been found in the image!',
+                    );
+                    setUploaded(true);
+                }
+            } else {
                 Alert.alert(
-                    'No face found',
-                    'Please upload a better image with a single picture of your face',
+                    'Error',
+                    'There was an error processing your image. Please try again',
                 );
-            } else if (data.message === 'Face found') {
-                Alert.alert(
-                    'Face found',
-                    'Your face has been found in the image!',
-                );
-                setUploaded(true);
             }
-            setCheckingPhoto(false);
-        } catch (error) {
-            console.log(error);
+        } catch (e) {
+            console.log('Error: ', e);
         }
+        setCheckingPhoto(false);
     };
 
     return (
@@ -181,7 +186,7 @@ function InitialInfoScreen({navigation}) {
             )}
             {checkingPhoto && (
                 <View style={styles.progressBarContainer}>
-                    <Progress.CircleSnail color={['#F44336']}/>
+                    <Progress.Circle/>
                     <Text>Checking Photo...</Text>
                 </View>
             )}
