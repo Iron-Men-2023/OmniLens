@@ -45,14 +45,14 @@ class FacialRecognitionAPI:
             return None
 
 
-# http://192.168.0.233:8000
-# https://flask-api-omnilense.herokuapp.com
-api = FacialRecognitionAPI("http://192.168.0.233:8000")
-user_id = "LfqBYBcq1BhHUvmE7803PhCFxeI2"
-path = "/home/pi/Desktop/holder/local.jpeg"
-print("start")
-start = time.time()
-result = api.recognize_face(path, user_id, "web")
-print(time.time() - start)
-print("end")
-print(result)
+#http://192.168.0.233:8000
+#https://flask-api-omnilense.herokuapp.com
+# api = FacialRecognitionAPI("https://flask-api-omnilense.herokuapp.com")
+# user_id = "LfqBYBcq1BhHUvmE7803PhCFxeI2"
+# path = "/home/pi/Desktop/holder/local.jpeg"
+# print("start")
+# start = time.time()
+# result = api.recognize_face(path, user_id, "web")
+# print(time.time() - start)
+# print("end")
+# print(result)

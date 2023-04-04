@@ -15,7 +15,7 @@ from waveshare_OLED import OLED_1in51
 from PIL import Image,ImageDraw,ImageFont
 logging.basicConfig(level=logging.DEBUG)
 
-def display1(name):
+def display1(line1,line2):
     
     try:
         disp = OLED_1in51.OLED_1in51()
@@ -29,9 +29,9 @@ def display1(name):
         image1 = Image.new('1', (disp.width, disp.height), "WHITE")
         draw = ImageDraw.Draw(image1)
         font1 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
-        font2 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 21)
-        draw.text((0,2), str(name), font = font1, fill = 0)
-        draw.text((10,18), 'Iron Men', font = font2, fill = 0)
+        font2 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 20)
+        draw.text((0,2), str(line1), font = font1, fill = 0)
+        draw.text((0,20), str(line2), font = font2, fill = 0)
         image1 = image1.rotate(180) 
         disp.ShowImage(disp.getbuffer(image1))
         time.sleep(5)
@@ -46,3 +46,4 @@ def display1(name):
         OLED_1in51.config.module_exit()
         exit()
 
+display1("line 1","line 2")

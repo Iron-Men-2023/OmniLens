@@ -29,12 +29,11 @@ with picamera.PiCamera() as camera:
 
             # Draw rectangles around the detected faces
             if len(faces)!=0:
-                print("face detected")
                 camera.capture("/home/pi/Desktop/holder/local.jpeg")
                 upload1("LfqBYBcq1BhHUvmE7803PhCFxeI2","/home/pi/Desktop/holder/local.jpeg")
-                
-                result_call=api.api.recognize_face("/home/pi/Desktop/holder/local.jpeg", "LfqBYBcq1BhHUvmE7803PhCFxeI2", "web")
-                display1(result_call)
+                display1("Face Detected!","Loading...")
+                result_call=api.recognize_face("/home/pi/Desktop/holder/local.jpeg", "LfqBYBcq1BhHUvmE7803PhCFxeI2", "web")
+                display1(result_call,"Accuracy")
 
             # Clear the stream for the next frame
             output.truncate(0)
