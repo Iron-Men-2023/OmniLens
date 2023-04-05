@@ -4,6 +4,7 @@ import Recent from "../components/Recent"
 import {auth, db} from "../config/firebaseConfig";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 import Header from "../components/Header";
+import {useTheme} from "react-native-paper";
 
 function Feed({navigation}) {
 
@@ -15,10 +16,15 @@ function Feed({navigation}) {
     const [searchText, setSearchText] = useState('');
     const recentsRef = useRef([]);
     const emailsRef = useRef([]);
+    const {colors} = useTheme();
 
 
     function dynamicSearch(text) {
         setSearchText(text);
+        if (text === '') {
+            setSearchedRecents(recentsRef.current);
+            return;
+        }
         setSearchedRecents(recentsRef.current.filter(element => element.name.includes(text)));
     }
 
@@ -56,38 +62,43 @@ function Feed({navigation}) {
         return () => unsubscribe();
     }, [userSet]);
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: "#f1ecec"}}>
+        <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
             <View style={{flex: 1}}>
                 <View>
                     <FlatList
                         data={searchText.length === 0 ? recentsRef.current : searchedRecents}
-                        renderItem={({item}) => <Recent data={item} loggedInUser={user} navigation={navigation}/>}
+                        renderItem={({item}) => (
+                            <Recent data={item} loggedInUser={user} navigation={navigation}/>
+                        )}
                         keyExtractor={(item) => item.uid}
                         showsVerticalScrollIndicator={false}
-                        ListHeaderComponent={user ?
-                            <Header user={user} search={dynamicSearch} navigation={navigation}/> : null}/>
-
+                        ListHeaderComponent={
+                            user ? (
+                                <Header
+                                    user={user}
+                                    search={dynamicSearch}
+                                    navigation={navigation}
+                                />
+                            ) : null
+                        }
+                    />
                 </View>
                 <View style={styles.backPanel}>
-                    <View style={{height: 300, backgroundColor: '#001F2D'}}/>
+                    <View style={{height: 300, backgroundColor: colors.primary}}/>
                 </View>
             </View>
-
         </SafeAreaView>
     );
-}
+};
 
 const styles = StyleSheet.create({
     backPanel: {
-        position: 'absolute',
+        position: "absolute",
         top: 0,
         bottom: 0,
         left: 0,
         right: 0,
         zIndex: -1,
-
     },
-
 });
-
 export default Feed;

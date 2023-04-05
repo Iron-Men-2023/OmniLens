@@ -18,10 +18,11 @@ import dimensions from '../../config/DeviceSpecifications';
 import FriendRequestsScreen from '../FriendRequestsScreen';
 import BoxComponent from '../BoxComponent';
 import InterestComponent from '../../components/InterestComponent';
-import {Chip} from 'react-native-paper';
-import igLogo from '../../assets/iglogo.jpg';
-import fbLogo from '../../assets/fblogo.jpg';
-import twitterLogo from '../../assets/twitter.jpg';
+import {Avatar, Chip, FAB, Surface, useTheme} from 'react-native-paper';
+import {LinearGradient} from 'expo-linear-gradient';
+// import igLogo from '../../assets/iglogo.jpg';
+// import fbLogo from '../../assets/fblogo.jpg';
+// import twitterLogo from '../../assets/twitter.jpg';
 
 const ProfilePage = () => {
     const [user, setUser] = useState(null);
@@ -87,12 +88,14 @@ const ProfilePage = () => {
             style={styles.scrollView}
             refreshControl={
                 <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
-            }>
+            }
+        >
             {user ? (
                 <View style={styles.container}>
-                    {/*</View>*/}
-                    <View style={styles.header}>
-                        {/*Placeholder for cover photo */}
+                    <LinearGradient
+                        colors={['#9a6cd9', '#F5FCFF']}
+                        style={styles.header}
+                    >
                         <ProfilePhotoComponent
                             imageStyle={styles.coverPhoto}
                             photoType={'Cover'}
@@ -103,28 +106,22 @@ const ProfilePage = () => {
                             photoType={'Avatar'}
                             user={user}
                         />
-                        {/* Placeholder for profile picture */}
-
                         <Text style={styles.name}>{user.name}</Text>
                         <ScrollView style={styles.scroll} horizontal={true}>
                             {user.interests ? (
-                                <>
-                                    {user.interests.map(interest => (
-                                        <View style={styles.chip} key={interest}>
-                                            <Chip icon={'heart'} onPress={() => console.log('Pressed')}>
-                                                {interest}
-                                            </Chip>
-                                        </View>
-                                    ))}
-                                </>
+                                user.interests.map(interest => (
+                                    <Chip icon="heart" key={interest} style={styles.chip}>
+                                        {interest}
+                                    </Chip>
+                                ))
                             ) : (
                                 <Text>No interests</Text>
                             )}
                         </ScrollView>
-                    </View>
-                    <View style={styles.header2}>
+                    </LinearGradient>
+                    <Surface style={styles.header2}>
                         <Text style={styles.bio}>Bio: {user.bio}</Text>
-                    </View>
+                    </Surface>
                     <View style={styles.box}>
                         {friend ? (
                             <BoxComponent
@@ -146,34 +143,30 @@ const ProfilePage = () => {
                     <Text style={styles.title}>Socials:</Text>
 
                     <View style={styles.socials}>
-                        <TouchableOpacity
+                        <FAB
                             style={styles.socialImageBtn}
+                            icon="facebook"
                             onPress={() =>
                                 Linking.openURL(
                                     'https://www.instagram.com/' + user.instagram + '/',
                                 )
-                            }>
-                            <Image source={fbLogo} style={styles.socialImage}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity
+                            }
+                        />
+                        <FAB
                             style={styles.socialImageBtn}
+                            icon="instagram"
                             onPress={() =>
                                 Linking.openURL(
                                     'https://www.instagram.com/' + user.instagram + '/',
                                 )
-                            }>
-                            <Image source={igLogo} style={styles.socialImage}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity
+                            }
+                        />
+                        <FAB
                             style={styles.socialImageBtn}
-                            onPress={() =>
-                                Linking.openURL('https://twitter.com/' + user.twitter)
-                            }>
-                            <Image source={twitterLogo} style={styles.socialImage}/>
-                        </TouchableOpacity>
+                            icon="twitter"
+                            onPress={() => Linking.openURL('https://twitter.com/' + user.twitter)}
+                        />
                     </View>
-
-                    {/*<Posts />*/}
                 </View>
             ) : (
                 <Text>Loading...</Text>
@@ -195,6 +188,12 @@ const styles = StyleSheet.create({
     },
     socials: {
         flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        /* Put space between each social icon */
+        justifyContent: 'space-between',
+        /* Make space between only 10 pixels */
+        marginHorizontal: 60,
     },
     socialImageBtn: {},
     header: {
