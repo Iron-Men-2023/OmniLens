@@ -41,6 +41,7 @@ import * as TaskManager from 'expo-task-manager';
 import ChatScreen from "../../screens/MessagingScreen";
 import ChatsScreen from "../../screens/ChatsScreen";
 import MessagingScreen from "../../screens/MessagingScreen";
+import QRCodeScreen from "../../screens/QRCodeScreen";
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -221,6 +222,7 @@ function DrawerNavigator() {
             <Drawer.Screen name="Friends" component={FriendsScreen}/>
             <Drawer.Screen name="Friend Requests" component={FriendRequestsScreen}/>
             <Stack.Screen name={'Chats'} component={ChatsScreen}/>
+            <Stack.Screen name={'QrCode'} component={QRCodeScreen}/>
             <Drawer.Screen
                 name="Account Settings"
                 component={AccountSettingsScreen}
@@ -308,6 +310,9 @@ export default function Navigation() {
                     ) : null}
                     {user ? (
                         <Stack.Screen name={'Messages'} component={MessagingScreen}/>
+                    ) : null}
+                    {user ? (
+                        <Stack.Screen name={'QRCode'} component={QRCodeScreen}/>
                     ) : null}
                     <Stack.Screen name={'Onboarding'} component={OnboardingScreen}/>
                     <Stack.Screen

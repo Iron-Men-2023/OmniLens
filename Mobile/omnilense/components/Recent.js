@@ -76,7 +76,7 @@ const Recent = ({data, loggedInUser, navigation}) => {
         <View style={styles.container}>
             <Pressable
                 style={({pressed}) => [
-                    {backgroundColor: pressed ? 'black' : 'white'},
+                    {backgroundColor: pressed ? 'black' : 'white', borderRadius: 14},
                 ]}
                 onPressIn={() => setDetailColor("#283441")}
                 onPressOut={() => setDetailColor("white")}
@@ -91,7 +91,8 @@ const Recent = ({data, loggedInUser, navigation}) => {
                     padding: 20,
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    backgroundColor: detailColor
+                    backgroundColor: detailColor,
+                    borderRadius: 14,
                 }}>
                     <DetailComponent
                         title={data.name}
@@ -161,6 +162,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         marginBottom: 24,
         margin: 14,
+        borderRadius: 14,
 
     },
     center: {
@@ -169,6 +171,7 @@ const styles = StyleSheet.create({
     imageView: {
         height: dimensions.height * .4,
         width: "100%",
+        borderRadius: 14,
     },
     icons: {
         flexDirection: 'row',

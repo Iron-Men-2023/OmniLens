@@ -1,9 +1,10 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Text, View, StyleSheet,FlatList,SafeAreaView, ScrollView} from 'react-native';
+import {Text, View, StyleSheet, FlatList, SafeAreaView, ScrollView} from 'react-native';
 import Recent from "../components/Recent"
 import {auth, db} from "../config/firebaseConfig";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 import Header from "../components/Header";
+
 function Feed({navigation}) {
 
     const [user, setUser] = useState(null);
@@ -55,17 +56,18 @@ function Feed({navigation}) {
     return (
         <SafeAreaView style={{flex: 1, backgroundColor: "#f1ecec"}}>
             <View style={{flex: 1}}>
-                <View style={{zIndex: 0}}>
+                <View>
                     <FlatList
-                        data={searchText.length === 0? recentsRef.current: searchedRecents}
-                        renderItem={({item})=><Recent data={item} loggedInUser={user} navigation={navigation}/>}
-                        keyExtractor={(item)=>item.id}
+                        data={searchText.length === 0 ? recentsRef.current : searchedRecents}
+                        renderItem={({item}) => <Recent data={item} loggedInUser={user} navigation={navigation}/>}
+                        keyExtractor={(item) => item.id}
                         showsVerticalScrollIndicator={false}
-                        ListHeaderComponent={user? <Header user={user} search={dynamicSearch} navigation={navigation}/>: null}/>
+                        ListHeaderComponent={user ?
+                            <Header user={user} search={dynamicSearch} navigation={navigation}/> : null}/>
 
                 </View>
                 <View style={styles.backPanel}>
-                    <View style={{height: 300 ,backgroundColor: '#001F2D'}}/>
+                    <View style={{height: 300, backgroundColor: '#001F2D'}}/>
                 </View>
             </View>
 
