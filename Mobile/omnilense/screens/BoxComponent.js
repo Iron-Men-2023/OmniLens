@@ -14,11 +14,6 @@ function BoxComponent({title, friend, screen, navigation, currentUser}) {
                     <Image style={styles.image} source={{uri: friend}}/>
                 </TouchableOpacity>
             ) : null}
-            {friend ?
-                <Image style={styles.image} source={{uri: friend}}/>
-                : null
-            }
-
         </View>
     )
 }

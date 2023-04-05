@@ -24,6 +24,8 @@ const ViewOtherUser = ({route, navigation, screen}) => {
     const [friend, setFriend] = useState(null);
     const {uid} = route.params;
 
+    console.log('uid: ', route.params);
+
     useEffect(() => {
         getUserById(uid)
             .then(r => {
@@ -107,10 +109,7 @@ const ViewOtherUser = ({route, navigation, screen}) => {
                                 navigation={navigation}
                                 screen={"Recents"}
                             />
-                        ) : (
-                            <BoxComponent title={'New viewers'} navigation={navigation}
-                                          screen={"Recents"}/>
-                        )}
+                        ) : null}
                     </View>
                     <Text style={styles.title}>Socials:</Text>
 
