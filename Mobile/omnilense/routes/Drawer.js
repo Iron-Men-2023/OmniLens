@@ -3,7 +3,7 @@ import {createAppContainer} from "react-navigation";
 import HomeStack from "./HomeStack";
 import SettingsStack from "./SettingsStack";
 import OnboardingScreen from "../screens/OnboardingScreen";
-import AuthScreen from "../screens/AuthScreen";
+import AuthScreen from "../screens/SignInScreen";
 import LoginStack from "./LoginStack";
 import BottomTabNavigator from "./BottomTabNavigator";
 import FeedScreen from "../screens/FeedScreen";

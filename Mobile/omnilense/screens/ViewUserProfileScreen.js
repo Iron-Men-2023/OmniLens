@@ -31,12 +31,16 @@ const ViewOtherUser = ({route, navigation, screen}) => {
                 setUser(r.userDoc);
                 setUserSet(true);
                 console.log('user issss: ', user);
-                getUserById(r.userDoc.friends[user.friends.length - 1])
-                    .then(r => {
-                        setFriend(r.userDoc);
-                        console.log(friend, 'asdsad');
-                    })
-                    .catch(e => console.log('easds1', e));
+                if (user.friends != null) {
+                    getUserById(r.userDoc.friends[user.friends.length - 1])
+                        .then(r => {
+                            setFriend(r.userDoc);
+                            console.log(friend, 'asdsad');
+                        })
+                        .catch(e => console.log('easds1', e));
+                } else {
+                    setFriend(null);
+                }
             })
             .catch(e => console.log('e1', e));
     }, [userSet]);
@@ -95,10 +99,7 @@ const ViewOtherUser = ({route, navigation, screen}) => {
                                 screen={"OtherUserFriends"}
                                 currentUser={uid}
                             />
-                        ) : (
-                            <BoxComponent title={user.friends.length + ' Friends'} navigation={navigation}
-                                          screen={"OtherUserFriends"}/>
-                        )}
+                        ) : null}
                         {friend ? (
                             <BoxComponent
                                 title={'New viewers'}

@@ -4,7 +4,7 @@ import {useNavigation} from "@react-navigation/native";
 import dimensions from "../config/DeviceSpecifications";
 import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
 import {DetailComponent, SubInfo} from "./SubInfo";
-import {generateFakeChats, sendFriendRequest} from "../config/DB_Functions/DB_Functions";
+import {generateFakeChats, getChatGivenUsers, sendFriendRequest} from "../config/DB_Functions/DB_Functions";
 import NotificationTextComponent from "./NotificationTextComponent";
 import {auth} from "../config/firebaseConfig";
 
@@ -22,7 +22,6 @@ const Recent = ({data, loggedInUser, navigation}) => {
     }
 
     function handleBookmarkPress() {
-        console.log("handleBookmarkPress");
         setSaved(!saved);
         if (!saved) {
             setSaveNotification(true);
@@ -35,7 +34,6 @@ const Recent = ({data, loggedInUser, navigation}) => {
     }
 
     async function handleCheckPress() {
-        console.log("handleCheckPress111");
         // await generateFakeChats();
         if (!connected) {
             const friendCode = await sendFriendRequest(data);
@@ -56,13 +54,14 @@ const Recent = ({data, loggedInUser, navigation}) => {
         }
     }
 
-    function handleChatPress() {
-        navigation.navigate('Messages', {id: data.uid})
+    async function handleChatPress() {
+        console.log("User1 is: ", auth.currentUser.uid, "User2 is: ", data.uid)
+        const chat = await getChatGivenUsers(auth.currentUser.uid, data.uid);
+        navigation.navigate('Messages', {id: chat.id, recipientId: data.uid})
     }
 
     useEffect(() => {
         // Check if the user is already friends or have sent a request
-        console.log('user', data);
         if (
             (data.friends && data.friends.includes(auth.currentUser.uid)) ||
             (data.friendRequests &&

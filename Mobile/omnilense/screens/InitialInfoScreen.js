@@ -6,6 +6,7 @@ import ImagePickerComponent from '../components/ImagePickerComponent';
 import TextButtonComponent from '../components/TextButtonComponent';
 import dimensions from '../config/DeviceSpecifications';
 import {
+    createUser,
     fetchApiData,
     setImageForUser,
     updateUserName, uriToBase64,
@@ -29,18 +30,11 @@ function InitialInfoScreen({navigation}) {
     const [uploadPhoto, setUploadPhoto] = useState(false);
     const [checkingPhoto, setCheckingPhoto] = useState(false);
 
-    async function updateNameAndImage() {
-        const user = auth.currentUser;
-        console.log('photo', photoUrl);
-        let name = firstName + ' ' + lastName;
-        await updateUserName(user, name).then(r => {
-            console.log('r', r);
-        });
-        // .8 second delay to allow firebase to update
-        setTimeout(() => {
-            navigation.navigate('Interests');
-        }, 800);
+    function handleNextScreen(name, photoUrl) {
+        navigation.navigate('Interests', {name: name, photoUrl: photoUrl});
+
     }
+
 
     const handleSetImage = uri => {
         setImage(uri);
@@ -107,7 +101,7 @@ function InitialInfoScreen({navigation}) {
                 // Upload completed successfully, now we can get the download URL
                 const url = await storageRef.getDownloadURL();
                 console.log('url', url);
-                await setImageForUser(user, url, 'Avatar');
+                setPhotoUrl(url);
                 Alert.alert(
                     'Photo uploaded!',
                     'Your photo has been uploaded to Firebase Cloud Storage!',
@@ -186,7 +180,7 @@ function InitialInfoScreen({navigation}) {
             )}
             {checkingPhoto && (
                 <View style={styles.progressBarContainer}>
-                    <Progress.Circle/>
+                    <Progress.Pie/>
                     <Text>Checking Photo...</Text>
                 </View>
             )}
@@ -194,7 +188,22 @@ function InitialInfoScreen({navigation}) {
                 <View style={styles.next}>
                     <TextButtonComponent
                         text="Next"
-                        onPress={() => updateNameAndImage()}
+                        onPress={() => {
+                            function handleNext() {
+                                if (firstName === '' || lastName === '') {
+                                    Alert.alert(
+                                        'Error',
+                                        'Please fill out all fields',
+                                    );
+                                } else {
+                                    const name = firstName + ' ' + lastName;
+                                    handleNextScreen(name, photoUrl);
+                                }
+                            }
+
+                            handleNext();
+                        }
+                        }
                     />
                 </View>
             ) : null}

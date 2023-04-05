@@ -28,11 +28,9 @@ function RecentComponent({name, avatar, navigation, id, user}) {
 
     async function displayImage() {
         urlRef.current = await avatar.getDownloadURL();
-        console.log('THHH', urlRef.current);
     }
 
     async function handleCheckPress() {
-        console.log('handleCheckPress111');
         await generateFakeChats();
         if (!connected) {
             const friendCode = await sendFriendRequest(user);

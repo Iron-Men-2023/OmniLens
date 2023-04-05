@@ -4,21 +4,25 @@ import dimensions from "../config/DeviceSpecifications";
 import {purple} from "@mui/material/colors";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 
-function BoxComponent({title,friend,screen,navigation,currentUser}) {
-    return(
+function BoxComponent({title, friend, screen, navigation, currentUser}) {
+    return (
         <View>
-            <Text style={styles.title} >{title}</Text>
-
-            <TouchableOpacity style={styles.container} onPress={()=>navigation.navigate(screen,{user:currentUser})}>
-                {friend?
-                    <Image  style={styles.image} source={{ uri: friend}}/>
-                    : null
-                }
-            </TouchableOpacity>
+            <Text style={styles.title}>{title}</Text>
+            {friend ? (
+                <TouchableOpacity style={styles.container}
+                                  onPress={() => navigation.navigate(screen, {user: currentUser})}>
+                    <Image style={styles.image} source={{uri: friend}}/>
+                </TouchableOpacity>
+            ) : null}
+            {friend ?
+                <Image style={styles.image} source={{uri: friend}}/>
+                : null
+            }
 
         </View>
     )
 }
+
 const styles = StyleSheet.create({
     container: {
         borderRadius: 10,
@@ -26,11 +30,11 @@ const styles = StyleSheet.create({
         borderColor: "#000000",
         borderWidth: 4,
         color: "#fff",
-        height: dimensions.height*.25,
-        width: dimensions.width*.45,
+        height: dimensions.height * .25,
+        width: dimensions.width * .45,
     },
     title: {
-        marginLeft: dimensions.width*.12,
+        marginLeft: dimensions.width * .12,
         fontWeight: '600',
         fontSize: 18,
         fontStyle: "italic",

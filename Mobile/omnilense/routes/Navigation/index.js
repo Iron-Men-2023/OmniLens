@@ -3,7 +3,7 @@ import {StyleSheet, View, Text, Alert} from 'react-native';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {createStackNavigator} from '@react-navigation/stack';
-import AuthScreen from '../../screens/AuthScreen';
+import AuthScreen from '../../screens/SignInScreen';
 import SignUpScreen from '../../screens/SignUpScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import SearchScreen from '../../screens/SearchScreen';
@@ -299,6 +299,20 @@ export default function Navigation() {
                     {user ? (
                         <Stack.Screen name="Home" component={DrawerNavigator}/>
                     ) : null}
+                    {user ? (
+                        <Stack.Screen name={'Recents'} component={RecentsScreen}
+                                      options={{title: "Viewed By", headerShown: true}}/>
+                    ) : null}
+                    {user ? (
+                        <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser}/>
+                    ) : null}
+                    {user ? (
+                        <Stack.Screen name={'OtherUserFriends'} component={ViewUserFriendsScreen}
+                                      options={{title: "Friends", headerShown: true}}/>
+                    ) : null}
+                    {user ? (
+                        <Stack.Screen name={'Messages'} component={MessagingScreen}/>
+                    ) : null}
                     <Stack.Screen name={'Onboarding'} component={OnboardingScreen}/>
                     <Stack.Screen
                         name="Sign In"
@@ -308,16 +322,11 @@ export default function Navigation() {
                     <Stack.Screen name="Sign Up" component={SignUpScreen}/>
                     <Stack.Screen name={'Initial Info'} component={InitialInfoScreen}/>
                     <Stack.Screen name={'Interests'} component={InterestsScreen}/>
-                    <Stack.Screen name={'Recents'} component={RecentsScreen}
-                                  options={{title: "Viewed By", headerShown: true}}/>
-                    <Stack.Screen name={'OtherUserProfile'} component={ViewOtherUser}/>
-                    <Stack.Screen name={'OtherUserFriends'} component={ViewUserFriendsScreen}
-                                  options={{title: "Friends", headerShown: true}}/>
+
                     <Stack.Screen
                         name={'Forgot Password'}
                         component={ForgotPasswordScreen}
                     />
-                    <Stack.Screen name={'Messages'} component={MessagingScreen}/>
                 </Stack.Navigator>
             </NavigationContainer>
         </Provider>

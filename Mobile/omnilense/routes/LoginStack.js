@@ -3,18 +3,19 @@ import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import HeaderComponent from "../components/HeaderComponent";
 import React from "react";
-import AuthScreen from "../screens/AuthScreen";
+import AuthScreen from "../screens/SignInScreen";
 import OnboardingScreen from "../screens/OnboardingScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import InitialInfoScreen from "../screens/InitialInfoScreen";
 import InterestsScreen from "../screens/InterestsScreen";
-import {createAppContainer } from 'react-navigation';
+import {createAppContainer} from 'react-navigation';
 import BottomTabNavigator from "./BottomTabNavigator";
-const screens ={
+
+const screens = {
     Onboard: {
         screen: OnboardingScreen
     },
-    InitialInfo:{
+    InitialInfo: {
         screen: InitialInfoScreen,
         navigationOptions: ({navigation}) => {
         }
@@ -25,14 +26,14 @@ const screens ={
         }
     },
 
-    Login:{
+    Login: {
         screen: AuthScreen,
 
     },
-    SignUp:{
+    SignUp: {
         screen: SignUpScreen,
         navigationOptions: ({navigation}) => {
-            return{
+            return {
                 headerTitle: () => <HeaderComponent navigation={navigation} title={"Sign Up"}/>,
                 headerShown: true
             }
@@ -40,9 +41,10 @@ const screens ={
     },
 
 }
-const LoginStack = createStackNavigator(screens,{
-    defaultNavigationOptions:{
+const LoginStack = createStackNavigator(screens, {
+    defaultNavigationOptions: {
         headerShown: false
-    }})
+    }
+})
 
 export default LoginStack

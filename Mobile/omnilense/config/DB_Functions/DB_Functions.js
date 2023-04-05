@@ -43,28 +43,31 @@ async function fetchUserData() {
 
 async function getUserById(uid) {
     let userData = {};
-    const user = auth.currentUser;
-
-    // // Get the user's idToken
-    const idToken = await user.getIdToken();
-    //console.log('userId', user.uid);
-    //console.log('users', user);
     const userRef = await db.collection('users').doc(uid);
-    //console.log('userRef', userRef);
-    // const userRef = db.collection('users').doc(user.uid);
+    if (!userRef) {
+        return;
+    }
+    let userExists = false;
     await userRef
         .get()
         .then(async doc => {
             if (!doc.exists) {
                 console.log('User does not exist', uid);
+                return null;
             } else {
                 userData.userDoc = doc.data();
-                // console.log('userDoc', doc.data());
+                let userExists = true;
+                return userData;
             }
         })
         .catch(e => {
             //console.log('Error getting document', e);
+            return null;
         });
+    console.log('userData1', userData);
+    if (userData.userDoc === undefined) {
+        return null;
+    }
     return userData;
 }
 
@@ -80,7 +83,8 @@ async function getAllUsers() {
     return users;
 }
 
-function createUser(user) {
+function createUser(name, photoURL, interests) {
+    const user = auth.currentUser;
     if (!user) {
         return;
     }
@@ -88,20 +92,20 @@ function createUser(user) {
     let username = user.email.split('@')[0];
     return db.collection('users').doc(user.uid).set({
         email: user.email,
-        name: user.displayName,
+        name: name,
         username: username,
-        avatarPhotoUrl: photo,
+        avatarPhotoUrl: photoURL,
         coverPhotoUrl: photo,
-        bio: '',
+        bio: 'Please Edit Me!',
         uid: user.uid,
-        interests: null,
+        interests: interests,
         friendRequests: null,
         friends: null,
         recents: null,
-        instagram: '',
-        twitter: '',
-        facebook: '',
-        linkedin: '',
+        instagram: 'https://www.instagram.com/',
+        twitter: 'https://twitter.com/',
+        facebook: 'https://www.facebook.com/',
+        linkedin: 'https://www.linkedin.com/',
     });
 }
 
@@ -356,6 +360,50 @@ async function fetchApiData(jsonData, path) {
     }
 }
 
+async function getChatGivenUsers(user1Id, user2Id) {
+    try {
+        const chatsSnapshot = await db.collection('chats')
+            .where('users', 'array-contains', user1Id)
+            .get();
+
+        let chat = null;
+
+        chatsSnapshot.forEach(doc => {
+            const data = doc.data();
+            console.log("Chat data users: ", data.users, " user2: ", user2Id, " includes: ", data.users.includes(user2Id), " chat: ", chat);
+            if (data.users.includes(user2Id)) {
+                chat = {id: doc.id, data};
+            }
+        });
+
+        if (chat) {
+            console.log('chat: ', chat);
+            return chat;
+        } else {
+            const newChat = await db.collection('chats').add({
+                lastMessage: '',
+                users: [user1Id, user2Id],
+                name: '',
+                lastMessageUserId: '',
+            });
+
+            return {
+                id: newChat.id,
+                data: {
+                    lastMessage: '',
+                    users: [user1Id, user2Id],
+                    name: '',
+                    lastMessageUserId: '',
+                },
+            };
+        }
+    } catch (error) {
+        console.error('Error getting or creating chat:', error);
+        return null;
+    }
+}
+
+
 export {
     fetchUserData,
     createUser,
@@ -372,4 +420,5 @@ export {
     generateFakeChats,
     uriToBase64,
     fetchApiData,
+    getChatGivenUsers,
 };
