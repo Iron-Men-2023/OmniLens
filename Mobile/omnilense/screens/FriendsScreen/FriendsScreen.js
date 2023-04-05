@@ -15,6 +15,7 @@ import {Searchbar} from "react-native-paper";
 
 function FriendsList(props) {
     const {friends, navigation} = props;
+    console.log("Friends are: ", friends);
 
     return (
         <>
@@ -26,17 +27,17 @@ function FriendsList(props) {
                 </View>
             )}
             {friends.map(user => (
-                <View style={styles.row} key={user.id}>
-                    {user.photoUrl ? (
+                <View style={styles.row} key={user.uid}>
+                    {user.avatarPhotoUrl ? (
                         <Pressable
                             style={({pressed}) => [
                                 {backgroundColor: pressed ? 'black' : 'white'},
                                 styles.photo,
                             ]}
                             onPress={() =>
-                                navigation.navigate('OtherUserProfile', {uid: user.id})
+                                navigation.navigate('OtherUserProfile', {userData: user})
                             }>
-                            <Image style={styles.photo} source={{uri: user.photoUrl}}/>
+                            <Image style={styles.photo} source={{uri: user.avatarPhotoUrl}}/>
                         </Pressable>
                     ) : (
                         <Pressable
@@ -45,16 +46,18 @@ function FriendsList(props) {
                                 styles.photo,
                             ]}
                             onPress={() =>
-                                navigation.navigate('OtherUserProfile', {uid: user.id})
+                                navigation.navigate('OtherUserProfile', {userData: user})
                             }>
                             <Image
                                 source={require('../../assets/Logo.png')}
                                 style={styles.photo}
-                            />{' '}
+                            />
                         </Pressable>
                     )}
                     <Text style={styles.name}>{user.name}</Text>
-                    <View style={styles.friendStatusContainer}>{user.friendStatus}</View>
+                    <View style={styles.friendStatusContainer}>
+                        <Text style={styles.friendStatus}> Friends </Text>
+                    </View>
                 </View>
             ))}
         </>
@@ -93,14 +96,8 @@ const FriendsPage = ({navigation, route}) => {
                 userData.friends.forEach(friend => {
                     getUserById(friend)
                         .then(a => {
-                            console.log("Usersss: ", a.userDoc)
                             if (!emailsRef.current.includes(a.userDoc.email)) {
-                                setFriends([{
-                                    id: a.userDoc.uid,
-                                    name: a.userDoc.name,
-                                    photoUrl: a.userDoc.avatarPhotoUrl,
-                                    friendStatus: <Text style={styles.friendStatus}>Friends</Text>,
-                                }, ...userListRef.current]);
+                                setFriends([...friends, a.userDoc]);
                                 setEmails([a.userDoc.email, ...emailsRef.current])
                             }
                         }).catch(e => console.log(e))
@@ -130,42 +127,6 @@ const FriendsPage = ({navigation, route}) => {
                 </View>
             </View>
         </View>
-
-        // <View>
-        //     {friends.map(user => (
-        //         <View style={styles.row} key={user.id}>
-        //             {user.photoUrl ? (
-        //                 <Pressable
-        //                     style={({pressed}) => [
-        //                         {backgroundColor: pressed ? 'black' : 'white'},
-        //                         styles.photo,
-        //                     ]}
-        //                     onPress={() =>
-        //                         navigation.navigate('OtherUserProfile', {uid: user.id})
-        //                     }>
-        //                     <Image style={styles.photo} source={{uri: user.photoUrl}}/>
-        //                 </Pressable>
-        //             ) : (
-        //                 <Pressable
-        //                     style={({pressed}) => [
-        //                         {backgroundColor: pressed ? 'black' : 'white'},
-        //                         styles.photo,
-        //                     ]}
-        //                     onPress={() =>
-        //                         navigation.navigate('OtherUserProfile', {uid: item.uid})
-        //                     }>
-        //                     <Image
-        //                         source={require('../../assets/Logo.png')}
-        //                         style={styles.photo}
-        //                     />{' '}
-        //                 </Pressable>
-        //             )}
-        //             <Text style={styles.name}>{user.name}</Text>
-        //             <View>{user.friendStatus}</View>
-        //         </View>
-        //     ))}
-        // </View>
-
     );
 };
 

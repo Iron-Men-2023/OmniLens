@@ -24,7 +24,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 // import fbLogo from '../../assets/fblogo.jpg';
 // import twitterLogo from '../../assets/twitter.jpg';
 
-const ProfilePage = () => {
+const ProfilePage = ({navigation}) => {
     const [user, setUser] = useState(null);
     const [userSet, setUserSet] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
@@ -62,6 +62,7 @@ const ProfilePage = () => {
                         //get friend image for friend list display
                         getUserById(r.userDoc.friends[user.friends.length - 1])
                             .then(r => {
+                                console.log('friend: ', r.userDoc);
                                 setFriend(r.userDoc);
                             })
                             .catch(e => console.log('easds1', e));
@@ -101,11 +102,14 @@ const ProfilePage = () => {
                             photoType={'Cover'}
                             user={user}
                         />
-                        <ProfilePhotoComponent
-                            imageStyle={styles.avatar}
-                            photoType={'Avatar'}
-                            user={user}
-                        />
+                        <View style={styles.avatarContainer}>
+                            <ProfilePhotoComponent
+                                imageStyle={styles.avatar}
+                                photoType={'Avatar'}
+                                user={user}
+                                containerStyle={styles.avatarInnerContainer}
+                            />
+                        </View>
                         <Text style={styles.name}>{user.name}</Text>
                         <ScrollView style={styles.scroll} horizontal={true}>
                             {user.interests ? (
@@ -126,7 +130,9 @@ const ProfilePage = () => {
                         {friend ? (
                             <BoxComponent
                                 title={user.friends.length + ' Friends'}
-                                friend={friend.avatarPhotoUrl}
+                                navigation={navigation}
+                                userData={friend}
+                                screen={'OtherUserFriends'}
                             />
                         ) : (
                             <BoxComponent title={'0 Friends'}/>
@@ -134,7 +140,9 @@ const ProfilePage = () => {
                         {friend ? (
                             <BoxComponent
                                 title={'New viewers'}
-                                friend={friend.avatarPhotoUrl}
+                                userData={friend}
+                                navigation={navigation}
+                                screen={'OtherUserProfile'}
                             />
                         ) : (
                             <BoxComponent title={'New viewers'}/>
@@ -182,6 +190,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        zIndex: 0, // Add this line
     },
     row: {
         flexDirection: 'row',
@@ -196,15 +205,6 @@ const styles = StyleSheet.create({
         marginHorizontal: 60,
     },
     socialImageBtn: {},
-    header: {
-        width: '100%',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-        borderBottomWidth: 40,
-        borderBottomColor: 'lightgrey',
-        paddingBottom: 10,
-        flex: 1,
-    },
     header2: {
         width: '100%',
         alignItems: 'center',
@@ -214,19 +214,29 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         flex: 1,
     },
+    header: {
+        paddingBottom: 20,
+        zIndex: 1,
+    },
+    photosWrapper: {
+        position: 'relative',
+        flex: 1,
+    },
     coverPhoto: {
-        padding: 10,
-        width: dimensions.width,
-        height: 225,
+        width: '100%',
+        height: 200,
+        zIndex: 12,
     },
     avatar: {
-        width: 185,
-        height: 185,
-        borderRadius: 150,
-        borderWidth: 4,
-        marginTop: -125,
-        marginLeft: -165,
-        borderColor: 'white',
+        width: 130,
+        height: 130,
+        borderRadius: 100,
+        borderColor: '#FFF',
+        borderWidth: 3,
+        position: 'absolute',
+        top: -50, // Adjust this value to position the avatar properly
+        left: 15, // Adjust this value to position the avatar properly
+        zIndex: 1,
     },
     name: {
         fontSize: 22,
@@ -234,6 +244,9 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         alignSelf: 'flex-start',
         marginLeft: 10,
+        marginTop: 10,
+        paddingTop: 10,
+        position: 'relative'
     },
     title: {
         fontSize: 22,
@@ -278,6 +291,16 @@ const styles = StyleSheet.create({
     },
     headerContent: {
         alignItems: 'center',
+    },
+    avatarContainer: {
+        position: 'absolute',
+        top: 150, // Adjust this value to position the avatar properly
+        left: 20, // Adjust this value to position the avatar properly
+    },
+    avatarInnerContainer: {
+        position: 'relative',
+        top: 0,
+        left: 0,
     },
 });
 

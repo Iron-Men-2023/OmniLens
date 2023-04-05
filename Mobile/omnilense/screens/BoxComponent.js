@@ -4,14 +4,15 @@ import dimensions from "../config/DeviceSpecifications";
 import {purple} from "@mui/material/colors";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 
-function BoxComponent({title, friend, screen, navigation, currentUser}) {
+function BoxComponent({title, userData, screen, navigation}) {
+    console.log('userData HERE: ', userData);
     return (
         <View>
             <Text style={styles.title}>{title}</Text>
-            {friend ? (
+            {userData ? (
                 <TouchableOpacity style={styles.container}
-                                  onPress={() => navigation.navigate(screen, {user: currentUser})}>
-                    <Image style={styles.image} source={{uri: friend}}/>
+                                  onPress={() => navigation.navigate(screen, {userData: userData})}>
+                    <Image style={styles.image} source={{uri: userData.avatarPhotoUrl}}/>
                 </TouchableOpacity>
             ) : null}
         </View>
@@ -31,7 +32,6 @@ const styles = StyleSheet.create({
     title: {
         marginLeft: dimensions.width * .12,
         fontWeight: '600',
-        fontSize: 18,
         fontStyle: "italic",
         color: "#4c00ab"
     },

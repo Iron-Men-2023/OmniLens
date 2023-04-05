@@ -19,7 +19,7 @@ const Recent = ({data, loggedInUser, navigation}) => {
     const [detailColor, setDetailColor] = useState("#fff")
 
     function handleRecentComponentPress() {
-        navigation.navigate('OtherUserProfile', {uid: data.uid})
+        navigation.navigate('OtherUserProfile', {userData: data})
     }
 
     function handleBookmarkPress() {

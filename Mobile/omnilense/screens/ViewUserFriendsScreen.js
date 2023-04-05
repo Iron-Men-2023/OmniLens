@@ -12,32 +12,30 @@ import {auth, db} from "../config/firebaseConfig";
 import firebase from "firebase/compat/app";
 
 
-const ViewUserFriendsScreen = ({navigation,route}) => {
+const ViewUserFriendsScreen = ({navigation, route}) => {
     const [users, setUsers] = useState([]);
-    const {user} = route.params
+    const {userData} = route.params
     const [emails, setEmails] = useState([]);
     const userListRef = useRef(null)
     const emailsRef = useRef([])
     emailsRef.current = emails
     userListRef.current = users;
-    console.log(user,"usrs")
     useEffect(() => {
-        getUserById(user)
-            .then(doc=> {
+        getUserById(userData.uid)
+            .then(doc => {
                 const userData = doc.userDoc;
 
                 userData.friends.forEach(friend => {
                     getUserById(friend)
-                        .then(a=>{
-                            if(!emailsRef.current.includes(a.userDoc.email))
-                            {
+                        .then(a => {
+                            if (!emailsRef.current.includes(a.userDoc.email)) {
                                 setUsers([{
                                     id: a.userDoc.id,
                                     name: a.userDoc.name,
                                     photoUrl: a.userDoc.avatarPhotoUrl,
                                     friendStatus: <Text style={styles.friendStatus}>Friends</Text>,
-                                },...userListRef.current]);
-                                setEmails([a.userDoc.email,...emailsRef.current])
+                                }, ...userListRef.current]);
+                                setEmails([a.userDoc.email, ...emailsRef.current])
                             }
                         }).catch(e => console.log(e))
                 });
@@ -79,7 +77,7 @@ const ViewUserFriendsScreen = ({navigation,route}) => {
                             onPress={() =>
                                 navigation.navigate('OtherUserProfile', {uid: user.id})
                             }>
-                            <Image style={styles.photo} source={{uri: user.photoUrl}} />
+                            <Image style={styles.photo} source={{uri: user.photoUrl}}/>
                         </Pressable>
                     ) : (
                         <Pressable
