@@ -55,7 +55,6 @@ const Recent = ({data, loggedInUser, navigation}) => {
     }
 
     async function handleChatPress() {
-        console.log("User1 is: ", auth.currentUser.uid, "User2 is: ", data.uid)
         const chat = await getChatGivenUsers(auth.currentUser.uid, data.uid);
         navigation.navigate('Messages', {id: chat.id, recipientId: data.uid})
     }

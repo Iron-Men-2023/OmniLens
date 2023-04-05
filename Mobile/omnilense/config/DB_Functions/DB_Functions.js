@@ -13,13 +13,9 @@ async function fetchUserData() {
     const user = auth.currentUser;
     userData.userInfo = user;
 
-    // // Get the user's idToken
-    const idToken = await user.getIdToken();
-    //console.log('userId', user.uid);
-    //console.log('users', user);
+    // Get the user's idToken
     const userRef = await db.collection('users').doc(user.uid);
-    //console.log('userRef', userRef);
-    // const userRef = db.collection('users').doc(user.uid);
+
     await userRef
         .get()
         .then(async doc => {
@@ -27,16 +23,10 @@ async function fetchUserData() {
                 console.log('User does not exist', doc);
             } else {
                 userData.userDoc = doc.data();
-                //console.log('userDoc', doc.data());
             }
-            // const postsQuery = await firebase()
-            //     .firestore.collection('posts')
-            //     .where('userId', '==', user.uid)
-            //     .get();
-            // userData.postsData = postsQuery.docs.map(doc => doc.data());
         })
         .catch(e => {
-            //console.log('Error getting document', e);
+            console.log('Error getting document', e);
         });
     return userData;
 }
@@ -47,7 +37,6 @@ async function getUserById(uid) {
     if (!userRef) {
         return;
     }
-    let userExists = false;
     await userRef
         .get()
         .then(async doc => {
@@ -61,10 +50,8 @@ async function getUserById(uid) {
             }
         })
         .catch(e => {
-            //console.log('Error getting document', e);
             return null;
         });
-    console.log('userData1', userData);
     if (userData.userDoc === undefined) {
         return null;
     }
@@ -370,14 +357,12 @@ async function getChatGivenUsers(user1Id, user2Id) {
 
         chatsSnapshot.forEach(doc => {
             const data = doc.data();
-            console.log("Chat data users: ", data.users, " user2: ", user2Id, " includes: ", data.users.includes(user2Id), " chat: ", chat);
             if (data.users.includes(user2Id)) {
                 chat = {id: doc.id, data};
             }
         });
 
         if (chat) {
-            console.log('chat: ', chat);
             return chat;
         } else {
             const newChat = await db.collection('chats').add({

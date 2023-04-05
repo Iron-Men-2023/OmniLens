@@ -188,13 +188,10 @@ function DrawerNavigator() {
             .onSnapshot(async doc => {
                 const data = doc.data();
                 const friendRequestsData = data.friendRequests;
-                console.log('Friends', friendRequestsData);
                 try {
                     const friendData = await getAllUsersData(friendRequestsData);
-                    console.log('Friend Data', friendData);
                     // Get the lst friend request
                     const lastFriendRequest = friendData[friendData.length - 1];
-                    console.log('Last Friend Request in update', lastFriendRequest);
                     if (lastFriendRequest) {
                         await TaskManager.getRegisteredTasksAsync().then(tasks => {
                             console.log('Tasks', tasks);
@@ -258,7 +255,6 @@ function SignOutComponent(props) {
                                         });
                                     } catch (error) {
                                         console.error(error);
-                                        console.log('signOut error');
                                     }
                                     props.navigation.navigate('Sign In');
                                 },

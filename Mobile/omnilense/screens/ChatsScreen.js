@@ -3,7 +3,6 @@ import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
 import {Avatar, ListItem, SearchBar} from 'react-native-elements';
 import {db, auth} from '../config/firebaseConfig';
 import dimensions from "../config/DeviceSpecifications";
-import {getChatGivenUsers} from "../config/DB_Functions/DB_Functions";
 
 const ChatsScreen = ({navigation}) => {
     const [chats, setChats] = useState([]);
@@ -24,18 +23,14 @@ const ChatsScreen = ({navigation}) => {
                 if (chatData && chatData.users) {
                     const recipient = chatData.users.find(user => user !== auth.currentUser.uid);
                     const itemInfo = await getItemInfo(chatData);
-                    console.log("itemInfo", itemInfo);
                     if (itemInfo) {
                         setUserData(prevUserData => ({
                             ...prevUserData,
                             [recipient]: itemInfo,
                         }));
                     }
-                    console.log("userData", userData);
-
                     // Set up a listener for each chat reference stored in the user's document
                     const unsubscribe = chatRef.onSnapshot(chatSnapshot => {
-                        console.log("Chat snapshot: ", chatSnapshot.data());
                         setChats(prevChats => {
                             const updatedChat = {
                                 id: chatDoc.id,
@@ -55,6 +50,7 @@ const ChatsScreen = ({navigation}) => {
                             }
                         });
                     });
+                    () => unsubscribe();
                 } else {
                     console.log("Error: Chat data or users array is undefined.");
                 }
@@ -68,16 +64,23 @@ const ChatsScreen = ({navigation}) => {
         if (searchText === '') {
             return chat;
         } else {
-            if (chat.data.name) {
-                return chat.data.name.toLowerCase().includes(searchText.toLowerCase());
+            // Get the recipient ID from the chat
+            const recipient = chat.data.users.find(user => user !== auth.currentUser.uid);
+
+            // Get recipient data from userData
+            const recipientData = userData[recipient];
+
+            // If recipientData is available and it has a name property, filter by the name
+            if (recipientData && recipientData.name) {
+                return recipientData.name.toLowerCase().includes(searchText.toLowerCase());
             } else {
                 return chat;
             }
         }
     });
 
+
     const enterChat = (id, chat) => {
-        console.log("enterChat chat:", chat);
         // Get the user from the users array in chat that is not the current user
         const recipient = chat.data.users.find(user => user !== auth.currentUser.uid);
         navigation.navigate('Messages', {id: id, recipientId: recipient})
@@ -86,21 +89,17 @@ const ChatsScreen = ({navigation}) => {
 
     async function getItemInfo(item) {
         const chatData = item;
-        console.log("getItemInfo chatData:", chatData);
 
         if (chatData) {
             const recipient = chatData.users.find(user => user !== auth.currentUser.uid);
-            console.log("recipient:", recipient);
             const userRef = await db.collection('users').doc(recipient).get();
             const userData = userRef.data();
             if (userData) {
-                console.log("user data", userData);
                 return userData;
             }
         } else {
             console.log("chat data was undefined");
         }
-        console.log("user data was undefined");
         return null;
     }
 
@@ -121,7 +120,6 @@ const ChatsScreen = ({navigation}) => {
                 style={styles.container}
                 renderItem={({item}) => {
                     const recipient = item.data.users.find(user => user !== auth.currentUser.uid);
-                    console.log("recipient1", recipient);
                     const itemInfo = userData[recipient];
                     return (
                         <>{itemInfo ? (
