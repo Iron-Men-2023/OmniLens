@@ -35,15 +35,17 @@ function Feed({navigation}) {
 
                 // Iterate through the recents array and get the user data for each recent user
                 for (let id in userData.recents) {
-                    getUserById(userData.recents[id])
-                        .then(a => {
-                            if (!emailsRef.current.includes(a.userDoc.email)) {
-                                recentsRef.current.push(a.userDoc)
-                                emailsRef.current.push(a.userDoc.email)
-                            }
-                            console.log('list', recentsRef, emailsRef.current);
-                        })
-                        .catch(e => console.log('es2', e));
+                    if (userData.recents[id] !== auth.currentUser.uid) {
+                        getUserById(userData.recents[id])
+                            .then(a => {
+                                if (!emailsRef.current.includes(a.userDoc.email)) {
+                                    recentsRef.current.push(a.userDoc)
+                                    emailsRef.current.push(a.userDoc.email)
+                                }
+                                console.log('list', recentsRef, emailsRef.current);
+                            })
+                            .catch(e => console.log('es2', e));
+                    }
                 }
             } else {
                 console.log('No user data found');
@@ -60,7 +62,7 @@ function Feed({navigation}) {
                     <FlatList
                         data={searchText.length === 0 ? recentsRef.current : searchedRecents}
                         renderItem={({item}) => <Recent data={item} loggedInUser={user} navigation={navigation}/>}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.uid}
                         showsVerticalScrollIndicator={false}
                         ListHeaderComponent={user ?
                             <Header user={user} search={dynamicSearch} navigation={navigation}/> : null}/>

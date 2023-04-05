@@ -4,11 +4,11 @@ import * as FileSystem from 'expo-file-system';
 import * as FaceDetector from 'expo-face-detector';
 import {Camera, CameraType} from 'expo-camera';
 import {storage, auth, db} from '../../config/firebaseConfig';
+import {Button, Surface, Caption, FAB, Text, Provider as PaperProvider, DefaultTheme} from 'react-native-paper';
 import {
     TouchableOpacity,
     View,
     StyleSheet,
-    Text,
     Alert,
     ActivityIndicator, FlatList,
 } from 'react-native';
@@ -17,6 +17,15 @@ import {
     getUserByName,
     updateRecents, uriToBase64,
 } from '../../config/DB_Functions/DB_Functions';
+
+const theme = {
+    ...DefaultTheme,
+    colors: {
+        ...DefaultTheme.colors,
+        primary: '#333',
+        accent: '#0000ff',
+    },
+};
 
 const MLScreen = () => {
     const [type, setType] = useState(CameraType.back);
@@ -28,6 +37,7 @@ const MLScreen = () => {
     const [pictureUploading, setPictureUploading] = useState(false);
     const [permission, requestPermission] = Camera.useCameraPermissions();
     const [confidence, setConfidence] = useState(0.5);
+    const [open, setOpen] = useState(false);
 
     async function recognizeFace(imageUri, num_of_faces) {
         const base64Image = await uriToBase64(imageUri);
@@ -79,7 +89,9 @@ const MLScreen = () => {
             getUserByName(faceNames[i]).then((user) => {
                 console.log('user', user);
                 if (user) {
-                    updateRecents(user.uid).then(r => console.log(r));
+                    if (user.uid !== auth.currentUser.uid) {
+                        updateRecents(user.uid).then(r => console.log(r));
+                    }
                 }
             });
         }
@@ -93,29 +105,21 @@ const MLScreen = () => {
             current === CameraType.back ? CameraType.front : CameraType.back,
         );
     };
-
-    const CaptureButton = () => {
-        const handlePressIn = () => {
-            setCapturePressed(true);
-        };
-
-        const handlePressOut = () => {
-            setCapturePressed(false);
-        };
-
-        return (
-            <TouchableOpacity
-                style={styles.captureButton}
-                onPressIn={handlePressIn}
-                onPressOut={handlePressOut}>
-                {capturePressed ? (
-                    <Text style={styles.captureButtonText}>Stop Capture</Text>
-                ) : (
-                    <Text style={styles.captureButtonText}>Capture</Text>
-                )}
-            </TouchableOpacity>
-        );
+    const handleCameraPress = () => {
+        setCapturePressed((prevCapturePressed) => !prevCapturePressed);
     };
+
+    // const CaptureButton = () => {
+    //
+    //     return (
+    //         <FAB
+    //             style={styles.captureButton}
+    //             onPress={handlePress}
+    //             icon={capturePressed ? 'stop' : 'camera'}
+    //             label={capturePressed ? 'Stop Capture' : 'Capture'}
+    //         />
+    //     );
+    // };
 
     const FaceBox = ({face, apiFace, apiFaceName, confidence}) => {
         if (!face) {
@@ -158,7 +162,9 @@ const MLScreen = () => {
 
         return (
             <View style={boxStyles.faceBox}>
-                <Text style={boxStyles.nameText}>{personName} with {confidence}% Confidence</Text>
+                <Caption style={boxStyles.nameText}>
+                    {personName} with {confidence}% Confidence
+                </Caption>
             </View>
         );
     };
@@ -186,55 +192,82 @@ const MLScreen = () => {
     }
 
     return (
-        <View style={styles.container}>
-            {pictureUploading && (
-                <View style={styles.loadingContainer}>
-                    <ActivityIndicator size="large" color="#0000ff"/>
-                    <Text>Uploading image...</Text>
-                </View>
-            )}
-            <Camera
-                style={styles.camera}
-                ref={handleCameraReady}
-                type={type}
-                onCameraReady={requestPermission}
-                onFacesDetected={({faces}) =>
-                    handleFacesDetected({faces, camera: cameraRef})
-                } onFaceDetectionError={handleFaceDetectionError}
-                faceDetectorSettings={{
-                    mode: FaceDetector.FaceDetectorMode.accurate,
-                    detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
-                    runClassifications: FaceDetector.FaceDetectorClassifications.none,
-                    minDetectionInterval: 2000,
-                    tracking: true,
-                }}>
-                {faceLocations.map((face, index) => (
-                    <FaceBox
-                        key={index}
-                        face={face}
-                        apiFace={apiFaceLocations[index]}
-                        apiFaceName={apiFaceNames[index]}
-                        confidence={confidence[index]}
-                    />
-                ))}
-                <CaptureButton/>
-                <TouchableOpacity style={styles.flipButton} onPress={toggleCameraType}>
-                    <Text style={styles.flipButtonText}>Flip</Text>
-                </TouchableOpacity>
-            </Camera>
-            <View style={styles.personContainer}>
-                {apiFaceNames && (
-                    <View>
-                        <Text style={styles.personText}>People in the room:</Text>
-                        <FlatList
-                            data={apiFaceNames}
-                            renderItem={({item}) => <Text style={styles.personText}>{item}</Text>}
-                            keyExtractor={(item, index) => index.toString()}
-                        />
-                    </View>
+        <PaperProvider theme={theme}>
+            <View style={styles.container}>
+                {pictureUploading && (
+                    <Surface style={styles.loadingContainer}>
+                        <ActivityIndicator size="large" color={theme.colors.accent}/>
+                        <Caption>Uploading image...</Caption>
+                    </Surface>
                 )}
+                <Camera
+                    style={styles.camera}
+                    ref={handleCameraReady}
+                    type={type}
+                    onCameraReady={requestPermission}
+                    onFacesDetected={({faces}) =>
+                        handleFacesDetected({faces, camera: cameraRef})
+                    } onFaceDetectionError={handleFaceDetectionError}
+                    faceDetectorSettings={{
+                        mode: FaceDetector.FaceDetectorMode.accurate,
+                        detectLandmarks: FaceDetector.FaceDetectorLandmarks.none,
+                        runClassifications: FaceDetector.FaceDetectorClassifications.none,
+                        minDetectionInterval: 2000,
+                        tracking: true,
+                    }}>
+                    {faceLocations.map((face, index) => (
+                        <FaceBox
+                            key={index}
+                            face={face}
+                            apiFace={apiFaceLocations[index]}
+                            apiFaceName={apiFaceNames[index]}
+                            confidence={confidence[index]}
+                        />
+                    ))}
+                    <FAB.Group
+                        open={open}
+                        style={[styles.fab, styles.fabGroup]}
+                        icon={open ? 'close' : 'menu'}
+                        actions={[
+                            {
+                                icon: type === CameraType.back ? 'camera-front' : 'camera-rear',
+                                label: type === CameraType.back ? 'Front' : 'Back',
+                                onPress: () => toggleCameraType(),
+                                style: styles.fabAction, // Add this
+                                labelStyle: styles.fabLabel, // Add this
+                            },
+                            {
+                                icon: capturePressed ? 'stop' : 'camera',
+                                label: capturePressed ? 'Stop Capture' : 'Capture',
+                                onPress: () => handleCameraPress(),
+                                style: styles.fabAction, // Add this
+                                labelStyle: styles.fabLabel, // Add this
+                            },
+                        ]}
+                        onStateChange={({open}) => setOpen(open)}
+                        onPress={() => {
+                            if (open) {
+                                // set background to transparent
+                            }
+                        }}
+                        visible={true}
+                    />
+
+                </Camera>
+                <Surface style={styles.personContainer}>
+                    {apiFaceNames && (
+                        <View>
+                            <Caption style={styles.personText}>People in the room:</Caption>
+                            <FlatList
+                                data={apiFaceNames}
+                                renderItem={({item}) => <Caption style={styles.personText}>{item}</Caption>}
+                                keyExtractor={(item, index) => index.toString()}
+                            />
+                        </View>
+                    )}
+                </Surface>
             </View>
-        </View>
+        </PaperProvider>
     );
 };
 
@@ -242,41 +275,21 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         flexDirection: 'column',
+        backgroundColor: 'black',
+        padding: 5,
+        borderRadius: 5,
     },
     camera: {
         flex: 1,
-        borderWidth: 8,
         alignItems: 'center',
-        borderColor: 'grey',
-    },
-    buttonContainer: {
-        flex: 1,
-        backgroundColor: 'transparent',
-        margin: 20,
-    },
-    button: {
-        flex: 0.1,
-        alignSelf: 'flex-end',
-    },
-    text: {
-        fontSize: 40,
-        color: 'white',
-    },
-    toggleContainer: {
-        flex: 0.1,
-    },
-    toggleButton: {
-        backgroundColor: '#333',
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    toggleText: {
-        color: '#fff',
-        fontWeight: 'bold',
     },
     personContainer: {
         flex: 0.1,
+        justifyContent: 'center',
+        /* make the surface transparent */
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        padding: 8,
+        borderRadius: 5,
     },
     personText: {
         color: 'black',
@@ -287,27 +300,34 @@ const styles = StyleSheet.create({
         flex: 0.1,
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 10,
+    },
+    flipButton: {
+        position: 'absolute',
+        bottom: 20,
+        alignSelf: 'center',
+        paddingHorizontal: 15,
+        fontSize: 20,
     },
     captureButton: {
-        backgroundColor: '#333',
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
+        position: 'absolute',
+        bottom: 20,
+        left: 20,
+        alignSelf: 'center',
     },
-    captureButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 20,
-    }, flipButtonText: {
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 20,
-    }, flipButton: {
-        backgroundColor: '#333',
-        padding: 10,
-        borderRadius: 5,
-        alignItems: 'center',
-    }
+    fabGroup: {
+        position: 'absolute',
+        right: 0,
+        paddingBottom: 0,
+        backgroundColor: 'transparent',
+    },
+    fabAction: {
+        backgroundColor: 'transparent',
+        borderRadius: 0,
+    },
+    fabLabel: {
+        color: 'black',
+    },
 });
 
 export default MLScreen;
