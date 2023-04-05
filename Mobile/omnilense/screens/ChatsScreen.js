@@ -3,6 +3,7 @@ import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
 import {Avatar, ListItem, SearchBar} from 'react-native-elements';
 import {db, auth} from '../config/firebaseConfig';
 import dimensions from "../config/DeviceSpecifications";
+import {LinearGradient} from "expo-linear-gradient";
 
 const ChatsScreen = ({navigation}) => {
     const [chats, setChats] = useState([]);
@@ -104,20 +105,22 @@ const ChatsScreen = ({navigation}) => {
     }
 
     return (
-        <View>
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
             <SearchBar
                 placeholder="Search Chats"
                 onChangeText={text => setSearchText(text)}
                 value={searchText}
                 lightTheme={true}
                 round={true}
-                containerStyle={styles.container}
                 style={styles.search}
             />
             <FlatList
                 data={filteredChats}
                 keyExtractor={item => item.id}
-                style={styles.container}
+                style={styles.chatContainer}
                 renderItem={({item}) => {
                     const recipient = item.data.users.find(user => user !== auth.currentUser.uid);
                     const itemInfo = userData[recipient];
@@ -139,17 +142,19 @@ const ChatsScreen = ({navigation}) => {
                     );
                 }}
             />
-
-        </View>
+        </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#fff",
-        marginBottom: 24,
-        marginTop: 40,
-
+        flex: 1,
+    },
+    chatContainer: {
+        padding: 10,
+        borderBottomColor: "#ccc",
+        borderRadius: 14,
+        marginBottom: 10,
     },
     text: {
         fontSize: 20,

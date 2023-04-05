@@ -5,6 +5,7 @@ import {auth, db} from "../config/firebaseConfig";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 import Header from "../components/Header";
 import {useTheme} from "react-native-paper";
+import {LinearGradient} from "expo-linear-gradient";
 
 function Feed({navigation}) {
 
@@ -62,32 +63,33 @@ function Feed({navigation}) {
         return () => unsubscribe();
     }, [userSet]);
     return (
-        <SafeAreaView style={{flex: 1, backgroundColor: colors.background}}>
-            <View style={{flex: 1}}>
-                <View>
-                    <FlatList
-                        data={searchText.length === 0 ? recentsRef.current : searchedRecents}
-                        renderItem={({item}) => (
-                            <Recent data={item} loggedInUser={user} navigation={navigation}/>
-                        )}
-                        keyExtractor={(item) => item.uid}
-                        showsVerticalScrollIndicator={false}
-                        ListHeaderComponent={
-                            user ? (
-                                <Header
-                                    user={user}
-                                    search={dynamicSearch}
-                                    navigation={navigation}
-                                />
-                            ) : null
-                        }
-                    />
-                </View>
-                <View style={styles.backPanel}>
-                    <View style={{height: 300, backgroundColor: colors.primary}}/>
-                </View>
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
+            <View>
+                <FlatList
+                    data={searchText.length === 0 ? recentsRef.current : searchedRecents}
+                    renderItem={({item}) => (
+                        <Recent data={item} loggedInUser={user} navigation={navigation}/>
+                    )}
+                    keyExtractor={(item) => item.uid}
+                    showsVerticalScrollIndicator={false}
+                    ListHeaderComponent={
+                        user ? (
+                            <Header
+                                user={user}
+                                search={dynamicSearch}
+                                navigation={navigation}
+                            />
+                        ) : null
+                    }
+                />
             </View>
-        </SafeAreaView>
+            {/*<View style={styles.backPanel}>*/}
+            {/*    <View style={{height: 300, backgroundColor: colors.primary}}/>*/}
+            {/*</View>*/}
+        </LinearGradient>
     );
 };
 
@@ -100,5 +102,9 @@ const styles = StyleSheet.create({
         right: 0,
         zIndex: -1,
     },
+    container: {
+        flex: 1,
+        
+    }
 });
 export default Feed;

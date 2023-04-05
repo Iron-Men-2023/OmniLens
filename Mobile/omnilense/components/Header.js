@@ -1,14 +1,18 @@
 import React from "react";
-import {View, Image} from "react-native";
+import {View, Image, StyleSheet} from "react-native";
 import {Text, Avatar, useTheme} from "react-native-paper";
 import logo from "../assets/Logo-removebg.png";
 import SearchInputComponent from "./SearchInputComponent";
+import {LinearGradient} from "expo-linear-gradient";
 
 const Header = ({user, search, navigation}) => {
     const {colors} = useTheme();
 
     return (
-        <View style={{backgroundColor: colors.primary, padding: 14}}>
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
             <View
                 style={{
                     flexDirection: "row",
@@ -55,9 +59,18 @@ const Header = ({user, search, navigation}) => {
             <View style={{marginTop: 5}}>
                 <SearchInputComponent changeText={search}/>
             </View>
-        </View>
+        </LinearGradient>
     );
 };
 
+const styles = StyleSheet.create({
+    container: {
+        padding: 20,
+        paddingTop: 50,
+        paddingBottom: 50,
+        borderBottomLeftRadius: 20,
+        borderBottomRightRadius: 20,
+    },
+});
 export default Header;
 

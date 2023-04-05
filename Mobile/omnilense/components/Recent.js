@@ -7,6 +7,7 @@ import {DetailComponent, SubInfo} from "./SubInfo";
 import {generateFakeChats, getChatGivenUsers, sendFriendRequest} from "../config/DB_Functions/DB_Functions";
 import NotificationTextComponent from "./NotificationTextComponent";
 import {auth} from "../config/firebaseConfig";
+import {LinearGradient} from "expo-linear-gradient";
 
 const Recent = ({data, loggedInUser, navigation}) => {
     const [connected, setConnected] = useState(data.friends && data.friends.includes(auth.currentUser.uid),
@@ -73,7 +74,10 @@ const Recent = ({data, loggedInUser, navigation}) => {
     }, [setConnected]);
 
     return (
-        <View style={styles.container}>
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
             <Pressable
                 style={({pressed}) => [
                     {backgroundColor: pressed ? 'black' : 'white', borderRadius: 14},
@@ -153,7 +157,7 @@ const Recent = ({data, loggedInUser, navigation}) => {
                     />
                 ) : null}
             </View>
-        </View>
+        </LinearGradient>
     )
 
 }
