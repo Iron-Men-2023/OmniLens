@@ -19,8 +19,7 @@
         {
           "cameraPermission": "Allow $(PRODUCT_NAME) to access your camera."
         }
-      ],
-      "sentry-expo"
+      ]
     ],
     "splash": {
       "image": "./assets/splash.png",
