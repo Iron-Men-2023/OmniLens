@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     chat: {
-        height: 75,
+        height: 80,
         backgroundColor: "#fff",
         borderRadius: 10,
         padding: 10,
