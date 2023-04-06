@@ -12,6 +12,7 @@ import {auth, storage, db, firebaseApp} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import {sendFriendRequest} from '../../config/DB_Functions/DB_Functions';
+import {LinearGradient} from "expo-linear-gradient";
 
 const FriendsPage = ({navigation}) => {
     const [users, setUsers] = useState([]);
@@ -72,25 +73,30 @@ const FriendsPage = ({navigation}) => {
     };
 
     return (
-        <ScrollView>
-            <SearchInputComponent changeText={dynamicSearch}/>
-            {searchedUsers.map(user => (
-                <View style={styles.row} key={user.userData.uid}>
-                    <Pressable
-                        style={({pressed}) => [
-                            {backgroundColor: pressed ? 'black' : 'white'},
-                            styles.photo,
-                        ]}
-                        onPress={() =>
-                            navigation.navigate('OtherUserProfile', {userData: user.userData})
-                        }>
-                        <Image style={styles.photo} source={{uri: user.userData.avatarPhotoUrl}}/>
-                    </Pressable>
-                    <Text style={styles.name}>{user.userData.name}</Text>
-                    <View>{user.friendStatus}</View>
-                </View>
-            ))}
-        </ScrollView>
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
+            <ScrollView>
+                <SearchInputComponent changeText={dynamicSearch}/>
+                {searchedUsers.map(user => (
+                    <View style={styles.row} key={user.userData.uid}>
+                        <Pressable
+                            style={({pressed}) => [
+                                {backgroundColor: pressed ? 'black' : 'white'},
+                                styles.photo,
+                            ]}
+                            onPress={() =>
+                                navigation.navigate('OtherUserProfile', {userData: user.userData})
+                            }>
+                            <Image style={styles.photo} source={{uri: user.userData.avatarPhotoUrl}}/>
+                        </Pressable>
+                        <Text style={styles.name}>{user.userData.name}</Text>
+                        <View>{user.friendStatus}</View>
+                    </View>
+                ))}
+            </ScrollView>
+        </LinearGradient>
     );
 };
 
@@ -129,6 +135,9 @@ const styles = StyleSheet.create({
         padding: 5,
         borderColor: '#007AFF',
     },
+    container: {
+        flex: 1,
+    }
 });
 
 export default FriendsPage;

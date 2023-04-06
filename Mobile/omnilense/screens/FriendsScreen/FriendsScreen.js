@@ -12,6 +12,7 @@ import firebase from 'firebase/compat/app';
 import {getUserById} from "../../config/DB_Functions/DB_Functions";
 import * as PropTypes from "prop-types";
 import {Searchbar} from "react-native-paper";
+import {LinearGradient} from "expo-linear-gradient";
 
 function FriendsList(props) {
     const {friends, navigation} = props;
@@ -107,13 +108,11 @@ const FriendsPage = ({navigation, route}) => {
 
 
     return (
-
-        <View style={{flex: 1, backgroundColor: '#f1ecec'}}>
-            <View style={{flex: 1}}>
-                <View style={styles.header}>
-                    <Text style={styles.headerText}>Friends</Text>
-                </View>
-
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
+            <View style={{flex: 1, margin: 10}}>
                 <Searchbar
                     style={styles.searchBar}
                     placeholder="Search"
@@ -126,7 +125,7 @@ const FriendsPage = ({navigation, route}) => {
                     <FriendsList friends={filterFriends(searchText)} navigation={navigation}/>
                 </View>
             </View>
-        </View>
+        </LinearGradient>
     );
 };
 
@@ -200,6 +199,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderBottomWidth: 1,
         borderBottomColor: '#e0e0e0',
+        marginTop: 10,
+        borderRadius: 10,
     }, noFriendsContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -208,6 +209,9 @@ const styles = StyleSheet.create({
     noFriendsText: {
         fontSize: 20,
         fontWeight: 'bold',
+    },
+    container: {
+        flex: 1,
     }
 });
 

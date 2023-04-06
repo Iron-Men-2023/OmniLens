@@ -152,7 +152,7 @@ const MLScreen = () => {
                 bottom: -85,
                 right: -15,
                 color: 'red',
-                padding: 5,
+                padding: 15,
                 borderRadius: 5,
                 fontSize: fontSize,
             },

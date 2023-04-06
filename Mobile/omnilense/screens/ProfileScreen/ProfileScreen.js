@@ -7,7 +7,7 @@ import {
     Image,
     TouchableOpacity,
     RefreshControl,
-    Linking,
+    Linking, TextInput,
 } from 'react-native';
 import {
     fetchUserData,
@@ -20,6 +20,7 @@ import BoxComponent from '../BoxComponent';
 import InterestComponent from '../../components/InterestComponent';
 import {Avatar, Chip, FAB, Surface, useTheme} from 'react-native-paper';
 import {LinearGradient} from 'expo-linear-gradient';
+import {db, auth} from "../../config/firebaseConfig";
 // import igLogo from '../../assets/iglogo.jpg';
 // import fbLogo from '../../assets/fblogo.jpg';
 // import twitterLogo from '../../assets/twitter.jpg';
@@ -29,11 +30,14 @@ const ProfilePage = ({navigation}) => {
     const [userSet, setUserSet] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const [friend, setFriend] = useState(null);
+    const [editableBio, setEditableBio] = useState(""); // Add state variable for editable bio
+
 
     useEffect(() => {
         fetchUserData()
             .then(r => {
                 setUser(r.userDoc);
+                setEditableBio(r.userDoc.bio); // Set editable bio to user bio
                 setUserSet(true);
                 //get friend image for friend list display
                 if (user.friends) {
@@ -84,6 +88,16 @@ const ProfilePage = ({navigation}) => {
         }
     };
 
+    const updateBio = async (newBio) => {
+        try {
+            await db.collection("users").doc(auth.currentUser.uid).update({
+                bio: newBio
+            });
+        } catch (error) {
+            console.error("Error updating bio: ", error);
+        }
+    };
+
     return (
         <ScrollView
             style={styles.scrollView}
@@ -124,7 +138,14 @@ const ProfilePage = ({navigation}) => {
                         </ScrollView>
                     </LinearGradient>
                     <Surface style={styles.header2}>
-                        <Text style={styles.bio}>Bio: {user.bio}</Text>
+                        <Text style={styles.bio}>Bio:</Text>
+                        <TextInput
+                            style={styles.bio}
+                            onChangeText={text => setEditableBio(text)}
+                            value={editableBio}
+                            placeholder="Bio"
+                            onEndEditing={() => updateBio(editableBio)}
+                        />
                     </Surface>
                     <View style={styles.box}>
                         {friend ? (
@@ -207,7 +228,8 @@ const styles = StyleSheet.create({
     socialImageBtn: {},
     header2: {
         width: '100%',
-        alignItems: 'center',
+        /* Make items in a row */
+        flexDirection: 'row',
         backgroundColor: '#F5FCFF',
         borderBottomWidth: 5,
         borderBottomColor: '#9a6cd9',
