@@ -12,20 +12,23 @@ import {
 import {fetchUserData, getUserById} from '../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../components/ProfilePhotoComponent';
 import dimensions from '../config/DeviceSpecifications';
-import {Chip} from 'react-native-paper';
+import {Chip, FAB, Surface} from 'react-native-paper';
 import BoxComponent from './BoxComponent';
 import fbLogo from '../assets/fblogo.jpg';
 import igLogo from '../assets/iglogo.jpg';
 import twitterLogo from '../assets/twitter.jpg';
+import {LinearGradient} from "expo-linear-gradient";
 
 const ViewOtherUser = ({route, navigation, screen}) => {
     const [user, setUser] = useState(null);
     const [userSet, setUserSet] = useState(false);
     const [friend, setFriend] = useState(null);
-    const {uid} = route.params;
+    const {userData} = route.params;
+
+    console.log('uid: ', userData);
 
     useEffect(() => {
-        getUserById(uid)
+        getUserById(userData.uid)
             .then(r => {
                 console.log('user data: ', r.userDoc);
                 setUser(r.userDoc);
@@ -46,103 +49,95 @@ const ViewOtherUser = ({route, navigation, screen}) => {
     }, [userSet]);
 
     return (
-        <ScrollView style={styles.scrollView}>
+        <ScrollView
+            style={styles.scrollView}
+        >
             {user ? (
                 <View style={styles.container}>
-                    {/*</View>*/}
-                    <View style={styles.header}>
-                        {/*Placeholder for cover photo */}
+                    <LinearGradient
+                        colors={['#9a6cd9', '#F5FCFF']}
+                        style={styles.header}
+                    >
                         <ProfilePhotoComponent
                             imageStyle={styles.coverPhoto}
                             photoType={'Cover'}
                             user={user}
                             viewOnly={true}
                         />
-                        <ProfilePhotoComponent
-                            imageStyle={styles.avatar}
-                            photoType={'Avatar'}
-                            user={user}
-                            viewOnly={true}
-                        />
-                        {/* Placeholder for profile picture */}
-
+                        <View style={styles.avatarContainer}>
+                            <ProfilePhotoComponent
+                                imageStyle={styles.avatar}
+                                photoType={'Avatar'}
+                                user={user}
+                                viewOnly={true}
+                                containerStyle={styles.avatarInnerContainer}
+                            />
+                        </View>
                         <Text style={styles.name}>{user.name}</Text>
                         <ScrollView style={styles.scroll} horizontal={true}>
                             {user.interests ? (
-                                <>
-                                    {user.interests.map(interest => (
-                                        <View style={styles.chip} key={interest}>
-                                            <Chip icon={'heart'} onPress={() => console.log('Pressed')}>
-                                                {interest}
-                                            </Chip>
-                                        </View>
-                                    ))}
-                                </>
-                            ) : (
-                                <View style={styles.chip}>
-                                    <Chip icon={'heart'} onPress={() => console.log('Pressed')}>
-                                        No interests
+                                user.interests.map(interest => (
+                                    <Chip icon="heart" key={interest} style={styles.chip}>
+                                        {interest}
                                     </Chip>
-                                </View>
+                                ))
+                            ) : (
+                                <Text>No interests</Text>
                             )}
                         </ScrollView>
-                    </View>
-                    <View style={styles.header2}>
+                    </LinearGradient>
+                    <Surface style={styles.header2}>
                         <Text style={styles.bio}>Bio: {user.bio}</Text>
-                    </View>
+                    </Surface>
                     <View style={styles.box}>
                         {friend ? (
                             <BoxComponent
                                 title={user.friends.length + ' Friends'}
-                                friend={friend.avatarPhotoUrl}
                                 navigation={navigation}
-                                screen={"OtherUserFriends"}
-                                currentUser={uid}
+                                userData={friend}
+                                screen={'OtherUserFriends'}
                             />
-                        ) : null}
+                        ) : (
+                            <BoxComponent title={'0 Friends'}/>
+                        )}
                         {friend ? (
                             <BoxComponent
                                 title={'New viewers'}
-                                friend={friend.avatarPhotoUrl}
+                                userData={friend}
                                 navigation={navigation}
-                                screen={"Recents"}
+                                screen={'OtherUserProfile'}
                             />
                         ) : (
-                            <BoxComponent title={'New viewers'} navigation={navigation}
-                                          screen={"Recents"}/>
+                            <BoxComponent title={'New viewers'}/>
                         )}
                     </View>
                     <Text style={styles.title}>Socials:</Text>
 
                     <View style={styles.socials}>
-                        <TouchableOpacity
+                        <FAB
                             style={styles.socialImageBtn}
+                            icon="facebook"
                             onPress={() =>
                                 Linking.openURL(
                                     'https://www.instagram.com/' + user.instagram + '/',
                                 )
-                            }>
-                            <Image source={fbLogo} style={styles.socialImage}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity
+                            }
+                        />
+                        <FAB
                             style={styles.socialImageBtn}
+                            icon="instagram"
                             onPress={() =>
                                 Linking.openURL(
                                     'https://www.instagram.com/' + user.instagram + '/',
                                 )
-                            }>
-                            <Image source={igLogo} style={styles.socialImage}/>
-                        </TouchableOpacity>
-                        <TouchableOpacity
+                            }
+                        />
+                        <FAB
                             style={styles.socialImageBtn}
-                            onPress={() =>
-                                Linking.openURL('https://twitter.com/' + user.twitter)
-                            }>
-                            <Image source={twitterLogo} style={styles.socialImage}/>
-                        </TouchableOpacity>
+                            icon="twitter"
+                            onPress={() => Linking.openURL('https://twitter.com/' + user.twitter)}
+                        />
                     </View>
-
-                    {/*<Posts />*/}
                 </View>
             ) : (
                 <Text>Loading...</Text>
@@ -158,23 +153,21 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
+        zIndex: 0, // Add this line
     },
     row: {
         flexDirection: 'row',
     },
     socials: {
         flexDirection: 'row',
+        alignItems: 'center',
+        padding: 10,
+        /* Put space between each social icon */
+        justifyContent: 'space-between',
+        /* Make space between only 10 pixels */
+        marginHorizontal: 60,
     },
     socialImageBtn: {},
-    header: {
-        width: '100%',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-        borderBottomWidth: 40,
-        borderBottomColor: 'lightgrey',
-        paddingBottom: 10,
-        flex: 1,
-    },
     header2: {
         width: '100%',
         alignItems: 'center',
@@ -184,19 +177,29 @@ const styles = StyleSheet.create({
         paddingBottom: 10,
         flex: 1,
     },
+    header: {
+        paddingBottom: 20,
+        zIndex: 1,
+    },
+    photosWrapper: {
+        position: 'relative',
+        flex: 1,
+    },
     coverPhoto: {
-        padding: 10,
-        width: dimensions.width,
-        height: 225,
+        width: '100%',
+        height: 200,
+        zIndex: 12,
     },
     avatar: {
-        width: 185,
-        height: 185,
-        borderRadius: 150,
-        borderWidth: 4,
-        marginTop: -125,
-        marginLeft: -165,
-        borderColor: 'white',
+        width: 130,
+        height: 130,
+        borderRadius: 100,
+        borderColor: '#FFF',
+        borderWidth: 3,
+        position: 'absolute',
+        top: -50, // Adjust this value to position the avatar properly
+        left: 15, // Adjust this value to position the avatar properly
+        zIndex: 1,
     },
     name: {
         fontSize: 22,
@@ -204,6 +207,9 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         alignSelf: 'flex-start',
         marginLeft: 10,
+        marginTop: 10,
+        paddingTop: 10,
+        position: 'relative'
     },
     title: {
         fontSize: 22,
@@ -248,6 +254,16 @@ const styles = StyleSheet.create({
     },
     headerContent: {
         alignItems: 'center',
+    },
+    avatarContainer: {
+        position: 'absolute',
+        top: 150, // Adjust this value to position the avatar properly
+        left: 20, // Adjust this value to position the avatar properly
+    },
+    avatarInnerContainer: {
+        position: 'relative',
+        top: 0,
+        left: 0,
     },
 });
 export default ViewOtherUser;

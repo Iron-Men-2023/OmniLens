@@ -7,6 +7,7 @@ import {DetailComponent, SubInfo} from "./SubInfo";
 import {generateFakeChats, getChatGivenUsers, sendFriendRequest} from "../config/DB_Functions/DB_Functions";
 import NotificationTextComponent from "./NotificationTextComponent";
 import {auth} from "../config/firebaseConfig";
+import {LinearGradient} from "expo-linear-gradient";
 
 const Recent = ({data, loggedInUser, navigation}) => {
     const [connected, setConnected] = useState(data.friends && data.friends.includes(auth.currentUser.uid),
@@ -18,7 +19,7 @@ const Recent = ({data, loggedInUser, navigation}) => {
     const [detailColor, setDetailColor] = useState("#fff")
 
     function handleRecentComponentPress() {
-        navigation.navigate('OtherUserProfile', {uid: data.uid})
+        navigation.navigate('OtherUserProfile', {userData: data})
     }
 
     function handleBookmarkPress() {
@@ -55,7 +56,6 @@ const Recent = ({data, loggedInUser, navigation}) => {
     }
 
     async function handleChatPress() {
-        console.log("User1 is: ", auth.currentUser.uid, "User2 is: ", data.uid)
         const chat = await getChatGivenUsers(auth.currentUser.uid, data.uid);
         navigation.navigate('Messages', {id: chat.id, recipientId: data.uid})
     }
@@ -74,10 +74,13 @@ const Recent = ({data, loggedInUser, navigation}) => {
     }, [setConnected]);
 
     return (
-        <View style={styles.container}>
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
             <Pressable
                 style={({pressed}) => [
-                    {backgroundColor: pressed ? 'black' : 'white'},
+                    {backgroundColor: pressed ? 'black' : 'white', borderRadius: 14},
                 ]}
                 onPressIn={() => setDetailColor("#283441")}
                 onPressOut={() => setDetailColor("white")}
@@ -92,7 +95,8 @@ const Recent = ({data, loggedInUser, navigation}) => {
                     padding: 20,
                     flexDirection: "row",
                     justifyContent: "space-between",
-                    backgroundColor: detailColor
+                    backgroundColor: detailColor,
+                    borderRadius: 14,
                 }}>
                     <DetailComponent
                         title={data.name}
@@ -153,7 +157,7 @@ const Recent = ({data, loggedInUser, navigation}) => {
                     />
                 ) : null}
             </View>
-        </View>
+        </LinearGradient>
     )
 
 }
@@ -162,6 +166,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         marginBottom: 24,
         margin: 14,
+        borderRadius: 14,
 
     },
     center: {
@@ -170,6 +175,7 @@ const styles = StyleSheet.create({
     imageView: {
         height: dimensions.height * .4,
         width: "100%",
+        borderRadius: 14,
     },
     icons: {
         flexDirection: 'row',

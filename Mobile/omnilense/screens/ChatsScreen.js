@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
-import {Avatar, ListItem, SearchBar} from 'react-native-elements';
+import {Avatar, ListItem} from 'react-native-elements';
+import {Searchbar} from "react-native-paper";
 import {db, auth} from '../config/firebaseConfig';
 import dimensions from "../config/DeviceSpecifications";
-import {getChatGivenUsers} from "../config/DB_Functions/DB_Functions";
+import {LinearGradient} from "expo-linear-gradient";
 
 const ChatsScreen = ({navigation}) => {
     const [chats, setChats] = useState([]);
@@ -24,18 +25,14 @@ const ChatsScreen = ({navigation}) => {
                 if (chatData && chatData.users) {
                     const recipient = chatData.users.find(user => user !== auth.currentUser.uid);
                     const itemInfo = await getItemInfo(chatData);
-                    console.log("itemInfo", itemInfo);
                     if (itemInfo) {
                         setUserData(prevUserData => ({
                             ...prevUserData,
                             [recipient]: itemInfo,
                         }));
                     }
-                    console.log("userData", userData);
-
                     // Set up a listener for each chat reference stored in the user's document
                     const unsubscribe = chatRef.onSnapshot(chatSnapshot => {
-                        console.log("Chat snapshot: ", chatSnapshot.data());
                         setChats(prevChats => {
                             const updatedChat = {
                                 id: chatDoc.id,
@@ -55,6 +52,7 @@ const ChatsScreen = ({navigation}) => {
                             }
                         });
                     });
+                    () => unsubscribe();
                 } else {
                     console.log("Error: Chat data or users array is undefined.");
                 }
@@ -68,16 +66,23 @@ const ChatsScreen = ({navigation}) => {
         if (searchText === '') {
             return chat;
         } else {
-            if (chat.data.name) {
-                return chat.data.name.toLowerCase().includes(searchText.toLowerCase());
+            // Get the recipient ID from the chat
+            const recipient = chat.data.users.find(user => user !== auth.currentUser.uid);
+
+            // Get recipient data from userData
+            const recipientData = userData[recipient];
+
+            // If recipientData is available and it has a name property, filter by the name
+            if (recipientData && recipientData.name) {
+                return recipientData.name.toLowerCase().includes(searchText.toLowerCase());
             } else {
                 return chat;
             }
         }
     });
 
+
     const enterChat = (id, chat) => {
-        console.log("enterChat chat:", chat);
         // Get the user from the users array in chat that is not the current user
         const recipient = chat.data.users.find(user => user !== auth.currentUser.uid);
         navigation.navigate('Messages', {id: id, recipientId: recipient})
@@ -86,72 +91,77 @@ const ChatsScreen = ({navigation}) => {
 
     async function getItemInfo(item) {
         const chatData = item;
-        console.log("getItemInfo chatData:", chatData);
 
         if (chatData) {
             const recipient = chatData.users.find(user => user !== auth.currentUser.uid);
-            console.log("recipient:", recipient);
             const userRef = await db.collection('users').doc(recipient).get();
             const userData = userRef.data();
             if (userData) {
-                console.log("user data", userData);
                 return userData;
             }
         } else {
             console.log("chat data was undefined");
         }
-        console.log("user data was undefined");
         return null;
     }
 
     return (
-        <View>
-            <SearchBar
-                placeholder="Search Chats"
-                onChangeText={text => setSearchText(text)}
-                value={searchText}
-                lightTheme={true}
-                round={true}
-                containerStyle={styles.container}
-                style={styles.search}
-            />
-            <FlatList
-                data={filteredChats}
-                keyExtractor={item => item.id}
-                style={styles.container}
-                renderItem={({item}) => {
-                    const recipient = item.data.users.find(user => user !== auth.currentUser.uid);
-                    console.log("recipient1", recipient);
-                    const itemInfo = userData[recipient];
-                    return (
-                        <>{itemInfo ? (
-                            <ListItem onPress={() => enterChat(item.id, item)} bottomDivider>
-                                <Avatar source={{uri: itemInfo.avatarPhotoUrl}} rounded/>
-                                <ListItem.Content>
-                                    <ListItem.Title>{itemInfo.name}</ListItem.Title>
-                                    <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
-                                        {item.data.lastMessage}
-                                    </ListItem.Subtitle>
-                                </ListItem.Content>
-                                <ListItem.Chevron/>
-                            </ListItem>
-                        ) : (
-                            <ListItem.CheckBox title="Loading..." checked={false}/>
-                        )}</>
-                    );
-                }}
-            />
-
-        </View>
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
+            <View style={{flex: 1, margin: 10}}>
+                <Searchbar
+                    placeholder="Search Chats"
+                    onChangeText={text => setSearchText(text)}
+                    value={searchText}
+                    style={styles.searchBar}
+                />
+                <FlatList
+                    data={filteredChats}
+                    keyExtractor={item => item.id}
+                    style={styles.chatContainer}
+                    renderItem={({item}) => {
+                        const recipient = item.data.users.find(user => user !== auth.currentUser.uid);
+                        const itemInfo = userData[recipient];
+                        return (
+                            <View style={styles.chat}>
+                                {itemInfo ? (
+                                    <ListItem onPress={() => enterChat(item.id, item)}>
+                                        <Avatar source={{uri: itemInfo.avatarPhotoUrl}} rounded/>
+                                        <ListItem.Content>
+                                            <ListItem.Title>{itemInfo.name}</ListItem.Title>
+                                            <ListItem.Subtitle numberOfLines={1} ellipsizeMode="tail">
+                                                {item.data.lastMessage}
+                                            </ListItem.Subtitle>
+                                        </ListItem.Content>
+                                    </ListItem>
+                                ) : (
+                                    <ListItem.CheckBox title="Loading..." checked={false}/>
+                                )}
+                            </View>
+                        );
+                    }}
+                />
+            </View>
+        </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+    },
+    chatContainer: {
+        padding: 10,
+        marginBottom: 10,
+    },
+    chat: {
+        height: 75,
         backgroundColor: "#fff",
-        marginBottom: 24,
-        marginTop: 40,
-
+        borderRadius: 10,
+        padding: 10,
+        margin: 10,
     },
     text: {
         fontSize: 20,
@@ -159,14 +169,13 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         marginLeft: 10,
     },
-    search: {
-        width: dimensions.width,
+    searchBar: {
+        backgroundColor: '#FFFFFF',
         height: 50,
-        backgroundColor: "#fff",
-        borderRadius: 10,
-        padding: 10,
-        margin: 10,
-        fontSize: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
     },
     message: {
         width: dimensions.width,

@@ -1,144 +1,218 @@
 import React, {useState, useEffect, useRef} from 'react';
 import {
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  StyleSheet,
-  Pressable,
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+    Pressable,
 } from 'react-native';
 import {auth, storage, db, firebaseApp} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
 import {getUserById} from "../../config/DB_Functions/DB_Functions";
+import * as PropTypes from "prop-types";
+import {Searchbar} from "react-native-paper";
+import {LinearGradient} from "expo-linear-gradient";
 
-const FriendsPage = ({navigation,route}) => {
-  const [users, setUsers] = useState([]);
-  const {user} = route.params || auth.currentUser.uid
-  const [emails, setEmails] = useState([]);
-  const userListRef = useRef(null)
-  const emailsRef = useRef([])
-  emailsRef.current = emails
-  userListRef.current = users;
-  console.log(user,"usrs")
-  useEffect(() => {
-   getUserById(user)
-   .then(doc=> {
-      const userData = doc.userDoc;
+function FriendsList(props) {
+    const {friends, navigation} = props;
+    console.log("Friends are: ", friends);
 
-     userData.friends.forEach(friend => {
-        getUserById(friend)
-          .then(a=>{
-            if(!emailsRef.current.includes(a.userDoc.email))
-            {
-              setUsers([{
-                id: a.userDoc.id,
-                name: a.userDoc.name,
-                photoUrl: a.userDoc.avatarPhotoUrl,
-                friendStatus: <Text style={styles.friendStatus}>Friends</Text>,
-              },...userListRef.current]);
-              setEmails([a.userDoc.email,...emailsRef.current])
-            }
-          }).catch(e => console.log(e))
-      });
-      console.log(userrs)
-    }).catch(e => console.log('es2', e));
-  }, [])
+    return (
+        <>
+            {friends.length === 0 && (
+                <View style={styles.noFriendsContainer}>
+                    <Text style={styles.noFriendsText}>
+                        No friends with that name, or you need to add them!
+                    </Text>
+                </View>
+            )}
+            {friends.map(user => (
+                <View style={styles.row} key={user.uid}>
+                    {user.avatarPhotoUrl ? (
+                        <Pressable
+                            style={({pressed}) => [
+                                {backgroundColor: pressed ? 'black' : 'white'},
+                                styles.photo,
+                            ]}
+                            onPress={() =>
+                                navigation.navigate('OtherUserProfile', {userData: user})
+                            }>
+                            <Image style={styles.photo} source={{uri: user.avatarPhotoUrl}}/>
+                        </Pressable>
+                    ) : (
+                        <Pressable
+                            style={({pressed}) => [
+                                {backgroundColor: pressed ? 'black' : 'white'},
+                                styles.photo,
+                            ]}
+                            onPress={() =>
+                                navigation.navigate('OtherUserProfile', {userData: user})
+                            }>
+                            <Image
+                                source={require('../../assets/Logo.png')}
+                                style={styles.photo}
+                            />
+                        </Pressable>
+                    )}
+                    <Text style={styles.name}>{user.name}</Text>
+                    <View style={styles.friendStatusContainer}>
+                        <Text style={styles.friendStatus}> Friends </Text>
+                    </View>
+                </View>
+            ))}
+        </>
+    );
+}
 
+FriendsList.propTypes = {friends: PropTypes.arrayOf(PropTypes.any)};
+const FriendsPage = ({navigation, route}) => {
+    const [users, setUsers] = useState([]);
+    const [emails, setEmails] = useState([]);
+    const userListRef = useRef(null)
+    const emailsRef = useRef([])
+    const [friends, setFriends] = useState([]);
+    const [searchText, setSearchText] = useState('');
+    emailsRef.current = emails
+    userListRef.current = users;
 
-  const getFriendStatus = userData => {
-    const currentUser = auth.currentUser;
-    const friends = userData.friends || [];
-    if (friends.includes(currentUser.uid)) {
-      return <Text style={styles.friendStatus}>Friends</Text>;
+    function filterFriends(search) {
+        if (search === '') {
+            return friends;
+        }
+        return friends.filter(friend => friend.name.toLowerCase().includes(search.toLowerCase()));
     }
-  };
 
-  const sendFriendRequest = userData => {
-    const currentUser = auth.currentUser;
-    db.collection('users')
-      .doc(userData.uid)
-      .update({
-        friendRequests: firebase.firestore.FieldValue.arrayUnion(
-          currentUser.uid,
-        ),
-      })
-      .then(r => console.log('Friend request sent successfully!'))
-      .catch(e => console.error('Error sending friend request:', e));
-  };
+    useEffect(() => {
+        console.log('user', auth.currentUser.uid)
+        getUserById(auth.currentUser.uid)
+            .then(doc => {
+                const userData = doc.userDoc;
 
-  return (
-    <View>
-      {users.map(user => (
-        <View style={styles.row} key={user.id}>
-          {user.photoUrl ? (
-            <Pressable
-              style={({pressed}) => [
-                {backgroundColor: pressed ? 'black' : 'white'},
-                styles.photo,
-              ]}
-              onPress={() =>
-                navigation.navigate('OtherUserProfile', {uid: user.id})
-              }>
-              <Image style={styles.photo} source={{uri: user.photoUrl}} />
-            </Pressable>
-          ) : (
-            <Pressable
-              style={({pressed}) => [
-                {backgroundColor: pressed ? 'black' : 'white'},
-                styles.photo,
-              ]}
-              onPress={() =>
-                navigation.navigate('OtherUserProfile', {uid: item.uid})
-              }>
-              <Image
-                source={require('../../assets/Logo.png')}
-                style={styles.photo}
-              />{' '}
-            </Pressable>
-          )}
-          <Text style={styles.name}>{user.name}</Text>
-          <View>{user.friendStatus}</View>
-        </View>
-      ))}
-    </View>
-  );
+                if (userData.friends === null) {
+                    setFriends([]);
+                    return;
+                }
+
+                userData.friends.forEach(friend => {
+                    getUserById(friend)
+                        .then(a => {
+                            if (!emailsRef.current.includes(a.userDoc.email)) {
+                                setFriends([...friends, a.userDoc]);
+                                setEmails([a.userDoc.email, ...emailsRef.current])
+                            }
+                        }).catch(e => console.log(e))
+                });
+            }).then(r => console.log("Friends: ", friends)).catch(e => console.log('es2', e));
+    }, [])
+
+
+    return (
+        <LinearGradient
+            colors={['#8a2be2', '#4b0082', '#800080']}
+            style={styles.container}
+        >
+            <View style={{flex: 1, margin: 10}}>
+                <Searchbar
+                    style={styles.searchBar}
+                    placeholder="Search"
+                    onChangeText={query => {
+                        setSearchText(query)
+                    }}
+                    value={searchText}
+                />
+                <View style={styles.friendsList}>
+                    <FriendsList friends={filterFriends(searchText)} navigation={navigation}/>
+                </View>
+            </View>
+        </LinearGradient>
+    );
 };
 
 const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  photo: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 16,
-  },
-  name: {
-    fontWeight: 'bold',
-    flex: 1,
-    fontSize: 16,
-  },
-  addButton: {
-    backgroundColor: '#007AFF',
-    borderRadius: 5,
-    padding: 5,
-  },
-  addButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-  },
-  friendStatus: {
-    color: '#007AFF',
-    fontSize: 14,
-    fontWeight: 'bold',
-    borderRadius: 5,
-    padding: 5,
-    borderColor: '#007AFF',
-  },
+    row: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+    },
+    photo: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: 16,
+    },
+    name: {
+        fontWeight: 'bold',
+        flex: 1,
+        fontSize: 16,
+    },
+    addButton: {
+        backgroundColor: '#007AFF',
+        borderRadius: 5,
+        padding: 5,
+    },
+    addButtonText: {
+        color: '#FFFFFF',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+    friendStatus: {
+        color: '#007AFF',
+        fontSize: 14,
+        fontWeight: 'bold',
+        borderRadius: 5,
+        padding: 5,
+        borderColor: '#007AFF',
+    }, friendStatusContainer: {
+        backgroundColor: '#FFFFFF',
+        borderRadius: 5,
+        padding: 5,
+    },
+    header: {
+        backgroundColor: '#FFFFFF',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+    },
+    headerText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    searchBar: {
+        backgroundColor: '#FFFFFF',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+    },
+    searchBarText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    friendsList: {
+        backgroundColor: '#FFFFFF',
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0',
+        marginTop: 10,
+        borderRadius: 10,
+    }, noFriendsContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    noFriendsText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+    },
+    container: {
+        flex: 1,
+    }
 });
 
 export default FriendsPage;

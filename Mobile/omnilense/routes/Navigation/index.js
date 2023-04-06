@@ -41,6 +41,7 @@ import * as TaskManager from 'expo-task-manager';
 import ChatScreen from "../../screens/MessagingScreen";
 import ChatsScreen from "../../screens/ChatsScreen";
 import MessagingScreen from "../../screens/MessagingScreen";
+import QRCodeScreen from "../../screens/QRCodeScreen";
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -188,13 +189,10 @@ function DrawerNavigator() {
             .onSnapshot(async doc => {
                 const data = doc.data();
                 const friendRequestsData = data.friendRequests;
-                console.log('Friends', friendRequestsData);
                 try {
                     const friendData = await getAllUsersData(friendRequestsData);
-                    console.log('Friend Data', friendData);
                     // Get the lst friend request
                     const lastFriendRequest = friendData[friendData.length - 1];
-                    console.log('Last Friend Request in update', lastFriendRequest);
                     if (lastFriendRequest) {
                         await TaskManager.getRegisteredTasksAsync().then(tasks => {
                             console.log('Tasks', tasks);
@@ -224,6 +222,7 @@ function DrawerNavigator() {
             <Drawer.Screen name="Friends" component={FriendsScreen}/>
             <Drawer.Screen name="Friend Requests" component={FriendRequestsScreen}/>
             <Stack.Screen name={'Chats'} component={ChatsScreen}/>
+            <Stack.Screen name={'QrCode'} component={QRCodeScreen}/>
             <Drawer.Screen
                 name="Account Settings"
                 component={AccountSettingsScreen}
@@ -258,7 +257,6 @@ function SignOutComponent(props) {
                                         });
                                     } catch (error) {
                                         console.error(error);
-                                        console.log('signOut error');
                                     }
                                     props.navigation.navigate('Sign In');
                                 },
@@ -312,6 +310,9 @@ export default function Navigation() {
                     ) : null}
                     {user ? (
                         <Stack.Screen name={'Messages'} component={MessagingScreen}/>
+                    ) : null}
+                    {user ? (
+                        <Stack.Screen name={'QRCode'} component={QRCodeScreen}/>
                     ) : null}
                     <Stack.Screen name={'Onboarding'} component={OnboardingScreen}/>
                     <Stack.Screen

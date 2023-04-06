@@ -5,7 +5,9 @@ import {useEffect, useState} from "react";
 import {auth, db} from "../config/firebaseConfig";
 import {StyleSheet, View} from "react-native";
 import firebase from 'firebase/compat/app';
+import {LinearGradient} from 'expo-linear-gradient';
 import {getUserById} from "../config/DB_Functions/DB_Functions";
+import {Button} from "react-native-paper";
 
 // Create ChatScreen component
 const MessagingScreen = ({navigation, route}) => {
@@ -159,7 +161,18 @@ const MessagingScreen = ({navigation, route}) => {
 
     return (
         <>{recipient && currentUser && (
-            <View style={styles.container}>
+            <LinearGradient
+                colors={['#8a2be2', '#4b0082', '#800080']}
+                style={styles.container}
+            >
+                <Button
+                    onPress={() => navigation.navigate('Chats', {id: recipientId})}
+                    style={{margin: 50}}
+                    mode="contained"
+                    color="#2089dc"
+                >
+                    Back to {currentUser.name}'s Messages
+                </Button>
                 <GiftedChat
                     messages={messages}
                     onSend={newMessages => onSend(newMessages)}
@@ -174,7 +187,7 @@ const MessagingScreen = ({navigation, route}) => {
                     scrollToBottom
                     scrollToBottomComponent={() => <MaterialIcons name="expand-more" size={32} color="#2089dc"/>}
                 />
-            </View>
+            </LinearGradient>
         )}</>
     );
 };
@@ -182,9 +195,9 @@ const MessagingScreen = ({navigation, route}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: 20,
-        marginBottom: 20,
+        marginBottom: 35,
     },
 });
+
 
 export default MessagingScreen;
