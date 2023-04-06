@@ -40,8 +40,10 @@ const FriendsPage = ({navigation}) => {
 
     useEffect(() => {
         if (searchText !== '') {
+            console.log('Searching for', searchText);
+            console.log('Users are', users);
             const filteredUsers = users.filter(user =>
-                user.name.toLowerCase().includes(searchText.toLowerCase()),
+                user.userData.name.toLowerCase().includes(searchText.toLowerCase()),
             );
             setSearchedUsers(filteredUsers);
         } else {
