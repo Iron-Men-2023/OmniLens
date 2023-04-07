@@ -31,6 +31,8 @@ const ProfilePage = ({navigation}) => {
     const [refreshing, setRefreshing] = useState(false);
     const [friend, setFriend] = useState(null);
     const [editableBio, setEditableBio] = useState(""); // Add state variable for editable bio
+    const {colors} = useTheme();
+    const {theme} = useTheme();
 
 
     useEffect(() => {
@@ -107,36 +109,32 @@ const ProfilePage = ({navigation}) => {
         >
             {user ? (
                 <View style={styles.container}>
-                    <LinearGradient
-                        colors={['#9a6cd9', '#F5FCFF']}
-                        style={styles.header}
-                    >
+                    <ProfilePhotoComponent
+                        imageStyle={styles.coverPhoto}
+                        photoType={'Cover'}
+                        user={user}
+                    />
+                    <View style={styles.avatarContainer}>
                         <ProfilePhotoComponent
-                            imageStyle={styles.coverPhoto}
-                            photoType={'Cover'}
+                            imageStyle={styles.avatar}
+                            photoType={'Avatar'}
                             user={user}
+                            containerStyle={styles.avatarInnerContainer}
                         />
-                        <View style={styles.avatarContainer}>
-                            <ProfilePhotoComponent
-                                imageStyle={styles.avatar}
-                                photoType={'Avatar'}
-                                user={user}
-                                containerStyle={styles.avatarInnerContainer}
-                            />
-                        </View>
-                        <Text style={styles.name}>{user.name}</Text>
-                        <ScrollView style={styles.scroll} horizontal={true}>
-                            {user.interests ? (
-                                user.interests.map(interest => (
-                                    <Chip icon="heart" key={interest} style={styles.chip}>
-                                        {interest}
-                                    </Chip>
-                                ))
-                            ) : (
-                                <Text>No interests</Text>
-                            )}
-                        </ScrollView>
-                    </LinearGradient>
+                    </View>
+                    <Text style={styles.name}>{user.name}</Text>
+                    <ScrollView style={styles.scroll} horizontal={true}>
+                        {user.interests ? (
+                            user.interests.map(interest => (
+                                <Chip icon="heart" key={interest}
+                                      style={{borderColor: `#001F2D`, backgroundColor: `white`}}>
+                                    {interest}
+                                </Chip>
+                            ))
+                        ) : (
+                            <Text>No interests</Text>
+                        )}
+                    </ScrollView>
                     <Surface style={styles.header2}>
                         <Text style={styles.bio}>Bio:</Text>
                         <TextInput
@@ -173,7 +171,7 @@ const ProfilePage = ({navigation}) => {
 
                     <View style={styles.socials}>
                         <FAB
-                            style={styles.socialImageBtn}
+                            style={{borderColor: `#001F2D`, backgroundColor: `white`}}
                             icon="facebook"
                             onPress={() =>
                                 Linking.openURL(
@@ -182,7 +180,7 @@ const ProfilePage = ({navigation}) => {
                             }
                         />
                         <FAB
-                            style={styles.socialImageBtn}
+                            style={{borderColor: `#001F2D`, backgroundColor: `white`}}
                             icon="instagram"
                             onPress={() =>
                                 Linking.openURL(
@@ -191,7 +189,7 @@ const ProfilePage = ({navigation}) => {
                             }
                         />
                         <FAB
-                            style={styles.socialImageBtn}
+                            style={{borderColor: `#001F2D`, backgroundColor: `white`}}
                             icon="twitter"
                             onPress={() => Linking.openURL('https://twitter.com/' + user.twitter)}
                         />
@@ -200,6 +198,9 @@ const ProfilePage = ({navigation}) => {
             ) : (
                 <Text>Loading...</Text>
             )}
+            <View style={styles.backPanel}>
+                <View style={{height: 300, backgroundColor: colors.primary}}/>
+            </View>
         </ScrollView>
     );
 };
@@ -216,6 +217,14 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: 'row',
     },
+    backPanel: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: -1,
+    },
     socials: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -225,14 +234,23 @@ const styles = StyleSheet.create({
         /* Make space between only 10 pixels */
         marginHorizontal: 60,
     },
-    socialImageBtn: {},
+    socialImageBtn: {
+        // backgroundColor: '#001F2D',
+        marginHorizontal: 10,
+        color: '#FFF',
+        theme: {
+            colors: {
+                accent: '#001F2D',
+            },
+        },
+    },
     header2: {
         width: '100%',
         /* Make items in a row */
         flexDirection: 'row',
         backgroundColor: '#F5FCFF',
         borderBottomWidth: 5,
-        borderBottomColor: '#9a6cd9',
+        borderBottomColor: '#001F2D',
         paddingBottom: 10,
         flex: 1,
     },
@@ -262,17 +280,17 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 22,
-        color: '#000000',
+        color: '#FFFFFF',
         fontWeight: '600',
         alignSelf: 'flex-start',
         marginLeft: 10,
         marginTop: 10,
-        paddingTop: 10,
+        marginBottom: 10,
         position: 'relative'
     },
     title: {
         fontSize: 22,
-        color: '#000000',
+        color: '#001F2D',
         fontWeight: '600',
         alignSelf: 'flex-start',
         marginLeft: 20,
@@ -280,11 +298,12 @@ const styles = StyleSheet.create({
     },
     bio: {
         fontSize: 16,
-        color: '#696969',
+        color: '#FFFFFF',
         marginTop: 10,
         textAlign: 'center',
         alignSelf: 'flex-start',
         marginLeft: 10,
+        zIndex: 1,
     },
     socialImage: {
         width: 80,
@@ -300,7 +319,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'stretch',
         borderBottomWidth: 5,
-        borderBottomColor: '#9a6cd9',
+        borderBottomColor: '#001F2D',
     },
     stats: {
         marginTop: 20,

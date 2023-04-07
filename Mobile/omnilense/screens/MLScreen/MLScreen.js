@@ -4,7 +4,16 @@ import * as FileSystem from 'expo-file-system';
 import * as FaceDetector from 'expo-face-detector';
 import {Camera, CameraType} from 'expo-camera';
 import {storage, auth, db} from '../../config/firebaseConfig';
-import {Button, Surface, Caption, FAB, Text, Provider as PaperProvider, DefaultTheme} from 'react-native-paper';
+import {
+    Button,
+    Surface,
+    Caption,
+    FAB,
+    Text,
+    Provider as PaperProvider,
+    DefaultTheme,
+    useTheme
+} from 'react-native-paper';
 import {
     TouchableOpacity,
     View,
@@ -18,14 +27,6 @@ import {
     updateRecents, uriToBase64,
 } from '../../config/DB_Functions/DB_Functions';
 
-const theme = {
-    ...DefaultTheme,
-    colors: {
-        ...DefaultTheme.colors,
-        primary: '#333',
-        accent: '#0000ff',
-    },
-};
 
 const MLScreen = () => {
     const [type, setType] = useState(CameraType.back);
@@ -38,6 +39,8 @@ const MLScreen = () => {
     const [permission, requestPermission] = Camera.useCameraPermissions();
     const [confidence, setConfidence] = useState(0.5);
     const [open, setOpen] = useState(false);
+    const {theme} = useTheme();
+    const {colors} = useTheme();
 
     async function recognizeFace(imageUri, num_of_faces) {
         const base64Image = await uriToBase64(imageUri);
@@ -196,7 +199,7 @@ const MLScreen = () => {
             <View style={styles.container}>
                 {pictureUploading && (
                     <Surface style={styles.loadingContainer}>
-                        <ActivityIndicator size="large" color={theme.colors.accent}/>
+                        <ActivityIndicator size="large" color={colors.primary}/>
                         <Caption>Uploading image...</Caption>
                     </Surface>
                 )}

@@ -1,13 +1,16 @@
 // Import required dependencies and add them to the top of your file
-import {Bubble, GiftedChat, Send} from 'react-native-gifted-chat';
+import {Bubble, GiftedChat, InputToolbar, Send} from 'react-native-gifted-chat';
 import {MaterialIcons} from '@expo/vector-icons';
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {auth, db} from "../config/firebaseConfig";
-import {StyleSheet, View} from "react-native";
+import {ImageBackground, StyleSheet, TouchableOpacity, View} from "react-native";
 import firebase from 'firebase/compat/app';
 import {LinearGradient} from 'expo-linear-gradient';
 import {getUserById} from "../config/DB_Functions/DB_Functions";
-import {Button} from "react-native-paper";
+import {Button, useTheme, Avatar, Text} from "react-native-paper";
+import * as ImagePicker from 'expo-image-picker';
+import * as Permissions from 'expo-permissions';
+import * as Camera from 'expo-camera';
 
 // Create ChatScreen component
 const MessagingScreen = ({navigation, route}) => {
@@ -15,6 +18,7 @@ const MessagingScreen = ({navigation, route}) => {
     const [messages, setMessages] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
     const [recipient, setRecipient] = useState(null);
+    const {colors} = useTheme();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -127,25 +131,28 @@ const MessagingScreen = ({navigation, route}) => {
 
     const renderBubble = (props) => {
         return (
-            <Bubble
-                {...props}
-                wrapperStyle={{
-                    right: {
-                        backgroundColor: '#2089dc',
-                    },
-                    left: {
-                        backgroundColor: 'white',
-                    },
-                }}
-                textStyle={{
-                    right: {
-                        color: 'white',
-                    },
-                    left: {
-                        color: 'black',
-                    },
-                }}
-            />
+            <View style={{marginBottom: 1}}>
+                <Bubble
+                    {...props}
+                    wrapperStyle={{
+                        right: {
+                            backgroundColor: '#2089dc',
+                            marginBottom: 1,
+                        },
+                        left: {
+                            backgroundColor: 'white',
+                        },
+                    }}
+                    textStyle={{
+                        right: {
+                            color: 'white',
+                        },
+                        left: {
+                            color: 'black',
+                        },
+                    }}
+                />
+            </View>
         );
     };
 
@@ -159,12 +166,62 @@ const MessagingScreen = ({navigation, route}) => {
         );
     };
 
+    const pickImage = async () => {
+        const {status} = await Permissions.askAsync(Permissions.MEDIA_LIBRARY);
+        if (status === 'granted') {
+            const result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.Images,
+                quality: 1,
+            });
+
+            if (!result.cancelled) {
+                // Send the image message
+            }
+        }
+    };
+
+    const takePhoto = async () => {
+        const {status} = await Permissions.askAsync(Permissions.CAMERA);
+        if (status === 'granted') {
+            const result = await Camera.launchCameraAsync({
+                mediaTypes: Camera.MediaTypeOptions.Images,
+                quality: 1,
+            });
+
+            if (!result.cancelled) {
+                // Send the image message
+            }
+        }
+    };
+
+    const renderInputToolbar = (props) => (
+
+        <View style={{
+            flexDirection: 'row', marginBottom: 10,
+        }}>
+            <InputToolbar
+                {...props}
+                containerStyle={{
+                    backgroundColor: 'white',
+                    borderTopWidth: 1,
+                    borderTopColor: '#e5e5e5',
+                    marginRight: 15,
+                    marginLeft: 85,
+                    borderRadius: 10,
+                }}
+            />
+            <TouchableOpacity onPress={pickImage} style={{marginLeft: 7, marginBottom: 5}}>
+                <MaterialIcons name="photo-library" size={32} color="#2089dc"/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={takePhoto} style={{marginLeft: 10, marginBottom: 5}}>
+                <MaterialIcons name="camera-alt" size={32} color="#2089dc"/>
+            </TouchableOpacity>
+        </View>
+    );
+
     return (
         <>{recipient && currentUser && (
-            <LinearGradient
-                colors={['#8a2be2', '#4b0082', '#800080']}
-                style={styles.container}
-            >
+            <View style={{flex: 1, marginBottom: 15}}>
                 <Button
                     onPress={() => navigation.navigate('Chats', {id: recipientId})}
                     style={{margin: 50}}
@@ -183,19 +240,50 @@ const MessagingScreen = ({navigation, route}) => {
                     }}
                     renderBubble={renderBubble}
                     renderSend={renderSend}
-                    alwaysShowSend
-                    scrollToBottom
-                    scrollToBottomComponent={() => <MaterialIcons name="expand-more" size={32} color="#2089dc"/>}
+                    alwaysShowSend={true}
+                    renderUsernameOnMessage
+                    renderQuickReplySend={props => (
+                        <Send {...props}>
+                            <View>
+                                <MaterialIcons name="send" size={32} color="#2089dc"/>
+                            </View>
+                        </Send>
+                    )}
+                    renderAvatar={() =>
+                        <Avatar.Image
+                            source={{uri: recipient.avatarPhotoUrl}}
+                            size={40}
+                        />
+                    }
+                    renderInputToolbar={renderInputToolbar}
                 />
-            </LinearGradient>
+                <>
+                    <View style={styles.backPanel}>
+                        <ImageBackground
+                            source={{uri: "https://images.unsplash.com/photo-1589988874319-8e8b0b2b0b1a?ixid=MXwxMjA3fDB8MHxzZWFyY2h8Mnx8YmFja2dyb3VuZCUyMHBob3Rvc3xlbnwwfDB8MHx8&ixlib=rb-1.2.1&w=1000&q=80"}}
+                            style={{width: '100%', height: '100%'}}
+                            blurRadius={10}
+                        />
+                    </View>
+                </>
+            </View>
         )}</>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         marginBottom: 35,
+    },
+    backPanel: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: -1,
     },
 });
 

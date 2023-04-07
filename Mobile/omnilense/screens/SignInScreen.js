@@ -8,7 +8,7 @@ import {
     Alert,
 } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
+import {useTheme, Provider as PaperProvider} from 'react-native-paper';
 import {auth} from '../config/firebaseConfig';
 import FormInputComponent from '../components/FormInputComponent';
 import FormButtonComponent from '../components/FormButtonComponent';
@@ -16,18 +16,10 @@ import SocialButtonComponent from '../components/SocialButtonComponent';
 import {createUser, getUserById} from '../config/DB_Functions/DB_Functions';
 import * as Google from 'expo-auth-session/providers/google';
 
-const theme = {
-    ...DefaultTheme,
-    colors: {
-        ...DefaultTheme.colors,
-        primary: 'rgb(57,153,215)',
-        secondary: '#f1c40f',
-    },
-};
-
 function SignInScreen({navigation}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const {theme} = useTheme();
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {

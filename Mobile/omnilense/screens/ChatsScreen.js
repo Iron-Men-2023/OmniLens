@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import {View, Text, TouchableOpacity, FlatList, StyleSheet} from 'react-native';
 import {Avatar, ListItem} from 'react-native-elements';
-import {Searchbar} from "react-native-paper";
+import {Searchbar, useTheme} from "react-native-paper";
 import {db, auth} from '../config/firebaseConfig';
 import dimensions from "../config/DeviceSpecifications";
 import {LinearGradient} from "expo-linear-gradient";
@@ -10,6 +10,7 @@ const ChatsScreen = ({navigation}) => {
     const [chats, setChats] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [userData, setUserData] = useState({});
+    const {colors} = useTheme();
 
 
     useEffect(() => {
@@ -106,10 +107,7 @@ const ChatsScreen = ({navigation}) => {
     }
 
     return (
-        <LinearGradient
-            colors={['#8a2be2', '#4b0082', '#800080']}
-            style={styles.container}
-        >
+        <>
             <View style={{flex: 1, margin: 10}}>
                 <Searchbar
                     placeholder="Search Chats"
@@ -144,7 +142,11 @@ const ChatsScreen = ({navigation}) => {
                     }}
                 />
             </View>
-        </LinearGradient>
+            <View style={styles.backPanel}>
+                <View style={{height: 300, backgroundColor: colors.primary}}/>
+            </View>
+        </>
+
     );
 };
 
@@ -185,6 +187,14 @@ const styles = StyleSheet.create({
         padding: 10,
         margin: 10,
         fontSize: 20,
+    },
+    backPanel: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: -1,
     },
 });
 export default ChatsScreen;

@@ -42,6 +42,7 @@ import ChatScreen from "../../screens/MessagingScreen";
 import ChatsScreen from "../../screens/ChatsScreen";
 import MessagingScreen from "../../screens/MessagingScreen";
 import QRCodeScreen from "../../screens/QRCodeScreen";
+import {useTheme} from "react-native-paper";
 
 const Tab = createBottomTabNavigator();
 const SIZE = 30;
@@ -271,10 +272,10 @@ function SignOutComponent(props) {
 }
 
 const Stack = createStackNavigator();
-const {LightTheme} = adaptNavigationTheme({reactNavigationLight: false});
 export default function Navigation() {
     const [user, setUser] = useState();
     const [isUserSet, setIsUserSet] = useState(false);
+    const theme = useTheme();
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -291,8 +292,8 @@ export default function Navigation() {
 
     return (
 
-        <Provider theme={MD3LightTheme}>
-            <NavigationContainer theme={LightTheme}>
+        <Provider theme={theme}>
+            <NavigationContainer>
                 <Stack.Navigator screenOptions={{headerShown: false}}>
                     {user ? (
                         <Stack.Screen name="Home" component={DrawerNavigator}/>

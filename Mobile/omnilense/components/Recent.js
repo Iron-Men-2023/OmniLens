@@ -9,7 +9,7 @@ import NotificationTextComponent from "./NotificationTextComponent";
 import {auth} from "../config/firebaseConfig";
 import {LinearGradient} from "expo-linear-gradient";
 
-const Recent = ({data, loggedInUser, navigation}) => {
+const Recent = ({data, navigation}) => {
     const [connected, setConnected] = useState(data.friends && data.friends.includes(auth.currentUser.uid),
     )
     const [saved, setSaved] = useState(false);

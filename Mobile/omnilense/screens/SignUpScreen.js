@@ -14,22 +14,14 @@ import {AntDesign} from '@expo/vector-icons';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
 import {createUser} from '../config/DB_Functions/DB_Functions';
-import {DefaultTheme, Provider as PaperProvider} from 'react-native-paper';
-
-const theme = {
-    ...DefaultTheme,
-    colors: {
-        ...DefaultTheme.colors,
-        primary: 'rgb(57,153,215)',
-        secondary: '#f1c40f',
-    },
-};
+import {useTheme, Provider as PaperProvider} from 'react-native-paper';
 
 function SignUpScreen({navigation}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState(null);
+    const {colors} = useTheme();
 
     function createAccount() {
         if (password === confirmPassword) {

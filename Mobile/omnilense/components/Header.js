@@ -9,10 +9,7 @@ const Header = ({user, search, navigation}) => {
     const {colors} = useTheme();
 
     return (
-        <LinearGradient
-            colors={['#8a2be2', '#4b0082', '#800080']}
-            style={styles.container}
-        >
+        <View style={{flex: 1, margin: 10}}>
             <View
                 style={{
                     flexDirection: "row",
@@ -59,7 +56,8 @@ const Header = ({user, search, navigation}) => {
             <View style={{marginTop: 5}}>
                 <SearchInputComponent changeText={search}/>
             </View>
-        </LinearGradient>
+        </View>
+
     );
 };
 

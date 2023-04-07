@@ -63,10 +63,7 @@ function Feed({navigation}) {
         return () => unsubscribe();
     }, [userSet]);
     return (
-        <LinearGradient
-            colors={['#8a2be2', '#4b0082', '#800080']}
-            style={styles.container}
-        >
+        <>
             <View>
                 <FlatList
                     data={searchText.length === 0 ? recentsRef.current : searchedRecents}
@@ -86,10 +83,10 @@ function Feed({navigation}) {
                     }
                 />
             </View>
-            {/*<View style={styles.backPanel}>*/}
-            {/*    <View style={{height: 300, backgroundColor: colors.primary}}/>*/}
-            {/*</View>*/}
-        </LinearGradient>
+            <View style={styles.backPanel}>
+                <View style={{height: 300, backgroundColor: colors.primary}}/>
+            </View>
+        </>
     );
 };
 
@@ -104,7 +101,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        
+
     }
 });
 export default Feed;
