@@ -28,11 +28,14 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly, containerStyle}) =
     const [uploadPhoto, setUploadPhoto] = useState(false);
     const [userImageUrl, setUserImageUrl] = useState(() => {
         if (photoType === 'Avatar') {
+            // Check if the avatarPhotoUrl exists as an actual url
             return user.avatarPhotoUrl;
         } else if (photoType === 'Cover') {
             return user.coverPhotoUrl;
         }
     });
+    const [isImageLoaded, setIsImageLoaded] = useState(false);
+
 
     const handleChoosePhoto = async () => {
         const options = {
@@ -65,7 +68,7 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly, containerStyle}) =
         setUploading(true);
         const manipulatedImage = await manipulateAsync(
             uri,
-            [{resize: {width: 400, height: 500}}],
+            [{resize: {width: 400}}],
             {
                 compress: 1,
                 format: ImageManipulator.SaveFormat.JPEG,
@@ -129,12 +132,29 @@ const ProfilePhoto = ({imageStyle, photoType, user, viewOnly, containerStyle}) =
         );
     };
 
+    useEffect(() => {
+        checkImage(userImageUrl).then(r => console.log('Image Loaded', r));
+    }, [userImageUrl]);
+
+    const checkImage = async (url) => {
+        try {
+            await Image.prefetch(url);
+            setIsImageLoaded(true);
+        } catch (error) {
+            setIsImageLoaded(false);
+        }
+    };
+
     return (
         <View>
             <View style={[styles.container, containerStyle]}>
                 {userImageUrl ? (
                     <TouchableOpacity onPress={!viewOnly ? handleChoosePhoto : null}>
-                        <Image source={{uri: userImageUrl}} style={imageStyle}/>
+                        {isImageLoaded ? (
+                            <Image source={{uri: userImageUrl}} style={imageStyle}/>
+                        ) : (
+                            <Image source={Logo} style={imageStyle}/>
+                        )}
                     </TouchableOpacity>
                 ) : (
                     <TouchableOpacity onPress={handleChoosePhoto}>

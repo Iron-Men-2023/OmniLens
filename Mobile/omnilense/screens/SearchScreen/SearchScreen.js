@@ -13,11 +13,13 @@ import firebase from 'firebase/compat/app';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import {sendFriendRequest} from '../../config/DB_Functions/DB_Functions';
 import {LinearGradient} from "expo-linear-gradient";
+import {useTheme} from "react-native-paper";
 
 const FriendsPage = ({navigation}) => {
     const [users, setUsers] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchedUsers, setSearchedUsers] = useState([]);
+    const {colors} = useTheme();
 
     useEffect(() => {
         const unsubscribe = db.collection('users').onSnapshot(snapshot => {
@@ -75,30 +77,28 @@ const FriendsPage = ({navigation}) => {
     };
 
     return (
-        <LinearGradient
-            colors={['#8a2be2', '#4b0082', '#800080']}
-            style={styles.container}
-        >
-            <ScrollView>
-                <SearchInputComponent changeText={dynamicSearch}/>
-                {searchedUsers.map(user => (
-                    <View style={styles.row} key={user.userData.uid}>
-                        <Pressable
-                            style={({pressed}) => [
-                                {backgroundColor: pressed ? 'black' : 'white'},
-                                styles.photo,
-                            ]}
-                            onPress={() =>
-                                navigation.navigate('OtherUserProfile', {userData: user.userData})
-                            }>
-                            <Image style={styles.photo} source={{uri: user.userData.avatarPhotoUrl}}/>
-                        </Pressable>
-                        <Text style={styles.name}>{user.userData.name}</Text>
-                        <View>{user.friendStatus}</View>
-                    </View>
-                ))}
-            </ScrollView>
-        </LinearGradient>
+        <ScrollView>
+            <SearchInputComponent changeText={dynamicSearch}/>
+            {searchedUsers.map(user => (
+                <View style={styles.row} key={user.userData.uid}>
+                    <Pressable
+                        style={({pressed}) => [
+                            {backgroundColor: pressed ? 'black' : 'white'},
+                            styles.photo,
+                        ]}
+                        onPress={() =>
+                            navigation.navigate('OtherUserProfile', {userData: user.userData})
+                        }>
+                        <Image style={styles.photo} source={{uri: user.userData.avatarPhotoUrl}}/>
+                    </Pressable>
+                    <Text style={styles.name}>{user.userData.name}</Text>
+                    <View>{user.friendStatus}</View>
+                </View>
+            ))}
+            <View style={styles.backPanel}>
+                <View style={{height: 300, backgroundColor: colors.primary}}/>
+            </View>
+        </ScrollView>
     );
 };
 
@@ -107,6 +107,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#CCCCCC',
+        borderRadius: 10,
+        margin: 10,
+        backgroundColor: '#FFFFFF',
     },
     photo: {
         width: 40,
@@ -118,6 +123,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         flex: 1,
         fontSize: 16,
+        /* Make color gray */
+        color: '#000',
     },
     addButton: {
         backgroundColor: '#007AFF',
@@ -125,7 +132,7 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     addButtonText: {
-        color: '#FFFFFF',
+        color: '#F5FCFF',
         fontSize: 14,
         fontWeight: 'bold',
     },
@@ -139,7 +146,15 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-    }
+    },
+    backPanel: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: -1,
+    },
 });
 
 export default FriendsPage;

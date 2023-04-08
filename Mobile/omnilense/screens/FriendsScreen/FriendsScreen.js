@@ -5,29 +5,26 @@ import {
     Image,
     TouchableOpacity,
     StyleSheet,
-    Pressable,
+    Pressable, ScrollView,
 } from 'react-native';
 import {auth, storage, db, firebaseApp} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
 import {getUserById} from "../../config/DB_Functions/DB_Functions";
 import * as PropTypes from "prop-types";
-import {Searchbar} from "react-native-paper";
-import {LinearGradient} from "expo-linear-gradient";
+import {Searchbar, useTheme} from "react-native-paper";
 
 function FriendsList(props) {
     const {friends, navigation} = props;
     console.log("Friends are: ", friends);
-
     return (
-        <>
+        <ScrollView>
             {friends.length === 0 && (
                 <View style={styles.noFriendsContainer}>
                     <Text style={styles.noFriendsText}>
                         No friends with that name, or you need to add them!
                     </Text>
                 </View>
-            )}
-            {friends.map(user => (
+            ) || friends.length > 0 && friends.map(user => (
                 <View style={styles.row} key={user.uid}>
                     {user.avatarPhotoUrl ? (
                         <Pressable
@@ -61,7 +58,7 @@ function FriendsList(props) {
                     </View>
                 </View>
             ))}
-        </>
+        </ScrollView>
     );
 }
 
@@ -73,6 +70,7 @@ const FriendsPage = ({navigation, route}) => {
     const emailsRef = useRef([])
     const [friends, setFriends] = useState([]);
     const [searchText, setSearchText] = useState('');
+    const {colors} = useTheme();
     emailsRef.current = emails
     userListRef.current = users;
 
@@ -108,10 +106,7 @@ const FriendsPage = ({navigation, route}) => {
 
 
     return (
-        <LinearGradient
-            colors={['#8a2be2', '#4b0082', '#800080']}
-            style={styles.container}
-        >
+        <>
             <View style={{flex: 1, margin: 10}}>
                 <Searchbar
                     style={styles.searchBar}
@@ -121,11 +116,12 @@ const FriendsPage = ({navigation, route}) => {
                     }}
                     value={searchText}
                 />
-                <View style={styles.friendsList}>
-                    <FriendsList friends={filterFriends(searchText)} navigation={navigation}/>
-                </View>
+                <FriendsList friends={filterFriends(searchText)} navigation={navigation}/>
             </View>
-        </LinearGradient>
+            <View style={styles.backPanel}>
+                <View style={{height: 300, backgroundColor: colors.primary}}/>
+            </View>
+        </>
     );
 };
 
@@ -134,6 +130,11 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#CCCCCC',
+        borderRadius: 10,
+        margin: 10,
+        backgroundColor: '#FFFFFF',
     },
     photo: {
         width: 40,
@@ -194,7 +195,6 @@ const styles = StyleSheet.create({
     },
     friendsList: {
         backgroundColor: '#FFFFFF',
-        height: 50,
         justifyContent: 'center',
         alignItems: 'center',
         borderBottomWidth: 1,
@@ -212,7 +212,15 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-    }
+    },
+    backPanel: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: -1,
+    },
 });
 
 export default FriendsPage;

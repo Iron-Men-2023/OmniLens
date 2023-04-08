@@ -3,12 +3,18 @@ import {Image, StyleSheet, Text, TouchableOpacity, View, Pressable, TextInput} f
 import dimensions from "../config/DeviceSpecifications";
 import {purple} from "@mui/material/colors";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
+import {useTheme} from "react-native-paper";
 
 function BoxComponent({title, userData, screen, navigation}) {
+    const {colors} = useTheme();
     console.log('userData HERE: ', userData);
     return (
         <View>
-            <Text style={styles.title}>{title}</Text>
+            <Text style={{
+                marginLeft: dimensions.width * .12,
+                fontWeight: '600',
+                fontStyle: "italic", color: colors.primary
+            }}>{title}</Text>
             {userData ? (
                 <TouchableOpacity style={styles.container}
                                   onPress={() => navigation.navigate(screen, {userData: userData})}>
@@ -33,7 +39,6 @@ const styles = StyleSheet.create({
         marginLeft: dimensions.width * .12,
         fontWeight: '600',
         fontStyle: "italic",
-        color: "#4c00ab"
     },
     image: {
         width: "100%",

@@ -7,12 +7,12 @@ import {
     Image,
     TouchableOpacity,
     RefreshControl,
-    Linking,
+    Linking, TextInput,
 } from 'react-native';
 import {fetchUserData, getUserById} from '../config/DB_Functions/DB_Functions';
 import ProfilePhotoComponent from '../components/ProfilePhotoComponent';
 import dimensions from '../config/DeviceSpecifications';
-import {Chip, FAB, Surface} from 'react-native-paper';
+import {Chip, FAB, Surface, useTheme} from 'react-native-paper';
 import BoxComponent from './BoxComponent';
 import fbLogo from '../assets/fblogo.jpg';
 import igLogo from '../assets/iglogo.jpg';
@@ -24,6 +24,7 @@ const ViewOtherUser = ({route, navigation, screen}) => {
     const [userSet, setUserSet] = useState(false);
     const [friend, setFriend] = useState(null);
     const {userData} = route.params;
+    const {colors} = useTheme();
 
     console.log('uid: ', userData);
 
@@ -54,38 +55,34 @@ const ViewOtherUser = ({route, navigation, screen}) => {
         >
             {user ? (
                 <View style={styles.container}>
-                    <LinearGradient
-                        colors={['#9a6cd9', '#F5FCFF']}
-                        style={styles.header}
-                    >
+                    <ProfilePhotoComponent
+                        imageStyle={styles.coverPhoto}
+                        photoType={'Cover'}
+                        viewOnly={true}
+                        user={user}
+                    />
+                    <View style={styles.avatarContainer}>
                         <ProfilePhotoComponent
-                            imageStyle={styles.coverPhoto}
-                            photoType={'Cover'}
+                            imageStyle={styles.avatar}
+                            photoType={'Avatar'}
                             user={user}
                             viewOnly={true}
+                            containerStyle={styles.avatarInnerContainer}
                         />
-                        <View style={styles.avatarContainer}>
-                            <ProfilePhotoComponent
-                                imageStyle={styles.avatar}
-                                photoType={'Avatar'}
-                                user={user}
-                                viewOnly={true}
-                                containerStyle={styles.avatarInnerContainer}
-                            />
-                        </View>
-                        <Text style={styles.name}>{user.name}</Text>
-                        <ScrollView style={styles.scroll} horizontal={true}>
-                            {user.interests ? (
-                                user.interests.map(interest => (
-                                    <Chip icon="heart" key={interest} style={styles.chip}>
-                                        {interest}
-                                    </Chip>
-                                ))
-                            ) : (
-                                <Text>No interests</Text>
-                            )}
-                        </ScrollView>
-                    </LinearGradient>
+                    </View>
+                    <Text style={styles.name}>{user.name}</Text>
+                    <ScrollView style={styles.scroll} horizontal={true}>
+                        {user.interests ? (
+                            user.interests.map(interest => (
+                                <Chip icon="heart" key={interest}
+                                      style={{borderColor: `#001F2D`, backgroundColor: `white`}}>
+                                    {interest}
+                                </Chip>
+                            ))
+                        ) : (
+                            <Text>No interests</Text>
+                        )}
+                    </ScrollView>
                     <Surface style={styles.header2}>
                         <Text style={styles.bio}>Bio: {user.bio}</Text>
                     </Surface>
@@ -115,7 +112,7 @@ const ViewOtherUser = ({route, navigation, screen}) => {
 
                     <View style={styles.socials}>
                         <FAB
-                            style={styles.socialImageBtn}
+                            style={{borderColor: `#001F2D`, backgroundColor: `white`}}
                             icon="facebook"
                             onPress={() =>
                                 Linking.openURL(
@@ -124,7 +121,7 @@ const ViewOtherUser = ({route, navigation, screen}) => {
                             }
                         />
                         <FAB
-                            style={styles.socialImageBtn}
+                            style={{borderColor: `#001F2D`, backgroundColor: `white`}}
                             icon="instagram"
                             onPress={() =>
                                 Linking.openURL(
@@ -133,7 +130,7 @@ const ViewOtherUser = ({route, navigation, screen}) => {
                             }
                         />
                         <FAB
-                            style={styles.socialImageBtn}
+                            style={{borderColor: `#001F2D`, backgroundColor: `white`}}
                             icon="twitter"
                             onPress={() => Linking.openURL('https://twitter.com/' + user.twitter)}
                         />
@@ -142,6 +139,9 @@ const ViewOtherUser = ({route, navigation, screen}) => {
             ) : (
                 <Text>Loading...</Text>
             )}
+            <View style={styles.backPanel}>
+                <View style={{height: 300, backgroundColor: colors.primary}}/>
+            </View>
         </ScrollView>
     );
 };
@@ -173,7 +173,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
         borderBottomWidth: 5,
-        borderBottomColor: '#9a6cd9',
+        borderBottomColor: '#001F2D',
         paddingBottom: 10,
         flex: 1,
     },
@@ -203,11 +203,10 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 22,
-        color: '#000000',
+        color: '#FFFFFF',
         fontWeight: '600',
         alignSelf: 'flex-start',
         marginLeft: 10,
-        marginTop: 10,
         paddingTop: 10,
         position: 'relative'
     },
@@ -221,7 +220,7 @@ const styles = StyleSheet.create({
     },
     bio: {
         fontSize: 16,
-        color: '#696969',
+        color: '#001F2D',
         marginTop: 10,
         textAlign: 'center',
         alignSelf: 'flex-start',
@@ -241,7 +240,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'stretch',
         borderBottomWidth: 5,
-        borderBottomColor: '#9a6cd9',
+        borderBottomColor: '#001F2D',
     },
     stats: {
         marginTop: 20,
@@ -264,6 +263,14 @@ const styles = StyleSheet.create({
         position: 'relative',
         top: 0,
         left: 0,
+    },
+    backPanel: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: -1,
     },
 });
 export default ViewOtherUser;

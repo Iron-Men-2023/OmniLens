@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     },
     bio: {
         fontSize: 16,
-        color: '#FFFFFF',
+        color: '#001F2D',
         marginTop: 10,
         textAlign: 'center',
         alignSelf: 'flex-start',
