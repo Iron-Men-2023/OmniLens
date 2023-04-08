@@ -2,6 +2,7 @@ import base64
 import json
 import requests
 import time
+from lcd import *
 
 
 class FacialRecognitionAPI:

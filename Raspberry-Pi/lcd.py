@@ -14,11 +14,11 @@ import traceback
 from waveshare_OLED import OLED_1in51
 from PIL import Image,ImageDraw,ImageFont
 logging.basicConfig(level=logging.DEBUG)
-
+disp = OLED_1in51.OLED_1in51()
 def display1(line1,line2):
     
     try:
-        disp = OLED_1in51.OLED_1in51()
+        #disp = OLED_1in51.OLED_1in51()
 
         # Initialize library.
         disp.Init()
@@ -34,9 +34,6 @@ def display1(line1,line2):
         draw.text((0,20), str(line2), font = font2, fill = 0)
         image1 = image1.rotate(180) 
         disp.ShowImage(disp.getbuffer(image1))
-        time.sleep(5)
-        
-        disp.clear()
 
     except IOError as e:
         logging.info(e)
@@ -46,4 +43,6 @@ def display1(line1,line2):
         OLED_1in51.config.module_exit()
         exit()
 
-display1("line 1","line 2")
+def clear():
+        disp.clear()
+        
