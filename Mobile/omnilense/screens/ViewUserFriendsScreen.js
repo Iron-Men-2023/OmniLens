@@ -20,49 +20,23 @@ const ViewUserFriendsScreen = ({navigation, route}) => {
     const emailsRef = useRef([])
     emailsRef.current = emails
     userListRef.current = users;
+
     useEffect(() => {
-        getUserById(userData.uid)
-            .then(doc => {
-                const userData = doc.userDoc;
+        let userList = [];
+        userData.friends.forEach(friend => {
+            getUserById(friend)
+                .then(a => {
+                    console.log("USER: ", a.userDoc)
+                    userList.push({
+                        userData: a.userDoc,
+                    });
 
-                userData.friends.forEach(friend => {
-                    getUserById(friend)
-                        .then(a => {
-                            if (!emailsRef.current.includes(a.userDoc.email)) {
-                                setUsers([{
-                                    id: a.userDoc.id,
-                                    name: a.userDoc.name,
-                                    photoUrl: a.userDoc.avatarPhotoUrl,
-                                    friendStatus: <Text style={styles.friendStatus}>Friends</Text>,
-                                }, ...userListRef.current]);
-                                setEmails([a.userDoc.email, ...emailsRef.current])
-                            }
-                        }).catch(e => console.log(e))
-                });
+                }).catch(e => console.log(e))
+        });
+        setUsers(userList);
 
-            }).catch(e => console.log('es2', e));
     }, [])
 
-    const getFriendStatus = userData => {
-        const currentUser = auth.currentUser;
-        const friends = userData.friends || [];
-        if (friends.includes(currentUser.uid)) {
-            return <Text style={styles.friendStatus}>Friends</Text>;
-        }
-    };
-
-    const sendFriendRequest = userData => {
-        const currentUser = auth.currentUser;
-        db.collection('users')
-            .doc(userData.uid)
-            .update({
-                friendRequests: firebase.firestore.FieldValue.arrayUnion(
-                    currentUser.uid,
-                ),
-            })
-            .then(r => console.log('Friend request sent successfully!'))
-            .catch(e => console.error('Error sending friend request:', e));
-    };
 
     return (
         <View>
@@ -75,9 +49,9 @@ const ViewUserFriendsScreen = ({navigation, route}) => {
                                 styles.photo,
                             ]}
                             onPress={() =>
-                                navigation.navigate('OtherUserProfile', {uid: user.id})
+                                navigation.navigate('OtherUserProfile', {userData: user.userData})
                             }>
-                            <Image style={styles.photo} source={{uri: user.photoUrl}}/>
+                            <Image style={styles.photo} source={{uri: user.userData.avatarPhotoUrl}}/>
                         </Pressable>
                     ) : (
                         <Pressable
@@ -86,7 +60,7 @@ const ViewUserFriendsScreen = ({navigation, route}) => {
                                 styles.photo,
                             ]}
                             onPress={() =>
-                                navigation.navigate('OtherUserProfile', {uid: item.uid})
+                                navigation.navigate('OtherUserProfile', {userData: user.userData})
                             }>
                             <Image
                                 source={require('../assets/Logo.png')}

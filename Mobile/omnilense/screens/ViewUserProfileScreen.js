@@ -17,7 +17,6 @@ import BoxComponent from './BoxComponent';
 import fbLogo from '../assets/fblogo.jpg';
 import igLogo from '../assets/iglogo.jpg';
 import twitterLogo from '../assets/twitter.jpg';
-import {LinearGradient} from "expo-linear-gradient";
 
 const ViewOtherUser = ({route, navigation, screen}) => {
     const [user, setUser] = useState(null);

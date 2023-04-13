@@ -4,7 +4,6 @@ import {Avatar, ListItem} from 'react-native-elements';
 import {Searchbar, useTheme} from "react-native-paper";
 import {db, auth} from '../config/firebaseConfig';
 import dimensions from "../config/DeviceSpecifications";
-import {LinearGradient} from "expo-linear-gradient";
 
 const ChatsScreen = ({navigation}) => {
     const [chats, setChats] = useState([]);

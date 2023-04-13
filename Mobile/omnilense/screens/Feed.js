@@ -5,7 +5,6 @@ import {auth, db} from "../config/firebaseConfig";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 import Header from "../components/Header";
 import {useTheme} from "react-native-paper";
-import {LinearGradient} from "expo-linear-gradient";
 
 function Feed({navigation}) {
 
@@ -21,11 +20,12 @@ function Feed({navigation}) {
 
 
     function dynamicSearch(text) {
-        setSearchText(text);
         if (text === '') {
+            setSearchText(text);
             setSearchedRecents(recentsRef.current);
             return;
         }
+        setSearchText(text);
         setSearchedRecents(recentsRef.current.filter(element => element.name.includes(text)));
     }
 

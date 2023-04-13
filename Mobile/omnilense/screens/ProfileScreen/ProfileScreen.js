@@ -19,7 +19,6 @@ import FriendRequestsScreen from '../FriendRequestsScreen';
 import BoxComponent from '../BoxComponent';
 import InterestComponent from '../../components/InterestComponent';
 import {Avatar, Chip, FAB, Surface, useTheme} from 'react-native-paper';
-import {LinearGradient} from 'expo-linear-gradient';
 import {db, auth} from "../../config/firebaseConfig";
 // import igLogo from '../../assets/iglogo.jpg';
 // import fbLogo from '../../assets/fblogo.jpg';

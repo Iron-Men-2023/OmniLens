@@ -7,9 +7,13 @@ import {firebaseConfig} from '../config';
 // Use this to initialize the firebase App
 const firebaseApp = firebase.initializeApp(firebaseConfig);
 // Use these for db & auth
+
+// Import GoogleAuthProvider
+import {GoogleAuthProvider} from 'firebase/auth';
+
 const db = firebaseApp.firestore();
 const auth = firebaseApp.auth();
 
 const storage = firebaseApp.storage();
 
-export {auth, db, storage, firebaseApp};
+export {auth, db, storage, firebaseApp, GoogleAuthProvider};

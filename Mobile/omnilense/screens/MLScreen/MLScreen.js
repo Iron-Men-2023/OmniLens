@@ -1,6 +1,5 @@
 import React, {useState, useEffect, useCallback} from 'react';
 import firebase from 'firebase/app';
-import * as FileSystem from 'expo-file-system';
 import * as FaceDetector from 'expo-face-detector';
 import {Camera, CameraType} from 'expo-camera';
 import {storage, auth, db} from '../../config/firebaseConfig';

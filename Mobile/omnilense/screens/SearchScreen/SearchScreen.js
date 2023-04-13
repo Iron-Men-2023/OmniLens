@@ -12,7 +12,6 @@ import {auth, storage, db, firebaseApp} from '../../config/firebaseConfig';
 import firebase from 'firebase/compat/app';
 import SearchInputComponent from '../../components/SearchInputComponent';
 import {sendFriendRequest} from '../../config/DB_Functions/DB_Functions';
-import {LinearGradient} from "expo-linear-gradient";
 import {useTheme} from "react-native-paper";
 
 const FriendsPage = ({navigation}) => {

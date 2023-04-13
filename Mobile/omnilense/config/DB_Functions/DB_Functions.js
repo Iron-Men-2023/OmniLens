@@ -35,7 +35,7 @@ async function getUserById(uid) {
     let userData = {};
     const userRef = await db.collection('users').doc(uid);
     if (!userRef) {
-        return;
+        return null;
     }
     await userRef
         .get()

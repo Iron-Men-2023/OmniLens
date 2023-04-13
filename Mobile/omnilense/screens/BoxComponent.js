@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View, Pressable, TextInput} from "react-native";
 import dimensions from "../config/DeviceSpecifications";
-import {purple} from "@mui/material/colors";
 import {getUserById} from "../config/DB_Functions/DB_Functions";
 import {useTheme} from "react-native-paper";
 

@@ -9,17 +9,29 @@ import {
 } from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {useTheme, Provider as PaperProvider} from 'react-native-paper';
-import {auth} from '../config/firebaseConfig';
+import {auth, firebaseApp} from '../config/firebaseConfig';
 import FormInputComponent from '../components/FormInputComponent';
 import FormButtonComponent from '../components/FormButtonComponent';
 import SocialButtonComponent from '../components/SocialButtonComponent';
 import {createUser, getUserById} from '../config/DB_Functions/DB_Functions';
-import * as Google from 'expo-auth-session/providers/google';
+import * as WebBrowser from "expo-web-browser";
+import * as Google from "expo-auth-session/providers/google";
+import * as Facebook from 'expo-auth-session/providers/facebook';
+import {expoClientId, iosClientId} from "../config";
+import {GoogleAuthProvider} from "firebase/auth";
+
+WebBrowser.maybeCompleteAuthSession();
+
 
 function SignInScreen({navigation}) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const {theme} = useTheme();
+    const {colors} = useTheme();
+    const [token, setToken] = useState("");
+    const [idToken, setIdToken] = useState("");
+    const [userInfo, setUserInfo] = useState(null);
+
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -58,26 +70,58 @@ function SignInScreen({navigation}) {
             });
     };
 
-    const signInWithGoogleAsync = async () => {
-        try {
-            const result = Google.useAuthRequest({
-                expoClientId: '',
-                iosClientId: '',
-                androidClientId: '',
-                scopes: ['profile', 'email'],
-            });
+    const [request, response, promptAsync] = Google.useAuthRequest({
+        androidClientId: "GOOGLE_GUID.apps.googleusercontent.com",
+        iosClientId: iosClientId,
+        expoClientId: expoClientId,
+        scopes: ["profile", "email"],
 
-            if (result.type === 'success') {
-                const credential = auth.GoogleAuthProvider.credential(
-                    result.idToken,
-                    result.accessToken,
-                );
-                await auth.signInWithCredential(credential);
+    });
+
+    useEffect(() => {
+        if (response?.type === "success") {
+            setToken(response.authentication.accessToken);
+            setIdToken(response.authentication.idToken);
+            getUserInfo().then(r =>
+                console.log("User info is: ", userInfo));
+            firebaseSignInWithGoogle(response.authentication.idToken).then(r => console.log("Signed in with Google"));
+        }
+    }, [response, token]);
+
+    const firebaseSignInWithGoogle = async (idToken) => {
+        const credential = GoogleAuthProvider.credential(idToken);
+        try {
+            const userCredential = await auth.signInWithCredential(credential);
+            const userExists = await getUserById(userCredential.user.uid);
+            if (userExists !== null) {
+                navigation.navigate('Home');
             } else {
-                console.log('Google sign-in was cancelled.');
+                Alert.alert(
+                    'Error',
+                    'User does not exist in the database. Please sign up or continue sign up.',
+                );
+                navigation.navigate('Initial Info');
             }
-        } catch (e) {
-            console.log('Error with Google sign-in:', e);
+        } catch (error) {
+            console.error("Error signing in with Google:", error);
+        }
+    };
+
+    const getUserInfo = async () => {
+        try {
+            const response = await fetch(
+                "https://www.googleapis.com/userinfo/v2/me",
+                {
+                    headers: {Authorization: `Bearer ${token}`},
+                }
+            );
+
+            const user = await response.json();
+            console.log("User info1 is: ", user);
+            setUserInfo(user);
+        } catch (error) {
+            // Add your own error handler here
+            console.log(error);
         }
     };
 
@@ -125,7 +169,7 @@ function SignInScreen({navigation}) {
                     socialName="google"
                     color="#de5246"
                     bgColor="#f5e7ea"
-                    onPress={signInWithGoogleAsync}
+                    onPress={() => promptAsync()}
                 />
                 <TouchableOpacity
                     style={styles.forgotButton}
@@ -163,6 +207,14 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '500',
         color: 'rgb(57,153,215)',
+    },
+    backPanel: {
+        position: "absolute",
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: -1,
     },
 });
 
