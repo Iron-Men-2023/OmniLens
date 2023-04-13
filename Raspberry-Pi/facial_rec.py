@@ -17,7 +17,8 @@ with picamera.PiCamera() as camera:
     with picamera.array.PiRGBArray(camera) as output:
         while True:
             # Capture a frame from the camera
-            camera.resolution= (640,480)
+            camera.resolution= (440,280)
+            camera.rotation=180
             while temp == False:
                 # Create a BytesIO object for the image data in memory
                 image_stream = io.BytesIO()
@@ -48,7 +49,7 @@ with picamera.PiCamera() as camera:
                     print('No QR code found.')
                     
             camera.capture(output, 'bgr')
-            frame= cv2.resize(output.array,(640,480))
+            frame= output.array
             # Convert the frame to grayscale
             gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
             
@@ -59,12 +60,13 @@ with picamera.PiCamera() as camera:
             # Draw rectangles around the detected faces
             if len(faces)!=0:
                 camera.capture("/home/pi/Desktop/holder/local.jpeg")
-                upload1("LfqBYBcq1BhHUvmE7803PhCFxeI2","/home/pi/Desktop/holder/local.jpeg")
+                #upload1("LfqBYBcq1BhHUvmE7803PhCFxeI2","/home/pi/Desktop/holder/local.jpeg")
                 display1("Face Detected!","Loading...")
                 result_call=api.recognize_face("/home/pi/Desktop/holder/local.jpeg", "LfqBYBcq1BhHUvmE7803PhCFxeI2", "web")
                 display1(result_call," ")
-                time.sleep(5)
+                time.sleep(3)
                 clear()
+                
 
             # Clear the stream for the next frame
             output.truncate(0)

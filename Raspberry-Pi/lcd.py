@@ -28,11 +28,12 @@ def display1(line1,line2):
         # Create blank image for drawing.
         image1 = Image.new('1', (disp.width, disp.height), "WHITE")
         draw = ImageDraw.Draw(image1)
-        font1 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
-        font2 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 20)
-        draw.text((0,2), str(line1), font = font1, fill = 0)
-        draw.text((0,20), str(line2), font = font2, fill = 0)
-        image1 = image1.rotate(180) 
+        font1 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 15)
+        font2 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
+        draw.text((2,8), str(line1), font = font1, fill = 0)
+        draw.text((2,28), str(line2), font = font2, fill = 0)
+        image1 = image1.rotate(0) 
+        image1 = image1.transpose(Image.FLIP_LEFT_RIGHT)
         disp.ShowImage(disp.getbuffer(image1))
 
     except IOError as e:
@@ -45,4 +46,9 @@ def display1(line1,line2):
 
 def clear():
         disp.clear()
-        
+
+
+#display1("Adnane Ezouhri", "Ezouhri")
+#time.sleep(3)
+#clear()
+#display1("Joslin Some","Ben D.")
