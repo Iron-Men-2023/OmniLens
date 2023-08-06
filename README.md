@@ -107,4 +107,4 @@ Omnilense is under the MIT License. See the [LICENSE](LICENSE.md) file for more 
 
 ## Contact
 
-For any questions or support, please reach out to [your-email@example.com](mailto:your-email@example.com).
+For any questions or support, please reach out to [ben.desollar01@gmail.com](mailto:ben.desollar01@gmail.com).
