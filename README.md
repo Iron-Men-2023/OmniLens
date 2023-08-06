@@ -50,6 +50,19 @@ npm install
 expo start
 \`\`\`
 
+# Clone the repository
+git clone https://github.com/your-username/Omnilense.git
+
+# Navigate to the project directory
+cd Omnilense
+
+# Install dependencies
+npm install
+
+# Start the Expo project
+expo start
+\`\`\`
+
 ## Code Structure
 
 Omnilense's codebase is organized as follows:
