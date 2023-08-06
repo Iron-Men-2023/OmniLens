@@ -86,11 +86,11 @@ We welcome contributions from the community. Feel free to open issues, create pu
 
 ## Privacy & Security
 
-Omnilense prioritizes user privacy and security. Read our [Privacy Policy](link-to-privacy-policy) for more information.
+Omnilense prioritizes user privacy and security. Read our [Privacy Policy](PRIVACY_POLICY.md) for more information.
 
 ## License
 
-Omnilense is under the MIT License. See the [LICENSE](link-to-license) file for more details.
+Omnilense is under the MIT License. See the [LICENSE](LICENSE.md) file for more details.
 
 ## Contact
 
