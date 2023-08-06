@@ -36,7 +36,7 @@ Omnilense is a cutting-edge social media app built with React Native and Expo th
 
 To get started with Omnilense, make sure you have Expo installed on your system, then follow these steps:
 
-\`\`\`bash
+```bash
 # Clone the repository
 git clone https://github.com/your-username/Omnilense.git
 
@@ -48,7 +48,7 @@ npm install
 
 # Start the Expo project
 expo start
-\`\`\`
+```
 
 # Clone the repository
 git clone https://github.com/your-username/Omnilense.git
