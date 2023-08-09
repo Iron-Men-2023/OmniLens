@@ -17,7 +17,7 @@ Omnilense is a cutting-edge social media app built with React Native and Expo th
 
 ## Demo Video
 
-![OmniLense Demo](https://www.youtube.com/watch?v=en4AzZk6zWw&list=TLGGA1rk4rFpHYMyODA3MjAyMw)
+[![OmniLense Demo]([https://www.youtube.com/watch?v=en4AzZk6zWw&list=TLGGA1rk4rFpHYMyODA3MjAyMw](https://youtu.be/en4AzZk6zWw?list=TLGGA1rk4rFpHYMwOTA4MjAyMw))](https://youtu.be/en4AzZk6zWw?list=TLGGA1rk4rFpHYMwOTA4MjAyMw)
 
 ## Screenshots
 
