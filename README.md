@@ -10,6 +10,10 @@ Omnilense is a cutting-edge social media app built with React Native and Expo th
 - **Friend Management**: Add users as friends and grow your network effortlessly.
 - **iOS Compatible**: Exclusively designed for iOS devices.
 
+## Website
+
+Check out our website [here](https://omnilens.tech/)!
+
 ## Technologies Used
 
 - React Native
